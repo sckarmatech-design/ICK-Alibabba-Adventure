@@ -9,6 +9,9 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { WhatsAppButton } from "./components/WhatsAppButton";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -21,6 +24,10 @@ export const links: Route.LinksFunction = () => [
     rel: "stylesheet",
     href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
   },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -32,7 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className="bg-[#0a0f1a]">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,7 +49,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
+      <Header />
+      <main className="flex-grow">
+        <Outlet />
+      </main>
+      <Footer />
+      <WhatsAppButton />
+    </div>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
@@ -62,14 +78,20 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="pt-16 p-4 container mx-auto">
-      <h1>{message}</h1>
-      <p>{details}</p>
-      {stack && (
-        <pre className="w-full p-4 overflow-x-auto">
-          <code>{stack}</code>
-        </pre>
-      )}
-    </main>
+    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
+      <Header />
+      <main className="flex-grow flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-6xl font-bold text-[#16a34a] mb-4">{message}</h1>
+          <p className="text-xl text-[#9ca3af] mb-8">{details}</p>
+          {stack && (
+            <pre className="w-full p-4 overflow-x-auto bg-[#111827] rounded-lg border border-[#1f2937] text-sm text-left">
+              <code>{stack}</code>
+            </pre>
+          )}
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }

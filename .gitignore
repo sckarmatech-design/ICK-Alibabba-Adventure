@@ -1,5 +1,6 @@
 .DS_Store
 .env
+.history
 /node_modules/
 
 # React Router

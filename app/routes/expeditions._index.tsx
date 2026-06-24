@@ -1,0 +1,71 @@
+import type { MetaFunction } from "react-router";
+import { TripCard } from "~/components/TripCard";
+import { SectionTitle } from "~/components/SectionTitle";
+import { Breadcrumb } from "~/components/Breadcrumb";
+import { expeditions } from "~/data/expeditions";
+
+export const meta: MetaFunction = () => [
+  { title: "Mountain Expeditions | Akhtar Abbasi Hiking" },
+  {
+    name: "description",
+    content:
+      "Expert-guided expeditions to the world's highest peaks in the Karakoram. Nanga Parbat, Rakaposhi, and more.",
+  },
+];
+
+export default function ExpeditionsIndex() {
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
+      <Breadcrumb
+        items={[{ label: "Home", href: "/" }, { label: "Expeditions" }]}
+      />
+
+      <div className="mt-8 mb-12">
+        <SectionTitle
+          title="Elite Mountain Expeditions"
+          subtitle="Conquer the world's most iconic peaks"
+          centered={true}
+        />
+      </div>
+
+      {/* Filter Section */}
+      <div className="bg-[#111827] border border-[#1f2937] rounded-lg p-6 mb-8">
+        <h3 className="font-semibold text-white mb-4">Filter by Altitude</h3>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+          {[
+            { label: "5,500–6,000m", value: "5500-6000" },
+            { label: "6,000–6,500m", value: "6000-6500" },
+            { label: "6,500–7,000m", value: "6500-7000" },
+            { label: "7,000–7,500m", value: "7000-7500" },
+            { label: "7,500–8,000m", value: "7500-8000" },
+          ].map((range) => (
+            <button
+              key={range.value}
+              className="px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-[#9ca3af] hover:bg-[#16a34a] hover:border-[#16a34a] hover:text-white transition text-sm font-medium"
+            >
+              {range.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Expeditions Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {expeditions.map((expedition) => (
+          <TripCard
+            key={expedition.slug}
+            slug={expedition.slug}
+            title={expedition.title}
+            category={expedition.difficulty}
+            region={expedition.region}
+            duration={expedition.duration}
+            difficulty={expedition.difficulty}
+            image={expedition.heroImage}
+            highlights={expedition.highlights}
+            href={`/expeditions/${expedition.slug}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
