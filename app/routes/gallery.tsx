@@ -4,13 +4,19 @@ import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Lightbox } from "~/components/Lightbox";
 import { galleryImages, videos } from "~/data/gallery";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Gallery | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Gallery | Akhtar Abbasi Hiking",
+    description:
       "Beautiful photos and videos from our trekking and expedition adventures in Gilgit Baltistan.",
+    image: "https://akhtarabbasi-hiking.com/images/og/gallery.webp",
+    url: `${SITE_CONFIG.url}/gallery`,
+  }),
+  {
+    name: "keywords",
+    content: "trekking photos, hiking pictures, adventure photography, Gilgit Baltistan videos",
   },
 ];
 

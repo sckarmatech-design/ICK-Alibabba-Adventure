@@ -2,13 +2,19 @@ import type { MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { blogPosts } from "~/data/blog-posts";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Blog | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Blog | Akhtar Abbasi Hiking",
+    description:
       "Stories from the trail, trekking tips, and travel guides from our mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+    url: `${SITE_CONFIG.url}/blog`,
+  }),
+  {
+    name: "keywords",
+    content: "trekking blog, hiking tips, adventure guides, mountain stories, travel tips",
   },
 ];
 

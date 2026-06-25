@@ -8,17 +8,24 @@ import { trips } from "~/data/trips";
 import { destinations } from "~/data/destinations";
 import { testimonials } from "~/data/testimonials";
 import { blogPosts } from "~/data/blog-posts";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
+    description:
       "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
+    image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
+    url: SITE_CONFIG.url,
+  }),
+  {
+    name: "keywords",
+    content:
+      "trekking, hiking, expeditions, Gilgit Baltistan, K2, mountains, adventure, Pakistan",
   },
   {
-    property: "og:image",
-    content: "/images/og/home.webp",
+    property: "og:type",
+    content: "website",
   },
 ];
 

@@ -3,13 +3,19 @@ import { TripCard } from "~/components/TripCard";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { tours } from "~/data/tours";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Gilgit Baltistan Tours | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Gilgit Baltistan Tours | Akhtar Abbasi Hiking",
+    description:
       "Explore cultural and scenic tours across Gilgit Baltistan. Skardu, Hunza, Gilgit, and more destinations.",
+    image: "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+    url: `${SITE_CONFIG.url}/tours`,
+  }),
+  {
+    name: "keywords",
+    content: "tours, cultural tours, Skardu, Hunza, Gilgit, Gilgit Baltistan travel",
   },
 ];
 

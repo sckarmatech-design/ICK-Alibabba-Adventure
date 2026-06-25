@@ -3,13 +3,19 @@ import { Breadcrumb } from "~/components/Breadcrumb";
 import { Accordion } from "~/components/Accordion";
 import { SectionTitle } from "~/components/SectionTitle";
 import { faqs } from "~/data/faqs";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "FAQ | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "FAQ | Akhtar Abbasi Hiking",
+    description:
       "Frequently asked questions about our trekking packages, expeditions, and adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/faq.webp",
+    url: `${SITE_CONFIG.url}/faq`,
+  }),
+  {
+    name: "keywords",
+    content: "FAQ, frequently asked questions, trekking information, expedition preparation",
   },
 ];
 

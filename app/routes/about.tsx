@@ -4,13 +4,19 @@ import { SectionTitle } from "~/components/SectionTitle";
 import { StatsBar } from "~/components/StatsBar";
 import { Users, Target, Heart, Mountain } from "lucide-react";
 import { team } from "~/data/team";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "About Us | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "About Us | Akhtar Abbasi Hiking",
+    description:
       "Learn about Akhtar Abbasi Hiking — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
+    url: `${SITE_CONFIG.url}/about`,
+  }),
+  {
+    name: "keywords",
+    content: "about us, our mission, experienced guides, trekking company, Gilgit Baltistan",
   },
 ];
 

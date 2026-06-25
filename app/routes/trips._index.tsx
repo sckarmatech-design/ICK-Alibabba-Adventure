@@ -3,13 +3,19 @@ import { TripCard } from "~/components/TripCard";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { trips } from "~/data/trips";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Hiking Trips | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Hiking Trips | Akhtar Abbasi Hiking",
+    description:
       "Explore our collection of carefully curated hiking trips across Gilgit Baltistan. From short day hikes to challenging multi-day treks.",
+    image: "https://akhtarabbasi-hiking.com/images/og/trips.webp",
+    url: `${SITE_CONFIG.url}/trips`,
+  }),
+  {
+    name: "keywords",
+    content: "hiking trips, trekking, Gilgit Baltistan, day hikes, multi-day treks",
   },
 ];
 

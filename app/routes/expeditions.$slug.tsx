@@ -7,6 +7,7 @@ import { Lightbox } from "~/components/Lightbox";
 import { DetailSidebar } from "~/components/DetailSidebar";
 import { HeroSection } from "~/components/HeroSection";
 import { expeditions } from "~/data/expeditions";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const expedition = expeditions.find((e) => e.slug === params.slug);
@@ -14,13 +15,21 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return expedition;
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.title} | Akhtar Abbasi Hiking` },
-  {
-    name: "description",
-    content: data?.overview.substring(0, 160),
-  },
-];
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
+  return [
+    ...generateMetaTags({
+      title: `${data.title} | Akhtar Abbasi Hiking`,
+      description: data.overview.substring(0, 160),
+      image: data.image || "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+      url: `${SITE_CONFIG.url}/expeditions/${data.slug}`,
+    }),
+    {
+      name: "keywords",
+      content: `${data.title}, expedition, peak climbing, ${data.altitude}m, Gilgit Baltistan`,
+    },
+  ];
+};
 
 export default function ExpeditionDetail() {
   const expedition = useLoaderData<typeof loader>();

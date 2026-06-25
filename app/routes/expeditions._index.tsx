@@ -4,12 +4,19 @@ import { SectionTitle } from "~/components/SectionTitle";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { expeditions } from "~/data/expeditions";
 
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
 export const meta: MetaFunction = () => [
-  { title: "Mountain Expeditions | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Mountain Expeditions | Akhtar Abbasi Hiking",
+    description:
       "Expert-guided expeditions to the world's highest peaks in the Karakoram. Nanga Parbat, Rakaposhi, and more.",
+    image: "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+    url: `${SITE_CONFIG.url}/expeditions`,
+  }),
+  {
+    name: "keywords",
+    content: "mountain expeditions, peak climbing, K2, Nanga Parbat, Rakaposhi, Gilgit Baltistan",
   },
 ];
 

@@ -8,6 +8,7 @@ import { Lightbox } from "~/components/Lightbox";
 import { DetailSidebar } from "~/components/DetailSidebar";
 import { HeroSection } from "~/components/HeroSection";
 import { trips } from "~/data/trips";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const trip = trips.find((t) => t.slug === params.slug);
@@ -15,13 +16,21 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return trip;
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.title} | Akhtar Abbasi Hiking` },
-  {
-    name: "description",
-    content: data?.overview.substring(0, 160),
-  },
-];
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
+  return [
+    ...generateMetaTags({
+      title: `${data.title} | Akhtar Abbasi Hiking`,
+      description: data.overview.substring(0, 160),
+      image: data.image || "https://akhtarabbasi-hiking.com/images/og/trips.webp",
+      url: `${SITE_CONFIG.url}/trips/${data.slug}`,
+    }),
+    {
+      name: "keywords",
+      content: `${data.title}, trekking, hiking, ${data.region}, Gilgit Baltistan`,
+    },
+  ];
+};
 
 export default function TripDetail() {
   const trip = useLoaderData<typeof loader>();

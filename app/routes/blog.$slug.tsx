@@ -2,6 +2,7 @@ import { useLoaderData, LoaderFunctionArgs } from "react-router";
 import type { MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { blogPosts } from "~/data/blog-posts";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const post = blogPosts.find((p) => p.slug === params.slug);
@@ -9,13 +10,24 @@ export async function loader({ params }: LoaderFunctionArgs) {
   return post;
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.title} | Akhtar Abbasi Hiking` },
-  {
-    name: "description",
-    content: data?.excerpt,
-  },
-];
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+  if (!data) return [];
+  return [
+    ...generateMetaTags({
+      title: `${data.title} | Akhtar Abbasi Hiking`,
+      description: data.excerpt,
+      image: data.image || "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+      url: `${SITE_CONFIG.url}/blog/${data.slug}`,
+      type: "article",
+      author: data.author,
+      publishedDate: data.date,
+    }),
+    {
+      name: "keywords",
+      content: `${data.title}, ${data.category}, trekking tips, hiking guide`,
+    },
+  ];
+};
 
 export default function BlogPost() {
   const post = useLoaderData<typeof loader>();

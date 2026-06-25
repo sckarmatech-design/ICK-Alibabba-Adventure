@@ -3,13 +3,19 @@ import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { companyInfo } from "~/data/nav";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export const meta: MetaFunction = () => [
-  { title: "Contact Us | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Contact Us | Akhtar Abbasi Hiking",
+    description:
       "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
+    image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
+    url: `${SITE_CONFIG.url}/contact`,
+  }),
+  {
+    name: "keywords",
+    content: "contact us, email, phone, WhatsApp, inquiry, booking",
   },
 ];
 

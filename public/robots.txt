@@ -1,0 +1,24 @@
+# Robots.txt for Akhtar Abbasi Hiking
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /.env
+Disallow: /.git
+Disallow: /node_modules
+
+# Crawl-delay in seconds (for resource-heavy crawlers)
+Crawl-delay: 1
+
+# Specific rules for major search engines
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://akhtarabbasi-hiking.com/sitemap.xml

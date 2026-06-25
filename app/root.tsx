@@ -8,10 +8,12 @@ import {
 } from "react-router";
 
 import type { Route } from "./+types/root";
+import type { MetaFunction } from "react-router";
 import "./app.css";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { WhatsAppButton } from "./components/WhatsAppButton";
+import { SITE_CONFIG } from "./lib/seo";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
