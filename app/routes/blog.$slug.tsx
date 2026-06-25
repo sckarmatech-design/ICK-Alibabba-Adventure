@@ -1,4 +1,5 @@
-import { useLoaderData, LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "@react-router/dev/routes";
 import type { MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { blogPosts } from "~/data/blog-posts";

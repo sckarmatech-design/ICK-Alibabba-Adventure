@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useLoaderData, LoaderFunctionArgs } from "react-router";
+import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs } from "@react-router/dev/routes";
 import type { MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { Accordion } from "~/components/Accordion";
