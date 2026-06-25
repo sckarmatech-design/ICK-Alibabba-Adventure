@@ -55,7 +55,7 @@ Invest in quality gear:
 - Trekking poles to reduce knee strain
 
 With proper preparation, you'll be ready to tackle this incredible adventure!`,
-    image: "/images/blog/k2-prep.webp",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
     readingTime: 7,
   },
   {
@@ -94,7 +94,7 @@ Life at high altitude presents natural challenges that build resilience:
 - Clean air and water
 
 Visit Hunza Valley to experience this unique lifestyle firsthand. Our tours provide genuine interactions with local families and insights into their traditions.`,
-    image: "/images/blog/hunza-secrets.webp",
+    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
     readingTime: 5,
   },
   {
@@ -153,7 +153,7 @@ Mountain weather changes rapidly:
 - Carry a satellite communicator on high-altitude treks
 
 With these precautions and our experienced guides, you'll have a safe and unforgettable mountain adventure.`,
-    image: "/images/blog/safety-tips.webp",
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
     readingTime: 8,
   },
   {
@@ -203,7 +203,58 @@ Limited trekking due to:
 - Only lower-altitude accessible areas
 
 Plan your trek based on season, difficulty level, and weather preferences. Contact us for season-specific recommendations.`,
-    image: "/images/blog/seasons.webp",
+    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
+    readingTime: 6,
+  },
+  {
+    slug: "trekking-gear-essentials",
+    title: "Essential Trekking Gear Checklist for Mountain Adventures",
+    author: "Sara Williams",
+    date: "2026-05-20",
+    category: "Travel Tips",
+    excerpt:
+      "Complete gear checklist to ensure you have everything needed for a comfortable and safe mountain trek.",
+    content: `Proper gear is essential for a comfortable and safe trekking experience. Here's a comprehensive checklist of everything you need.
+
+## Footwear & Clothing
+
+- Trekking boots (broken in before trek)
+- Wool socks (multiple pairs)
+- Layers: base layer, fleece, jacket
+- Rain gear and wind jacket
+- Hat and sun protection
+
+## Backpack & Bag
+
+- 60-70L backpack with rain cover
+- Day pack for daily items
+- Waterproof bags for electronics
+
+## Shelter & Sleep
+
+- Tent (provided by company)
+- Sleeping bag rated for altitude
+- Sleeping pad
+- Ground sheet
+
+## Nutrition & Water
+
+- Water bottles or hydration bladder
+- Electrolyte supplements
+- Energy bars and snacks
+- Sunscreen and lip balm
+
+## Health & Safety
+
+- First aid kit
+- Medications for altitude
+- Blister treatment
+- Personal medications
+- Insurance documents
+
+With this checklist, you'll be fully prepared for your mountain adventure!`,
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
     readingTime: 6,
   },
 ];
+
