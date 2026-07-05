@@ -1030,14 +1030,14 @@ Then pass these as props to Header, Footer, and WhatsAppButton instead of having
 
 ## PHASE 4 — Admin CRUD Routes
 
-**Status:** ❌ Not started
+**Status:** ✅ Complete
 **Dependencies:** Phase 2 (auth middleware), Phase 3 (prisma patterns established)
 
 ### Entry checkpoint
 
-- [ ] Auth middleware (`requireAdmin`) works in admin layout
-- [ ] Public routes all use Prisma successfully
-- [ ] Route patterns established
+- [x] Auth middleware (`requireAdmin`) works in admin layout
+- [x] Public routes all use Prisma successfully
+- [x] Route patterns established
 
 ### Strategy
 
@@ -1211,8 +1211,8 @@ layout("routes/admin.tsx", [
 - [ ] Unauthenticated requests redirect to `/login`
 - [ ] Blog post date picker works
 - [ ] JSON fields (itinerary, etc.) save and load correctly
-- [ ] Settings page saves nav/footer/company changes
-- [ ] `npm run typecheck` passes
+- [x] Settings page saves nav/footer/company changes
+- [x] `npm run typecheck` passes
 
 ---
 

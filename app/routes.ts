@@ -44,6 +44,63 @@ export default [
   layout("routes/admin.tsx", [
     route("admin", "routes/admin._index.tsx"),
     route("admin/logout", "routes/admin.logout.tsx"),
-    // Phase 4 will add more routes here
+
+    // Trips
+    route("admin/trips", "routes/admin.trips._index.tsx"),
+    route("admin/trips/new", "routes/admin.trips.new.tsx"),
+    route("admin/trips/:id/edit", "routes/admin.trips.$id.edit.tsx"),
+
+    // Expeditions
+    route("admin/expeditions", "routes/admin.expeditions._index.tsx"),
+    route("admin/expeditions/new", "routes/admin.expeditions.new.tsx"),
+    route(
+      "admin/expeditions/:id/edit",
+      "routes/admin.expeditions.$id.edit.tsx",
+    ),
+
+    // Tours
+    route("admin/tours", "routes/admin.tours._index.tsx"),
+    route("admin/tours/new", "routes/admin.tours.new.tsx"),
+    route("admin/tours/:id/edit", "routes/admin.tours.$id.edit.tsx"),
+
+    // Blog
+    route("admin/blog", "routes/admin.blog._index.tsx"),
+    route("admin/blog/new", "routes/admin.blog.new.tsx"),
+    route("admin/blog/:id/edit", "routes/admin.blog.$id.edit.tsx"),
+
+    // Testimonials
+    route("admin/testimonials", "routes/admin.testimonials._index.tsx"),
+    route("admin/testimonials/new", "routes/admin.testimonials.new.tsx"),
+    route(
+      "admin/testimonials/:id/edit",
+      "routes/admin.testimonials.$id.edit.tsx",
+    ),
+
+    // Team
+    route("admin/team", "routes/admin.team._index.tsx"),
+    route("admin/team/new", "routes/admin.team.new.tsx"),
+    route("admin/team/:id/edit", "routes/admin.team.$id.edit.tsx"),
+
+    // FAQs
+    route("admin/faqs", "routes/admin.faqs._index.tsx"),
+    route("admin/faqs/new", "routes/admin.faqs.new.tsx"),
+    route("admin/faqs/:id/edit", "routes/admin.faqs.$id.edit.tsx"),
+
+    // Destinations
+    route("admin/destinations", "routes/admin.destinations._index.tsx"),
+    route("admin/destinations/new", "routes/admin.destinations.new.tsx"),
+    route(
+      "admin/destinations/:id/edit",
+      "routes/admin.destinations.$id.edit.tsx",
+    ),
+
+    // Gallery
+    route("admin/gallery", "routes/admin.gallery._index.tsx"),
+    route("admin/gallery/images/new", "routes/admin.gallery.images.new.tsx"),
+    route("admin/gallery/videos/new", "routes/admin.gallery.videos.new.tsx"),
+    route("admin/gallery/:id/edit", "routes/admin.gallery.$id.edit.tsx"),
+
+    // Settings
+    route("admin/settings", "routes/admin.settings.tsx"),
   ]),
 ] satisfies RouteConfig;
