@@ -1218,14 +1218,16 @@ layout("routes/admin.tsx", [
 
 ## PHASE 5 — Image Upload to Supabase Storage
 
-**Status:** ❌ Not started
+**Status:** ✅ Complete
 **Dependencies:** Phase 4 (admin gallery routes exist)
+
+> Verified — bucket created, live upload tested successfully on 2026-07-05.
 
 ### Entry checkpoint
 
-- [ ] Phase 4 gallery admin routes exist
-- [ ] `.env` has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] Supabase project created with `images` bucket (set to public)
+- [x] Phase 4 gallery admin routes exist
+- [x] `.env` has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- [x] Supabase project created with `images` bucket (set to public)
 
 ### Tasks
 
@@ -1326,18 +1328,20 @@ These steps must be done manually in the Supabase dashboard:
 
 ### Verification
 
-- [ ] Uploading an image from `/admin/gallery/images/new` creates a file in Supabase Storage
-- [ ] The public URL is stored in the `GalleryImage.image` field
-- [ ] The image displays correctly on the public gallery page
-- [ ] Uploading a team member image works the same way
-- [ ] `npm run typecheck` passes
+- [x] Uploading an image from `/admin/gallery/images/new` creates a file in Supabase Storage
+- [x] The public URL is stored in the `GalleryImage.image` field
+- [x] The image displays correctly on the public gallery page
+- [x] Uploading a team member image works the same way
+- [x] `npm run typecheck` passes
 
 ---
 
 ## PHASE 6 — Video URL Embed
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** Phase 3 (gallery and blog public routes work)
+
+> **Architecture decision:** Videos are external links only (YouTube URLs). They are never uploaded to Supabase Storage; only images use Supabase Storage. This applies project-wide and in all future phases.
 
 ### Entry checkpoint
 

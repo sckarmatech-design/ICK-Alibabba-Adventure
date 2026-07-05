@@ -3,6 +3,7 @@ import type { ActionFunctionArgs } from "react-router";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString } from "~/lib/admin";
+import { getYoutubeThumbnailUrl } from "~/lib/video";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
@@ -10,11 +11,15 @@ export async function action({ request }: ActionFunctionArgs) {
 
   const title = getString(formData, "title");
   const videoUrl = getString(formData, "videoUrl");
-  const thumbnail = getOptionalString(formData, "thumbnail");
+  let thumbnail = getOptionalString(formData, "thumbnail");
   const alt = getString(formData, "alt");
 
   if (!title || !videoUrl || !alt) {
     return { error: "Title, video URL, and alt text are required." };
+  }
+
+  if (!thumbnail) {
+    thumbnail = getYoutubeThumbnailUrl(videoUrl) ?? undefined;
   }
 
   await prisma.galleryVideo.create({

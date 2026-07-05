@@ -1,5 +1,6 @@
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { redirect, Form, useLoaderData, Link } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import {
@@ -10,6 +11,7 @@ import {
 } from "~/lib/admin";
 import { ItineraryEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay } from "~/components/admin-form-editors";
+import { ImageInput, ImageListInput } from "~/components/ImageInput";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -57,6 +59,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function AdminEditTour() {
   const tour = useLoaderData<typeof loader>();
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div>
@@ -165,19 +168,13 @@ export default function AdminEditTour() {
           </div>
 
           <div className="md:col-span-2">
-            <label
-              htmlFor="heroImage"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Hero Image URL
-            </label>
-            <input
-              id="heroImage"
+            <ImageInput
               name="heroImage"
-              type="url"
-              required
+              label="Hero Image"
               defaultValue={tour.heroImage}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              folder="tours"
+              required
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -263,18 +260,12 @@ export default function AdminEditTour() {
           </div>
 
           <div>
-            <label
-              htmlFor="gallery"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Gallery URLs (one per line)
-            </label>
-            <textarea
-              id="gallery"
+            <ImageListInput
               name="gallery"
-              rows={4}
-              defaultValue={tour.gallery.join("\n")}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              label="Gallery Images"
+              defaultValues={tour.gallery}
+              folder="gallery"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -293,7 +284,8 @@ export default function AdminEditTour() {
           <div className="flex items-center gap-4">
             <button
               type="submit"
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
+              disabled={uploading}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50"
             >
               Save Changes
             </button>

@@ -222,6 +222,20 @@ model TeamMember {
   updatedAt      DateTime @updatedAt
 }
 
+// ===== CONTACT SUBMISSIONS =====
+
+model ContactSubmission {
+  id          String   @id @default(cuid())
+  fullName    String
+  email       String
+  phone       String?
+  tripInterest String?
+  travelMonth  String?
+  groupSize    Int?
+  message     String?
+  createdAt   DateTime @default(now())
+}
+
 // ===== SITE SETTINGS =====
 
 model SiteSetting {

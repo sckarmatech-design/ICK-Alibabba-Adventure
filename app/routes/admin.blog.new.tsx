@@ -1,14 +1,17 @@
+import { useState } from "react";
 import type { ActionFunctionArgs } from "react-router";
-import { redirect, Form, useLoaderData, Link, useActionData } from "react-router";
+import {
+  redirect,
+  Form,
+  useLoaderData,
+  Link,
+  useActionData,
+} from "react-router";
 import type { BlogCategory } from "@prisma/client";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
-import {
-  slugify,
-  getString,
-  getOptionalString,
-  getNumber,
-} from "~/lib/admin";
+import { slugify, getString, getOptionalString, getNumber } from "~/lib/admin";
+import { ImageInput } from "~/components/ImageInput";
 
 const categories: { value: BlogCategory; label: string }[] = [
   { value: "TREKKING", label: "Trekking" },
@@ -25,11 +28,15 @@ export async function action({ request }: ActionFunctionArgs) {
   const errors: Record<string, string> = {};
 
   if (!title.trim()) errors.title = "Title is required";
-  if (!getString(formData, "author").trim()) errors.author = "Author is required";
+  if (!getString(formData, "author").trim())
+    errors.author = "Author is required";
   if (!getString(formData, "date")) errors.date = "Date is required";
-  if (!getString(formData, "excerpt").trim()) errors.excerpt = "Excerpt is required";
-  if (!getString(formData, "content").trim()) errors.content = "Content is required";
-  if (!getString(formData, "image").trim()) errors.image = "Image URL is required";
+  if (!getString(formData, "excerpt").trim())
+    errors.excerpt = "Excerpt is required";
+  if (!getString(formData, "content").trim())
+    errors.content = "Content is required";
+  if (!getString(formData, "image").trim())
+    errors.image = "Image URL is required";
 
   if (Object.keys(errors).length > 0) {
     return { errors };
@@ -56,6 +63,7 @@ export async function action({ request }: ActionFunctionArgs) {
 export default function AdminBlogNew() {
   const actionData = useActionData<typeof action>();
   const errors = actionData?.errors;
+  const [uploading, setUploading] = useState(false);
 
   const inputClass =
     "w-full px-4 py-2 bg-gray-950 border border-gray-700 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition";
@@ -158,19 +166,12 @@ export default function AdminBlogNew() {
           </div>
 
           <div>
-            <label
-              htmlFor="image"
-              className="block text-sm font-medium text-gray-400 mb-2"
-            >
-              Image URL
-            </label>
-            <input
-              id="image"
+            <ImageInput
               name="image"
-              type="url"
+              label="Image URL"
+              folder="blog"
               required
-              className={inputClass}
-              placeholder="https://..."
+              onLoadingChange={setUploading}
             />
             {errors?.image && (
               <p className="mt-1 text-sm text-red-400">{errors.image}</p>
@@ -261,7 +262,8 @@ export default function AdminBlogNew() {
           </Link>
           <button
             type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+            disabled={uploading}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Create Post
           </button>

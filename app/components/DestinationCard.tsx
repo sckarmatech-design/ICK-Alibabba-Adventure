@@ -22,7 +22,7 @@ export function DestinationCard({
           className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
           loading="lazy"
         />
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-b from-transparent via-transparent to-black/80"></div>
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-linear-to-b from-transparent via-transparent to-black/80"></div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4">
           <h3 className="text-xl font-bold text-white mb-1">{name}</h3>

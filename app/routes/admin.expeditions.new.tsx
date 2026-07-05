@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { redirect, Form, useLoaderData, Link } from "react-router";
 import prisma from "~/lib/prisma.server";
@@ -5,6 +6,7 @@ import { requireAdmin } from "~/lib/auth.server";
 import { slugify, getString, getArray, parseJsonField } from "~/lib/admin";
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
+import { ImageInput, ImageListInput } from "~/components/ImageInput";
 
 const DIFFICULTY_OPTIONS = [
   "EASY",
@@ -59,6 +61,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export default function AdminNewExpedition() {
   useLoaderData<typeof loader>();
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div>
@@ -179,18 +182,12 @@ export default function AdminNewExpedition() {
           </div>
 
           <div>
-            <label
-              htmlFor="heroImage"
-              className="block text-sm font-medium text-gray-400 mb-2"
-            >
-              Hero Image URL
-            </label>
-            <input
-              id="heroImage"
+            <ImageInput
               name="heroImage"
-              type="url"
+              label="Hero Image"
+              folder="expeditions"
               required
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -248,20 +245,12 @@ export default function AdminNewExpedition() {
           </div>
 
           <div>
-            <label
-              htmlFor="gallery"
-              className="block text-sm font-medium text-gray-400 mb-2"
-            >
-              Gallery
-              <span className="text-gray-600 text-xs block font-normal">
-                One image URL per line
-              </span>
-            </label>
-            <textarea
-              id="gallery"
+            <ImageListInput
               name="gallery"
-              rows={6}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              label="Gallery Images"
+              defaultValues={[]}
+              folder="gallery"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -304,7 +293,8 @@ export default function AdminNewExpedition() {
         <div className="flex items-center gap-4 pt-4">
           <button
             type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold"
+            disabled={uploading}
+            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed transition font-semibold"
           >
             Create Expedition
           </button>

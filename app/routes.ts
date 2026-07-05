@@ -40,6 +40,9 @@ export default [
   // Auth
   route("login", "routes/login.tsx"),
 
+  // API
+  route("api/upload-image", "routes/api.upload-image.tsx"),
+
   // Admin layout + routes
   layout("routes/admin.tsx", [
     route("admin", "routes/admin._index.tsx"),
@@ -99,6 +102,9 @@ export default [
     route("admin/gallery/images/new", "routes/admin.gallery.images.new.tsx"),
     route("admin/gallery/videos/new", "routes/admin.gallery.videos.new.tsx"),
     route("admin/gallery/:id/edit", "routes/admin.gallery.$id.edit.tsx"),
+
+    // Inquiries
+    route("admin/inquiries", "routes/admin.inquiries.tsx"),
 
     // Settings
     route("admin/settings", "routes/admin.settings.tsx"),

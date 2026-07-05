@@ -11,7 +11,10 @@ export function getString(formData: FormData, name: string): string {
   return String(value);
 }
 
-export function getOptionalString(formData: FormData, name: string): string | undefined {
+export function getOptionalString(
+  formData: FormData,
+  name: string,
+): string | undefined {
   const value = formData.get(name);
   if (value === null || String(value) === "") return undefined;
   return String(value);
@@ -24,7 +27,11 @@ export function getNumber(formData: FormData, name: string): number {
 }
 
 export function getArray(formData: FormData, name: string): string[] {
-  const value = formData.get(name);
+  const values = formData.getAll(name);
+  if (values.length > 1) {
+    return values.map((value) => String(value).trim()).filter(Boolean);
+  }
+  const value = values[0];
   if (value === null || String(value) === "") return [];
   return String(value)
     .split("\n")
