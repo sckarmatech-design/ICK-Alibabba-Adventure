@@ -2,6 +2,9 @@
   "name": "",
   "private": true,
   "type": "module",
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
@@ -9,10 +12,16 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@react-router/node": "8.0.0",
     "@react-router/serve": "8.0.0",
+    "bcryptjs": "^3.0.3",
     "isbot": "^5.1.36",
+    "jose": "^6.2.3",
     "lucide-react": "^1.21.0",
+    "pg": "^8.22.0",
+    "prisma": "^7.8.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router": "8.0.0"
@@ -24,6 +33,7 @@
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "tailwindcss": "^4.2.2",
+    "tsx": "^4.23.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.3"
   }

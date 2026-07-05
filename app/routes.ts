@@ -1,4 +1,9 @@
-import { type RouteConfig, index, layout, route } from "@react-router/dev/routes";
+import {
+  type RouteConfig,
+  index,
+  layout,
+  route,
+} from "@react-router/dev/routes";
 
 export default [
   // Home
@@ -31,4 +36,14 @@ export default [
 
   // Contact
   route("contact", "routes/contact.tsx"),
+
+  // Auth
+  route("login", "routes/login.tsx"),
+
+  // Admin layout + routes
+  layout("routes/admin.tsx", [
+    route("admin", "routes/admin._index.tsx"),
+    route("admin/logout", "routes/admin.logout.tsx"),
+    // Phase 4 will add more routes here
+  ]),
 ] satisfies RouteConfig;

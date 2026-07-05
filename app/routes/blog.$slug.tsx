@@ -1,37 +1,49 @@
 import { useLoaderData } from "react-router";
-import type { LoaderFunctionArgs } from "@react-router/dev/routes";
+import type { LoaderFunctionArgs } from "react-router";
 import type { MetaFunction } from "react-router";
+import { useState, useEffect } from "react";
 import { Breadcrumb } from "~/components/Breadcrumb";
-import { blogPosts } from "~/data/blog-posts";
+import prisma from "~/lib/prisma.server";
+import { mapBlogPostFromPrisma } from "~/lib/mappers";
+import type { BlogPost } from "~/data/blog-posts";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: params.slug },
+  });
   if (!post) throw new Response("Not Found", { status: 404 });
-  return post;
+  return mapBlogPostFromPrisma(post);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) return [];
+export const meta: MetaFunction = ({ loaderData }) => {
+  const post = loaderData as BlogPost | undefined;
+  if (!post) return [];
   return [
     ...generateMetaTags({
-      title: `${data.title} | Akhtar Abbasi Hiking`,
-      description: data.excerpt,
-      image: data.image || "https://akhtarabbasi-hiking.com/images/og/blog.webp",
-      url: `${SITE_CONFIG.url}/blog/${data.slug}`,
+      title: `${post.title} | Akhtar Abbasi Hiking`,
+      description: post.excerpt,
+      image:
+        post.image || "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+      url: `${SITE_CONFIG.url}/blog/${post.slug}`,
       type: "article",
-      author: data.author,
-      publishedDate: data.date,
+      author: post.author,
+      publishedDate: post.date,
     }),
     {
       name: "keywords",
-      content: `${data.title}, ${data.category}, trekking tips, hiking guide`,
+      content: `${post.title}, ${post.category}, trekking tips, hiking guide`,
     },
   ];
 };
 
 export default function BlogPost() {
   const post = useLoaderData<typeof loader>();
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  useEffect(() => {
+    setCurrentUrl(currentUrl);
+  }, []);
 
   return (
     <div>
@@ -119,7 +131,7 @@ export default function BlogPost() {
           <h4 className="text-white font-semibold mb-4">Share this article</h4>
           <div className="flex gap-4">
             <a
-              href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
+              href={`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"
@@ -127,7 +139,7 @@ export default function BlogPost() {
               Facebook
             </a>
             <a
-              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${window.location.href}`}
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${currentUrl}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"
@@ -135,7 +147,7 @@ export default function BlogPost() {
               Twitter
             </a>
             <a
-              href={`https://wa.me/?text=${encodeURIComponent(post.title + " " + window.location.href)}`}
+              href={`https://wa.me/?text=${encodeURIComponent(post.title + " " + currentUrl)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"

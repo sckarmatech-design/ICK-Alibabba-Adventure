@@ -5,15 +5,42 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "react-router";
 
 import type { Route } from "./+types/root";
-import type { MetaFunction } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import "./app.css";
 import { Header } from "./components/Header";
 import { Footer } from "./components/Footer";
 import { WhatsAppButton } from "./components/WhatsAppButton";
+import prisma from "./lib/prisma.server";
 import { SITE_CONFIG } from "./lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const settings = await prisma.siteSetting.findMany();
+  const map = Object.fromEntries(settings.map((s) => [s.key, s.value])) as {
+    mainNav: Array<{
+      label: string;
+      href?: string;
+      submenu?: Array<{ label: string; href: string }>;
+    }>;
+    footerLinks: Array<{
+      category: string;
+      links: Array<{ label: string; href: string }>;
+    }>;
+    companyInfo: {
+      name: string;
+      email: string;
+      phone: string;
+      location: string;
+      description: string;
+      whatsapp: string;
+      socialMedia: { facebook: string; instagram: string; youtube: string };
+    };
+  };
+  return map;
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -51,14 +78,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { mainNav, footerLinks, companyInfo } = useLoaderData<typeof loader>();
   return (
     <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
-      <Header />
+      <Header mainNav={mainNav} companyInfo={companyInfo} />
       <main className="flex-grow">
         <Outlet />
       </main>
-      <Footer />
-      <WhatsAppButton />
+      <Footer footerLinks={footerLinks} companyInfo={companyInfo} />
+      <WhatsAppButton companyInfo={companyInfo} />
     </div>
   );
 }
@@ -80,20 +108,16 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
-      <Header />
-      <main className="flex-grow flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-6xl font-bold text-[#16a34a] mb-4">{message}</h1>
-          <p className="text-xl text-[#9ca3af] mb-8">{details}</p>
-          {stack && (
-            <pre className="w-full p-4 overflow-x-auto bg-[#111827] rounded-lg border border-[#1f2937] text-sm text-left">
-              <code>{stack}</code>
-            </pre>
-          )}
-        </div>
-      </main>
-      <Footer />
+    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb] items-center justify-center p-4">
+      <div className="text-center">
+        <h1 className="text-6xl font-bold text-[#16a34a] mb-4">{message}</h1>
+        <p className="text-xl text-[#9ca3af] mb-8">{details}</p>
+        {stack && (
+          <pre className="w-full p-4 overflow-x-auto bg-[#111827] rounded-lg border border-[#1f2937] text-sm text-left">
+            <code>{stack}</code>
+          </pre>
+        )}
+      </div>
     </div>
   );
 }

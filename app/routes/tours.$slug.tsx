@@ -1,41 +1,47 @@
 import { useState } from "react";
 import { useLoaderData } from "react-router";
-import type { LoaderFunctionArgs } from "@react-router/dev/routes";
-import type { MetaFunction } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { Lightbox } from "~/components/Lightbox";
 import { DetailSidebar } from "~/components/DetailSidebar";
 import { HeroSection } from "~/components/HeroSection";
-import { tours } from "~/data/tours";
+import prisma from "~/lib/prisma.server";
+import { mapTourFromPrisma } from "~/lib/mappers";
+import type { Tour } from "~/data/tours";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const tour = tours.find((t) => t.slug === params.slug);
+  const tour = await prisma.tour.findUnique({
+    where: { slug: params.slug },
+  });
   if (!tour) throw new Response("Not Found", { status: 404 });
-  return tour;
+  return mapTourFromPrisma(tour);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-  if (!data) return [];
+export const meta: MetaFunction = ({ loaderData }) => {
+  const tour = loaderData as Tour | undefined;
+  if (!tour) return [];
   return [
     ...generateMetaTags({
-      title: `${data.title} | Akhtar Abbasi Hiking`,
-      description: data.overview.substring(0, 160),
-      image: data.image || "https://akhtarabbasi-hiking.com/images/og/tours.webp",
-      url: `${SITE_CONFIG.url}/tours/${data.slug}`,
+      title: `${tour.title} | Akhtar Abbasi Hiking`,
+      description: tour.overview.substring(0, 160),
+      image:
+        tour.heroImage ||
+        "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+      url: `${SITE_CONFIG.url}/tours/${tour.slug}`,
     }),
     {
       name: "keywords",
-      content: `${data.title}, tour, ${data.region}, Gilgit Baltistan travel guide`,
+      content: `${tour.title}, tour, ${tour.region}, Gilgit Baltistan travel guide`,
     },
   ];
 };
 
 export default function TourDetail() {
   const tour = useLoaderData<typeof loader>();
-  const [selectedTab, setSelectedTab] = useState<"overview" | "itinerary" | "highlights">(
-    "overview"
-  );
+  const [selectedTab, setSelectedTab] = useState<
+    "overview" | "itinerary" | "highlights"
+  >("overview");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
@@ -89,8 +95,12 @@ export default function TourDetail() {
             {selectedTab === "overview" && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">About This Tour</h3>
-                  <p className="text-[#9ca3af] leading-relaxed">{tour.overview}</p>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    About This Tour
+                  </h3>
+                  <p className="text-[#9ca3af] leading-relaxed">
+                    {tour.overview}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -102,8 +112,12 @@ export default function TourDetail() {
                   </div>
                   {tour.accommodation && (
                     <div className="bg-[#111827] p-4 rounded-lg border border-[#1f2937]">
-                      <p className="text-sm text-[#9ca3af] mb-1">Accommodation</p>
-                      <p className="text-sm text-[#f9fafb]">{tour.accommodation}</p>
+                      <p className="text-sm text-[#9ca3af] mb-1">
+                        Accommodation
+                      </p>
+                      <p className="text-sm text-[#f9fafb]">
+                        {tour.accommodation}
+                      </p>
                     </div>
                   )}
                   {tour.mealPlan && (
@@ -139,7 +153,9 @@ export default function TourDetail() {
 
             {selectedTab === "highlights" && (
               <div>
-                <h3 className="text-2xl font-bold text-white mb-4">Highlights</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  Highlights
+                </h3>
                 <ul className="space-y-3">
                   {tour.highlights.map((highlight, index) => (
                     <li

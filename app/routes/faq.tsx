@@ -1,9 +1,18 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { Accordion } from "~/components/Accordion";
 import { SectionTitle } from "~/components/SectionTitle";
-import { faqs } from "~/data/faqs";
+import prisma from "~/lib/prisma.server";
+import { mapFAQFromPrisma } from "~/lib/mappers";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const faqs = await prisma.fAQ.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+  return faqs.map(mapFAQFromPrisma);
+}
 
 export const meta: MetaFunction = () => [
   ...generateMetaTags({
@@ -15,13 +24,20 @@ export const meta: MetaFunction = () => [
   }),
   {
     name: "keywords",
-    content: "FAQ, frequently asked questions, trekking information, expedition preparation",
+    content:
+      "FAQ, frequently asked questions, trekking information, expedition preparation",
   },
 ];
 
-type FAQCategory = "General" | "Preparation" | "Logistics" | "Safety" | "Finance";
+type FAQCategory =
+  | "General"
+  | "Preparation"
+  | "Logistics"
+  | "Safety"
+  | "Finance";
 
 export default function FAQ() {
+  const faqs = useLoaderData<typeof loader>();
   const categories: FAQCategory[] = [
     "General",
     "Preparation",
@@ -47,7 +63,9 @@ export default function FAQ() {
         {/* FAQ Sections */}
         <div className="space-y-12">
           {categories.map((category) => {
-            const categoryFAQs = faqs.filter((faq) => faq.category === category);
+            const categoryFAQs = faqs.filter(
+              (faq) => faq.category === category,
+            );
 
             return (
               <div key={category}>

@@ -1,9 +1,14 @@
 import { useState } from "react";
 import { Link } from "react-router";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { companyInfo, mainNav } from "~/data/nav";
+import type { CompanyInfo, NavItem } from "~/data/nav";
 
-export function Header() {
+interface HeaderProps {
+  mainNav: NavItem[];
+  companyInfo: CompanyInfo;
+}
+
+export function Header({ mainNav, companyInfo }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
@@ -17,12 +22,18 @@ export function Header() {
               <span>📍</span>
               <span>{companyInfo.location}</span>
             </div>
-            <a href={`mailto:${companyInfo.email}`} className="flex items-center gap-2 hover:text-[#16a34a] transition">
+            <a
+              href={`mailto:${companyInfo.email}`}
+              className="flex items-center gap-2 hover:text-[#16a34a] transition"
+            >
               <span>✉️</span>
               <span>{companyInfo.email}</span>
             </a>
           </div>
-          <a href={`tel:${companyInfo.phone}`} className="flex items-center gap-2 hover:text-[#16a34a] transition">
+          <a
+            href={`tel:${companyInfo.phone}`}
+            className="flex items-center gap-2 hover:text-[#16a34a] transition"
+          >
             <span>📞</span>
             <span>{companyInfo.phone}</span>
           </a>
@@ -48,7 +59,12 @@ export function Header() {
                 className="text-[#f9fafb] hover:text-[#16a34a] transition flex items-center gap-1 py-2"
               >
                 {item.label}
-                {item.submenu && <ChevronDown size={16} className="group-hover:rotate-180 transition" />}
+                {item.submenu && (
+                  <ChevronDown
+                    size={16}
+                    className="group-hover:rotate-180 transition"
+                  />
+                )}
               </Link>
 
               {/* Desktop Dropdown */}
@@ -72,7 +88,7 @@ export function Header() {
         {/* CTA Button & Mobile Menu */}
         <div className="flex items-center gap-4">
           <a
-            href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}`}
+            href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden sm:inline-block px-6 py-2 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-medium text-sm"
@@ -96,7 +112,11 @@ export function Header() {
           {mainNav.map((item) => (
             <div key={item.label}>
               <button
-                onClick={() => setOpenDropdown(openDropdown === item.label ? null : item.label)}
+                onClick={() =>
+                  setOpenDropdown(
+                    openDropdown === item.label ? null : item.label,
+                  )
+                }
                 className="w-full text-left px-4 py-3 text-[#f9fafb] hover:bg-[#1f2937] transition flex items-center justify-between"
               >
                 {item.label}
@@ -128,7 +148,7 @@ export function Header() {
 
           <div className="border-t border-[#1f2937] px-4 py-3">
             <a
-              href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}`}
+              href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
               className="block w-full px-4 py-2 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-medium text-center text-sm"
