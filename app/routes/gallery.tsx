@@ -1,27 +1,65 @@
 import { useState } from "react";
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Lightbox } from "~/components/Lightbox";
-import { galleryImages, videos } from "~/data/gallery";
+import prisma from "~/lib/prisma.server";
+import {
+  mapGalleryImageFromPrisma,
+  mapGalleryVideoFromPrisma,
+} from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const [images, videos] = await Promise.all([
+    prisma.galleryImage.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.galleryVideo.findMany({ orderBy: { createdAt: "desc" } }),
+  ]);
+  return {
+    images: images.map(mapGalleryImageFromPrisma),
+    videos: videos.map(mapGalleryVideoFromPrisma),
+  };
+}
 
 export const meta: MetaFunction = () => [
-  { title: "Gallery | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Gallery | Akhtar Abbasi Hiking",
+    description:
       "Beautiful photos and videos from our trekking and expedition adventures in Gilgit Baltistan.",
+    image: "https://akhtarabbasi-hiking.com/images/og/gallery.webp",
+    url: `${SITE_CONFIG.url}/gallery`,
+  }),
+  {
+    name: "keywords",
+    content:
+      "trekking photos, hiking pictures, adventure photography, Gilgit Baltistan videos",
   },
 ];
 
-type FilterCategory = "All" | "Treks" | "Expeditions" | "Tours" | "Nature" | "Culture";
+type FilterCategory =
+  | "All"
+  | "Treks"
+  | "Expeditions"
+  | "Tours"
+  | "Nature"
+  | "Culture";
 
 export default function Gallery() {
-  const [selectedCategory, setSelectedCategory] = useState<FilterCategory>("All");
+  const { images: galleryImages, videos } = useLoaderData<typeof loader>();
+  const [selectedCategory, setSelectedCategory] =
+    useState<FilterCategory>("All");
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const categories: FilterCategory[] = ["All", "Treks", "Expeditions", "Tours", "Nature", "Culture"];
+  const categories: FilterCategory[] = [
+    "All",
+    "Treks",
+    "Expeditions",
+    "Tours",
+    "Nature",
+    "Culture",
+  ];
 
   const filteredImages =
     selectedCategory === "All"

@@ -1,7 +1,11 @@
 import { MessageCircle } from "lucide-react";
-import { companyInfo } from "~/data/nav";
+import type { CompanyInfo } from "~/data/nav";
 
-export function WhatsAppButton() {
+interface WhatsAppButtonProps {
+  companyInfo: CompanyInfo;
+}
+
+export function WhatsAppButton({ companyInfo }: WhatsAppButtonProps) {
   const whatsappNumber = companyInfo.whatsapp.replace(/\D/g, "");
   const whatsappLink = `https://wa.me/${whatsappNumber}?text=Hi%20Akhtar%20Abbasi%20Hiking%2C%20I%20would%20like%20to%20know%20more%20about%20your%20trekking%20packages.`;
 
@@ -14,7 +18,9 @@ export function WhatsAppButton() {
       aria-label="Chat with us on WhatsApp"
     >
       <MessageCircle size={24} />
-      <span className="hidden group-hover:inline text-sm font-medium whitespace-nowrap">Chat with us</span>
+      <span className="hidden group-hover:inline text-sm font-medium whitespace-nowrap">
+        Chat with us
+      </span>
     </a>
   );
 }

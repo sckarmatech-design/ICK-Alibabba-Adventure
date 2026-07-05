@@ -1,19 +1,36 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { TripCard } from "~/components/TripCard";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Breadcrumb } from "~/components/Breadcrumb";
-import { expeditions } from "~/data/expeditions";
+import prisma from "~/lib/prisma.server";
+import { mapExpeditionFromPrisma } from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const expeditions = await prisma.expedition.findMany({
+    orderBy: { title: "asc" },
+  });
+  return expeditions.map(mapExpeditionFromPrisma);
+}
 
 export const meta: MetaFunction = () => [
-  { title: "Mountain Expeditions | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Mountain Expeditions | Akhtar Abbasi Hiking",
+    description:
       "Expert-guided expeditions to the world's highest peaks in the Karakoram. Nanga Parbat, Rakaposhi, and more.",
+    image: "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+    url: `${SITE_CONFIG.url}/expeditions`,
+  }),
+  {
+    name: "keywords",
+    content:
+      "mountain expeditions, peak climbing, K2, Nanga Parbat, Rakaposhi, Gilgit Baltistan",
   },
 ];
 
 export default function ExpeditionsIndex() {
+  const expeditions = useLoaderData<typeof loader>();
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
       <Breadcrumb

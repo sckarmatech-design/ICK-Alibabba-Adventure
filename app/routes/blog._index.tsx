@@ -1,29 +1,49 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
-import { blogPosts } from "~/data/blog-posts";
+import prisma from "~/lib/prisma.server";
+import { mapBlogPostFromPrisma } from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const blogPosts = await prisma.blogPost.findMany({
+    orderBy: { date: "desc" },
+  });
+  return blogPosts.map(mapBlogPostFromPrisma);
+}
 
 export const meta: MetaFunction = () => [
-  { title: "Blog | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Blog | Akhtar Abbasi Hiking",
+    description:
       "Stories from the trail, trekking tips, and travel guides from our mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+    url: `${SITE_CONFIG.url}/blog`,
+  }),
+  {
+    name: "keywords",
+    content:
+      "trekking blog, hiking tips, adventure guides, mountain stories, travel tips",
   },
 ];
 
 type BlogCategory = "Trekking" | "Expeditions" | "Travel Tips" | "Culture";
 
 export default function BlogIndex() {
-  const categories: BlogCategory[] = ["Trekking", "Expeditions", "Travel Tips", "Culture"];
+  const blogPosts = useLoaderData<typeof loader>();
+  const categories: BlogCategory[] = [
+    "Trekking",
+    "Expeditions",
+    "Travel Tips",
+    "Culture",
+  ];
 
   return (
     <div>
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        <Breadcrumb
-          items={[{ label: "Home", href: "/" }, { label: "Blog" }]}
-        />
+        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Blog" }]} />
 
         <div className="mt-8 mb-12">
           <SectionTitle
@@ -37,7 +57,7 @@ export default function BlogIndex() {
         <div className="space-y-12">
           {categories.map((category) => {
             const categoryPosts = blogPosts.filter(
-              (post) => post.category === category
+              (post) => post.category === category,
             );
 
             if (categoryPosts.length === 0) return null;

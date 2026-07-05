@@ -1,24 +1,54 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, MapPin, Calendar, Filter } from "lucide-react";
-import type { MetaFunction } from "react-router";
+import {
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Calendar,
+  Filter,
+} from "lucide-react";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { TripCard } from "~/components/TripCard";
 import { DestinationCard } from "~/components/DestinationCard";
 import { SectionTitle } from "~/components/SectionTitle";
-import { trips } from "~/data/trips";
-import { destinations } from "~/data/destinations";
-import { testimonials } from "~/data/testimonials";
-import { blogPosts } from "~/data/blog-posts";
+import prisma from "~/lib/prisma.server";
+import {
+  mapTripFromPrisma,
+  mapTestimonialFromPrisma,
+  mapBlogPostFromPrisma,
+  mapDestinationFromPrisma,
+} from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
+export async function loader(_args: LoaderFunctionArgs) {
+  const [trips, testimonials, blogPosts, destinations] = await Promise.all([
+    prisma.trip.findMany({ orderBy: { title: "asc" } }),
+    prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } }),
+    prisma.blogPost.findMany({ orderBy: { date: "desc" }, take: 3 }),
+    prisma.destination.findMany({ orderBy: { name: "asc" } }),
+  ]);
+  return {
+    trips: trips.map(mapTripFromPrisma),
+    testimonials: testimonials.map(mapTestimonialFromPrisma),
+    blogPosts: blogPosts.map(mapBlogPostFromPrisma),
+    destinations: destinations.map(mapDestinationFromPrisma),
+  };
+}
+import k2BaseCamp from "~/images/hero/k2-base-camp.webp";
+import hunzaValley from "~/images/hero/sebastien-goldberg-BKLHxgbYFDI-unsplash.jpg";
+import fairyMeadows from "~/images/hero/toomas-tartes-Yizrl9N_eDA-unsplash.jpg";
 export const meta: MetaFunction = () => [
-  { title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
+    description:
       "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
-  },
+    image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
+    url: SITE_CONFIG.url,
+  }),
   {
-    property: "og:image",
-    content: "/images/og/home.webp",
+    name: "keywords",
+    content:
+      "trekking, hiking, expeditions, Gilgit Baltistan, K2, mountains, adventure, Pakistan",
   },
 ];
 
@@ -28,21 +58,21 @@ function HeroSlider() {
 
   const slides = [
     {
-      image: "/images/hero/k2-base-camp.webp",
+      image: `${k2BaseCamp}`,
       headline: "K2 Base Camp Trek",
       subheadline: "Walk across the legendary Baltoro Glacier",
       cta: "Explore Trek",
       href: "/trips/k2-base-camp-trek",
     },
     {
-      image: "/images/hero/fairy-meadows.webp",
+      image: `${fairyMeadows}`,
       headline: "Fairy Meadows Adventure",
       subheadline: "Experience the magic of alpine meadows",
       cta: "View Expedition",
       href: "/expeditions",
     },
     {
-      image: "/images/hero/hunza-valley.webp",
+      image: `${hunzaValley}`,
       headline: "Hunza Valley Tour",
       subheadline: "Discover the secrets of longevity",
       cta: "Explore Tours",
@@ -145,10 +175,17 @@ function SearchBar() {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
-          <label className="block text-sm text-[#9ca3af] mb-2">
+          <label
+            htmlFor="search-destination"
+            className="block text-sm text-[#9ca3af] mb-2"
+          >
             Destination
           </label>
-          <select className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]">
+          <select
+            id="search-destination"
+            name="destination"
+            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+          >
             <option value="">Select destination</option>
             <option value="skardu">Skardu</option>
             <option value="hunza">Hunza</option>
@@ -157,8 +194,17 @@ function SearchBar() {
         </div>
 
         <div>
-          <label className="block text-sm text-[#9ca3af] mb-2">Month</label>
-          <select className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]">
+          <label
+            htmlFor="search-month"
+            className="block text-sm text-[#9ca3af] mb-2"
+          >
+            Month
+          </label>
+          <select
+            id="search-month"
+            name="month"
+            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+          >
             <option value="">Select month</option>
             <option value="june">June</option>
             <option value="july">July</option>
@@ -168,8 +214,17 @@ function SearchBar() {
         </div>
 
         <div>
-          <label className="block text-sm text-[#9ca3af] mb-2">Type</label>
-          <select className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]">
+          <label
+            htmlFor="search-type"
+            className="block text-sm text-[#9ca3af] mb-2"
+          >
+            Type
+          </label>
+          <select
+            id="search-type"
+            name="type"
+            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+          >
             <option value="">Select type</option>
             <option value="trek">Trek</option>
             <option value="expedition">Expedition</option>
@@ -188,6 +243,8 @@ function SearchBar() {
 }
 
 export default function Home() {
+  const { trips, testimonials, blogPosts, destinations } =
+    useLoaderData<typeof loader>();
   const featuredTrips = trips.slice(0, 3);
   const latestPosts = blogPosts.slice(0, 3);
 
@@ -271,7 +328,9 @@ export default function Home() {
                   <p className="font-semibold text-[#f9fafb]">
                     {testimonial.name}
                   </p>
-                  <p className="text-sm text-[#9ca3af]">{testimonial.country}</p>
+                  <p className="text-sm text-[#9ca3af]">
+                    {testimonial.country}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-1 mb-4">
@@ -340,8 +399,8 @@ export default function Home() {
             Ready to Explore Gilgit Baltistan?
           </h2>
           <p className="text-lg text-[#9ca3af] mb-8 max-w-2xl mx-auto">
-            Start your mountain adventure today. Our expert guides and experienced
-            team are ready to make your trek unforgettable.
+            Start your mountain adventure today. Our expert guides and
+            experienced team are ready to make your trek unforgettable.
           </p>
           <a
             href="/contact"

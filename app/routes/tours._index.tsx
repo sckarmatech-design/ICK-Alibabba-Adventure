@@ -1,19 +1,36 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { TripCard } from "~/components/TripCard";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Breadcrumb } from "~/components/Breadcrumb";
-import { tours } from "~/data/tours";
+import prisma from "~/lib/prisma.server";
+import { mapTourFromPrisma } from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const tours = await prisma.tour.findMany({
+    orderBy: { title: "asc" },
+  });
+  return tours.map(mapTourFromPrisma);
+}
 
 export const meta: MetaFunction = () => [
-  { title: "Gilgit Baltistan Tours | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Gilgit Baltistan Tours | Akhtar Abbasi Hiking",
+    description:
       "Explore cultural and scenic tours across Gilgit Baltistan. Skardu, Hunza, Gilgit, and more destinations.",
+    image: "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+    url: `${SITE_CONFIG.url}/tours`,
+  }),
+  {
+    name: "keywords",
+    content:
+      "tours, cultural tours, Skardu, Hunza, Gilgit, Gilgit Baltistan travel",
   },
 ];
 
 export default function ToursIndex() {
+  const tours = useLoaderData<typeof loader>();
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
       <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "Tours" }]} />

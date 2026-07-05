@@ -1,26 +1,42 @@
 import { useState } from "react";
-import { useLoaderData, LoaderFunctionArgs } from "react-router";
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { Accordion } from "~/components/Accordion";
 import { Lightbox } from "~/components/Lightbox";
 import { DetailSidebar } from "~/components/DetailSidebar";
 import { HeroSection } from "~/components/HeroSection";
-import { expeditions } from "~/data/expeditions";
+import prisma from "~/lib/prisma.server";
+import { mapExpeditionFromPrisma } from "~/lib/mappers";
+import type { Expedition } from "~/data/expeditions";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const expedition = expeditions.find((e) => e.slug === params.slug);
+  const expedition = await prisma.expedition.findUnique({
+    where: { slug: params.slug },
+  });
   if (!expedition) throw new Response("Not Found", { status: 404 });
-  return expedition;
+  return mapExpeditionFromPrisma(expedition);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.title} | Akhtar Abbasi Hiking` },
-  {
-    name: "description",
-    content: data?.overview.substring(0, 160),
-  },
-];
+export const meta: MetaFunction = ({ loaderData }) => {
+  const expedition = loaderData as Expedition | undefined;
+  if (!expedition) return [];
+  return [
+    ...generateMetaTags({
+      title: `${expedition.title} | Akhtar Abbasi Hiking`,
+      description: expedition.overview.substring(0, 160),
+      image:
+        expedition.heroImage ||
+        "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+      url: `${SITE_CONFIG.url}/expeditions/${expedition.slug}`,
+    }),
+    {
+      name: "keywords",
+      content: `${expedition.title}, expedition, peak climbing, ${expedition.altitude}m, Gilgit Baltistan`,
+    },
+  ];
+};
 
 export default function ExpeditionDetail() {
   const expedition = useLoaderData<typeof loader>();
@@ -116,7 +132,9 @@ export default function ExpeditionDetail() {
                     </p>
                   </div>
                   <div className="bg-[#111827] p-4 rounded-lg border border-[#1f2937]">
-                    <p className="text-sm text-[#9ca3af] mb-1">Technical Rating</p>
+                    <p className="text-sm text-[#9ca3af] mb-1">
+                      Technical Rating
+                    </p>
                     <p className="text-lg font-semibold text-[#d97706]">
                       {expedition.technicalRating}
                     </p>
@@ -130,7 +148,10 @@ export default function ExpeditionDetail() {
                     </h4>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {expedition.gear.map((item, index) => (
-                        <li key={index} className="flex items-center gap-2 text-[#9ca3af]">
+                        <li
+                          key={index}
+                          className="flex items-center gap-2 text-[#9ca3af]"
+                        >
                           <span className="w-2 h-2 bg-[#16a34a] rounded-full"></span>
                           {item}
                         </li>
@@ -152,7 +173,9 @@ export default function ExpeditionDetail() {
 
             {selectedTab === "highlights" && (
               <div>
-                <h3 className="text-2xl font-bold text-white mb-4">Highlights</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  Highlights
+                </h3>
                 <ul className="space-y-3">
                   {expedition.highlights.map((highlight, index) => (
                     <li

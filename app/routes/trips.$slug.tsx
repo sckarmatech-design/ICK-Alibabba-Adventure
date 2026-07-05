@@ -1,27 +1,43 @@
 import { useState } from "react";
-import { useLoaderData, LoaderFunctionArgs } from "react-router";
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { LoaderFunctionArgs, MetaFunction } from "react-router";
 import { MapPin, Clock, Zap, Users } from "lucide-react";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { Accordion } from "~/components/Accordion";
 import { Lightbox } from "~/components/Lightbox";
 import { DetailSidebar } from "~/components/DetailSidebar";
 import { HeroSection } from "~/components/HeroSection";
-import { trips } from "~/data/trips";
+import prisma from "~/lib/prisma.server";
+import { mapTripFromPrisma } from "~/lib/mappers";
+import type { Trip } from "~/data/trips";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const trip = trips.find((t) => t.slug === params.slug);
+  const trip = await prisma.trip.findUnique({
+    where: { slug: params.slug },
+  });
   if (!trip) throw new Response("Not Found", { status: 404 });
-  return trip;
+  return mapTripFromPrisma(trip);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => [
-  { title: `${data?.title} | Akhtar Abbasi Hiking` },
-  {
-    name: "description",
-    content: data?.overview.substring(0, 160),
-  },
-];
+export const meta: MetaFunction = ({ loaderData }) => {
+  const trip = loaderData as Trip | undefined;
+  if (!trip) return [];
+  return [
+    ...generateMetaTags({
+      title: `${trip.title} | Akhtar Abbasi Hiking`,
+      description: trip.overview.substring(0, 160),
+      image:
+        trip.heroImage ||
+        "https://akhtarabbasi-hiking.com/images/og/trips.webp",
+      url: `${SITE_CONFIG.url}/trips/${trip.slug}`,
+    }),
+    {
+      name: "keywords",
+      content: `${trip.title}, trekking, hiking, ${trip.region}, Gilgit Baltistan`,
+    },
+  ];
+};
 
 export default function TripDetail() {
   const trip = useLoaderData<typeof loader>();
@@ -95,8 +111,12 @@ export default function TripDetail() {
             {selectedTab === "overview" && (
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-white mb-4">About This Trek</h3>
-                  <p className="text-[#9ca3af] leading-relaxed">{trip.overview}</p>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    About This Trek
+                  </h3>
+                  <p className="text-[#9ca3af] leading-relaxed">
+                    {trip.overview}
+                  </p>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
@@ -133,7 +153,9 @@ export default function TripDetail() {
 
             {selectedTab === "highlights" && (
               <div>
-                <h3 className="text-2xl font-bold text-white mb-4">Highlights</h3>
+                <h3 className="text-2xl font-bold text-white mb-4">
+                  Highlights
+                </h3>
                 <ul className="space-y-3">
                   {trip.highlights.map((highlight, index) => (
                     <li
@@ -182,7 +204,8 @@ export default function TripDetail() {
                   <Accordion items={faqItems} />
                 ) : (
                   <p className="text-[#9ca3af]">
-                    No FAQs available for this trek. Contact us for more information.
+                    No FAQs available for this trek. Contact us for more
+                    information.
                   </p>
                 )}
               </div>

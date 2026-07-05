@@ -1,19 +1,38 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { Mail, Phone, MapPin, MessageCircle } from "lucide-react";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
-import { companyInfo } from "~/data/nav";
+import prisma from "~/lib/prisma.server";
+import type { CompanyInfo } from "~/data/nav";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const settings = await prisma.siteSetting.findMany();
+  const map = Object.fromEntries(
+    settings.map((s) => [s.key, s.value]),
+  ) as unknown as {
+    companyInfo: CompanyInfo;
+  };
+  return map;
+}
 
 export const meta: MetaFunction = () => [
-  { title: "Contact Us | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "Contact Us | Akhtar Abbasi Hiking",
+    description:
       "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
+    image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
+    url: `${SITE_CONFIG.url}/contact`,
+  }),
+  {
+    name: "keywords",
+    content: "contact us, email, phone, WhatsApp, inquiry, booking",
   },
 ];
 
 export default function Contact() {
+  const { companyInfo } = useLoaderData<typeof loader>();
   return (
     <div>
       {/* Hero */}
@@ -35,15 +54,22 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="lg:col-span-2">
             <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">Send us a Message</h3>
+              <h3 className="text-2xl font-bold text-white mb-6">
+                Send us a Message
+              </h3>
 
               <form className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="fullName"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Full Name *
                     </label>
                     <input
+                      id="fullName"
+                      name="fullName"
                       type="text"
                       required
                       className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
@@ -51,10 +77,15 @@ export default function Contact() {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Email *
                     </label>
                     <input
+                      id="email"
+                      name="email"
                       type="email"
                       required
                       className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
@@ -65,20 +96,32 @@ export default function Contact() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="phone"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Phone / WhatsApp
                     </label>
                     <input
+                      id="phone"
+                      name="phone"
                       type="tel"
                       className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
                       placeholder="+92 300 1234567"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="tripInterest"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Trip of Interest
                     </label>
-                    <select className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition">
+                    <select
+                      id="tripInterest"
+                      name="tripInterest"
+                      className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                    >
                       <option value="">Select a trip</option>
                       <option value="k2">K2 Base Camp Trek</option>
                       <option value="fairy">Fairy Meadows Trek</option>
@@ -91,10 +134,17 @@ export default function Contact() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="travelMonth"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Preferred Travel Month
                     </label>
-                    <select className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition">
+                    <select
+                      id="travelMonth"
+                      name="travelMonth"
+                      className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                    >
                       <option value="">Select month</option>
                       <option value="april">April</option>
                       <option value="may">May</option>
@@ -106,10 +156,15 @@ export default function Contact() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                    <label
+                      htmlFor="groupSize"
+                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                    >
                       Group Size
                     </label>
                     <input
+                      id="groupSize"
+                      name="groupSize"
                       type="number"
                       min="1"
                       className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
@@ -119,10 +174,15 @@ export default function Contact() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#9ca3af] mb-2">
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-[#9ca3af] mb-2"
+                  >
                     Message / Questions
                   </label>
                   <textarea
+                    id="message"
+                    name="message"
                     rows={5}
                     className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition resize-none"
                     placeholder="Tell us about your adventure plans..."
@@ -131,9 +191,10 @@ export default function Contact() {
 
                 <div className="bg-[#0a0f1a] p-4 rounded border border-[#1f2937]">
                   <p className="text-sm text-[#9ca3af]">
-                    <span className="font-semibold">Note:</span> Since this is a static
-                    website, please share your details via WhatsApp or email directly
-                    for the fastest response. We'll get back to you within 24 hours.
+                    <span className="font-semibold">Note:</span> Since this is a
+                    static website, please share your details via WhatsApp or
+                    email directly for the fastest response. We'll get back to
+                    you within 24 hours.
                   </p>
                 </div>
 

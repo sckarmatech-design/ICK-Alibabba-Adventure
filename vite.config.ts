@@ -7,4 +7,10 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  ssr: {
+    noExternal: ["lucide-react"],
+  },
+  optimizeDeps: {
+    include: ["lucide-react"],
+  },
 });

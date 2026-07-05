@@ -1,0 +1,151 @@
+/**
+ * SEO Configuration & Utilities
+ * Centralized SEO metadata for all pages
+ */
+
+export const SITE_CONFIG = {
+  name: "Akhtar Abbasi Hiking",
+  url: "https://akhtarabbasi-hiking.com",
+  description:
+    "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
+  locale: "en_US",
+  logo: "https://akhtarabbasi-hiking.com/images/logo.webp",
+  image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
+  social: {
+    twitter: "@akhtarabbasi",
+    facebook: "akhtarabbasi.hiking",
+    instagram: "@akhtarabbasi_hiking",
+  },
+};
+
+export interface SEOMetadata {
+  title: string;
+  description: string;
+  image?: string;
+  url?: string;
+  type?: "website" | "article";
+  author?: string;
+  publishedDate?: string;
+  modifiedDate?: string;
+  jsonLd?: Record<string, unknown>;
+}
+
+export const generateMetaTags = (meta: SEOMetadata) => {
+  const url = meta.url || SITE_CONFIG.url;
+  const image = meta.image || SITE_CONFIG.image;
+  const type = meta.type || "website";
+
+  const tags: Array<Record<string, unknown>> = [
+    { title: meta.title },
+    { name: "description", content: meta.description },
+    { name: "theme-color", content: "#0a0f1a" },
+
+    // Open Graph
+    { property: "og:title", content: meta.title },
+    { property: "og:description", content: meta.description },
+    { property: "og:image", content: image },
+    { property: "og:url", content: url },
+    { property: "og:type", content: type },
+    { property: "og:site_name", content: SITE_CONFIG.name },
+    { property: "og:locale", content: SITE_CONFIG.locale },
+
+    // Twitter
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: meta.title },
+    { name: "twitter:description", content: meta.description },
+    { name: "twitter:image", content: image },
+    { name: "twitter:creator", content: SITE_CONFIG.social.twitter },
+
+    // Additional SEO
+    { name: "canonical", content: url },
+    { name: "robots", content: "index, follow" },
+  ];
+
+  // Add article-specific tags
+  if (type === "article") {
+    if (meta.publishedDate) {
+      tags.push({ property: "article:published_time", content: meta.publishedDate });
+    }
+    if (meta.modifiedDate) {
+      tags.push({ property: "article:modified_time", content: meta.modifiedDate });
+    }
+    if (meta.author) {
+      tags.push({ property: "article:author", content: meta.author });
+    }
+  }
+
+  return tags;
+};
+
+export const generateJsonLd = (data: Record<string, unknown>) => {
+  return JSON.stringify(data);
+};
+
+/**
+ * Page-specific SEO metadata
+ */
+export const PAGE_SEO: Record<string, SEOMetadata> = {
+  home: {
+    title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
+    description:
+      "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
+    image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
+    url: "https://akhtarabbasi-hiking.com",
+  },
+  trips: {
+    title: "Hiking Trips | Akhtar Abbasi Hiking",
+    description:
+      "Explore our collection of carefully curated hiking trips across Gilgit Baltistan. From short day hikes to challenging multi-day treks.",
+    image: "https://akhtarabbasi-hiking.com/images/og/trips.webp",
+    url: "https://akhtarabbasi-hiking.com/trips",
+  },
+  expeditions: {
+    title: "Mountain Expeditions | Akhtar Abbasi Hiking",
+    description:
+      "Join high-altitude mountain expeditions in Gilgit Baltistan. Summit some of the world's most spectacular peaks with experienced mountaineers.",
+    image: "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+    url: "https://akhtarabbasi-hiking.com/expeditions",
+  },
+  tours: {
+    title: "Cultural Tours | Akhtar Abbasi Hiking",
+    description:
+      "Discover the rich culture and stunning landscapes of Gilgit Baltistan through guided cultural tours and regional experiences.",
+    image: "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+    url: "https://akhtarabbasi-hiking.com/tours",
+  },
+  gallery: {
+    title: "Gallery | Akhtar Abbasi Hiking",
+    description:
+      "View stunning photographs and videos from our trekking expeditions and mountain adventures in Gilgit Baltistan.",
+    image: "https://akhtarabbasi-hiking.com/images/og/gallery.webp",
+    url: "https://akhtarabbasi-hiking.com/gallery",
+  },
+  about: {
+    title: "About Us | Akhtar Abbasi Hiking",
+    description:
+      "Learn about Akhtar Abbasi Hiking — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
+    url: "https://akhtarabbasi-hiking.com/about",
+  },
+  faq: {
+    title: "FAQ | Akhtar Abbasi Hiking",
+    description:
+      "Frequently asked questions about our trekking trips, expeditions, safety measures, and booking process.",
+    image: "https://akhtarabbasi-hiking.com/images/og/faq.webp",
+    url: "https://akhtarabbasi-hiking.com/faq",
+  },
+  blog: {
+    title: "Blog | Akhtar Abbasi Hiking",
+    description:
+      "Stories from the trail, trekking tips, and travel guides from our mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+    url: "https://akhtarabbasi-hiking.com/blog",
+  },
+  contact: {
+    title: "Contact Us | Akhtar Abbasi Hiking",
+    description:
+      "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
+    image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
+    url: "https://akhtarabbasi-hiking.com/contact",
+  },
+};

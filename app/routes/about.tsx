@@ -1,20 +1,37 @@
-import type { MetaFunction } from "react-router";
+import { useLoaderData } from "react-router";
+import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { StatsBar } from "~/components/StatsBar";
 import { Users, Target, Heart, Mountain } from "lucide-react";
-import { team } from "~/data/team";
+import prisma from "~/lib/prisma.server";
+import { mapTeamMemberFromPrisma } from "~/lib/mappers";
+import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+
+export async function loader(_args: LoaderFunctionArgs) {
+  const team = await prisma.teamMember.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+  return team.map(mapTeamMemberFromPrisma);
+}
 
 export const meta: MetaFunction = () => [
-  { title: "About Us | Akhtar Abbasi Hiking" },
-  {
-    name: "description",
-    content:
+  ...generateMetaTags({
+    title: "About Us | Akhtar Abbasi Hiking",
+    description:
       "Learn about Akhtar Abbasi Hiking — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
+    image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
+    url: `${SITE_CONFIG.url}/about`,
+  }),
+  {
+    name: "keywords",
+    content:
+      "about us, our mission, experienced guides, trekking company, Gilgit Baltistan",
   },
 ];
 
 export default function About() {
+  const team = useLoaderData<typeof loader>();
   const stats = [
     { icon: Mountain, label: "Years of Experience", value: "25+" },
     { icon: Users, label: "Happy Clients", value: "2000+" },
@@ -26,7 +43,9 @@ export default function About() {
     <div>
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-4 py-8 md:py-12">
-        <Breadcrumb items={[{ label: "Home", href: "/" }, { label: "About" }]} />
+        <Breadcrumb
+          items={[{ label: "Home", href: "/" }, { label: "About" }]}
+        />
 
         <div className="mt-8 mb-12">
           <SectionTitle
@@ -42,22 +61,22 @@ export default function About() {
             <h2 className="text-3xl font-bold text-white mb-4">Who We Are</h2>
             <p className="text-[#9ca3af] leading-relaxed mb-4">
               Akhtar Abbasi Hiking is a premier adventure company dedicated to
-              providing world-class trekking and expedition experiences in Gilgit
-              Baltistan. Founded with a passion for the mountains, we've been
-              guiding adventurers to some of the world's most spectacular peaks
-              and valleys.
+              providing world-class trekking and expedition experiences in
+              Gilgit Baltistan. Founded with a passion for the mountains, we've
+              been guiding adventurers to some of the world's most spectacular
+              peaks and valleys.
             </p>
             <p className="text-[#9ca3af] leading-relaxed mb-4">
-              Our team of experienced guides, logistics coordinators, and support
-              staff work together to ensure every expedition is safe, memorable,
-              and transformative. We believe that mountain adventures aren't just
-              about reaching a summit—they're about connecting with nature,
-              challenging ourselves, and building lifelong memories.
+              Our team of experienced guides, logistics coordinators, and
+              support staff work together to ensure every expedition is safe,
+              memorable, and transformative. We believe that mountain adventures
+              aren't just about reaching a summit—they're about connecting with
+              nature, challenging ourselves, and building lifelong memories.
             </p>
             <p className="text-[#9ca3af] leading-relaxed">
-              With deep knowledge of local terrain, weather patterns, and cultural
-              traditions, we provide authentic experiences that go beyond standard
-              tourism.
+              With deep knowledge of local terrain, weather patterns, and
+              cultural traditions, we provide authentic experiences that go
+              beyond standard tourism.
             </p>
           </div>
 
@@ -81,8 +100,8 @@ export default function About() {
               <h3 className="text-2xl font-bold text-white">Our Mission</h3>
             </div>
             <p className="text-[#9ca3af] leading-relaxed">
-              To provide the highest quality trekking and expedition experiences in
-              Gilgit Baltistan while maintaining the safety, well-being, and
+              To provide the highest quality trekking and expedition experiences
+              in Gilgit Baltistan while maintaining the safety, well-being, and
               cultural respect of our clients and local communities.
             </p>
           </div>
@@ -146,10 +165,12 @@ export default function About() {
           <h2 className="text-2xl font-bold text-white mb-6">Our Values</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-semibold text-[#16a34a] mb-2">Safety First</h4>
+              <h4 className="font-semibold text-[#16a34a] mb-2">
+                Safety First
+              </h4>
               <p className="text-[#9ca3af]">
-                Safety is our top priority. All guides are trained in first aid and
-                high-altitude rescue.
+                Safety is our top priority. All guides are trained in first aid
+                and high-altitude rescue.
               </p>
             </div>
             <div>
@@ -166,8 +187,8 @@ export default function About() {
                 Cultural Respect
               </h4>
               <p className="text-[#9ca3af]">
-                We celebrate local traditions and ensure fair treatment of mountain
-                communities.
+                We celebrate local traditions and ensure fair treatment of
+                mountain communities.
               </p>
             </div>
             <div>

@@ -1,8 +1,13 @@
 import { Link } from "react-router";
 import { Share2, ArrowUp } from "lucide-react";
-import { companyInfo, footerLinks } from "~/data/nav";
+import type { CompanyInfo, FooterLink } from "~/data/nav";
 
-export function Footer() {
+interface FooterProps {
+  footerLinks: FooterLink[];
+  companyInfo: CompanyInfo;
+}
+
+export function Footer({ footerLinks, companyInfo }: FooterProps) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -57,7 +62,9 @@ export function Footer() {
           {/* Footer Links */}
           {footerLinks.map((section) => (
             <div key={section.category}>
-              <h4 className="font-semibold text-white mb-4">{section.category}</h4>
+              <h4 className="font-semibold text-white mb-4">
+                {section.category}
+              </h4>
               <ul className="space-y-2">
                 {section.links.map((link) => (
                   <li key={link.label}>
@@ -72,42 +79,7 @@ export function Footer() {
               </ul>
             </div>
           ))}
-
-          {/* Contact Info */}
-          <div>
-            <h4 className="font-semibold text-white mb-4">Contact</h4>
-            <ul className="space-y-3 text-sm text-[#9ca3af]">
-              <li>
-                <p className="font-medium text-white mb-1">Email</p>
-                <a href={`mailto:${companyInfo.email}`} className="hover:text-[#16a34a] transition">
-                  {companyInfo.email}
-                </a>
-              </li>
-              <li>
-                <p className="font-medium text-white mb-1">Phone</p>
-                <a href={`tel:${companyInfo.phone}`} className="hover:text-[#16a34a] transition">
-                  {companyInfo.phone}
-                </a>
-              </li>
-              <li>
-                <p className="font-medium text-white mb-1">WhatsApp</p>
-                <a
-                  href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-[#16a34a] transition"
-                >
-                  {companyInfo.whatsapp}
-                </a>
-              </li>
-              <li>
-                <p className="font-medium text-white mb-1">Location</p>
-                <p>{companyInfo.location}</p>
-              </li>
-            </ul>
-          </div>
         </div>
-
         {/* Bottom Footer */}
         <div className="border-t border-[#1f2937] pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-[#9ca3af] text-sm text-center md:text-left">

@@ -1,0 +1,231 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ===== ENUMS =====
+
+enum TripCategory {
+  SHORT_TREK
+  MULTI_DAY_TREK
+  DAY_HIKE
+}
+
+enum Difficulty {
+  EASY
+  MODERATE
+  CHALLENGING
+  EXPERT
+}
+
+enum BlogCategory {
+  TREKKING
+  EXPEDITIONS
+  TRAVEL_TIPS
+  CULTURE
+}
+
+enum FAQCategory {
+  GENERAL
+  PREPARATION
+  LOGISTICS
+  SAFETY
+  FINANCE
+}
+
+enum GalleryItemCategory {
+  TREKS
+  EXPEDITIONS
+  TOURS
+  NATURE
+  CULTURE
+}
+
+// ===== AUTH (used in Phase 2) =====
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// ===== TRIPS =====
+
+model Trip {
+  id         String         @id @default(cuid())
+  slug       String         @unique
+  title      String
+  category   TripCategory
+  region     String
+  duration   String
+  difficulty Difficulty
+  bestSeason String
+  heroImage  String
+  overview   String
+  groupSize  String?
+  startPoint String?
+  endPoint   String?
+  highlights String[]
+  gallery    String[]
+  itinerary  Json
+  faqs       Json
+  createdAt  DateTime       @default(now())
+  updatedAt  DateTime       @updatedAt
+}
+
+// ===== EXPEDITIONS =====
+
+model Expedition {
+  id              String     @id @default(cuid())
+  slug            String     @unique
+  title           String
+  region          String
+  duration        String
+  altitude        String
+  difficulty      Difficulty
+  bestSeason      String
+  heroImage       String
+  overview        String
+  technicalRating String
+  highlights      String[]
+  gallery         String[]
+  itinerary       Json
+  gear            String[]
+  faqs            Json
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+// ===== TOURS =====
+
+model Tour {
+  id            String     @id @default(cuid())
+  slug          String     @unique
+  title         String
+  region        String
+  duration      String
+  difficulty    Difficulty
+  bestSeason    String
+  heroImage     String
+  overview      String
+  accommodation String?
+  mealPlan      String?
+  transport     String?
+  highlights    String[]
+  gallery       String[]
+  itinerary     Json
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+// ===== BLOG =====
+
+model BlogPost {
+  id          String       @id @default(cuid())
+  slug        String       @unique
+  title       String
+  author      String
+  date        DateTime
+  category    BlogCategory
+  excerpt     String
+  content     String
+  image       String
+  readingTime Int
+  videoUrl    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+// ===== FAQS (standalone) =====
+
+model FAQ {
+  id        String      @id @default(cuid())
+  category  FAQCategory
+  question  String
+  answer    String
+  sortOrder Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+// ===== TESTIMONIALS =====
+
+model Testimonial {
+  id          String   @id @default(cuid())
+  name        String
+  country     String
+  countryCode String
+  rating      Int
+  review      String
+  tripName    String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== DESTINATIONS =====
+
+model Destination {
+  id          String   @id @default(cuid())
+  name        String
+  region      String
+  image       String
+  tripCount   Int      @default(0)
+  description String
+  highlights  String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ===== GALLERY =====
+
+model GalleryImage {
+  id        String              @id @default(cuid())
+  title     String
+  image     String
+  thumbnail String?
+  category  GalleryItemCategory
+  alt       String
+  featured  Boolean             @default(false)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+}
+
+model GalleryVideo {
+  id        String   @id @default(cuid())
+  title     String
+  videoUrl  String
+  thumbnail String?
+  alt       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ===== TEAM =====
+
+model TeamMember {
+  id             String   @id @default(cuid())
+  name           String
+  role           String
+  bio            String
+  image          String?
+  specialization String?
+  experience     String?
+  sortOrder      Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+// ===== SITE SETTINGS =====
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+}
