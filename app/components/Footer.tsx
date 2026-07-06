@@ -1,5 +1,6 @@
 import { Link } from "react-router";
-import { Share2, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
+import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
 import type { CompanyInfo, FooterLink } from "~/data/nav";
 
 interface FooterProps {
@@ -29,33 +30,39 @@ export function Footer({ footerLinks, companyInfo }: FooterProps) {
               {companyInfo.description}
             </p>
             <div className="flex gap-4">
-              <a
-                href={companyInfo.socialMedia.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#9ca3af] hover:text-[#16a34a] transition"
-                aria-label="Facebook"
-              >
-                <Share2 size={20} />
-              </a>
-              <a
-                href={companyInfo.socialMedia.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#9ca3af] hover:text-[#16a34a] transition"
-                aria-label="Instagram"
-              >
-                <Share2 size={20} />
-              </a>
-              <a
-                href={companyInfo.socialMedia.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#9ca3af] hover:text-[#16a34a] transition"
-                aria-label="YouTube"
-              >
-                <Share2 size={20} />
-              </a>
+              {companyInfo.socialMedia.facebook && (
+                <a
+                  href={companyInfo.socialMedia.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#9ca3af] hover:text-[#16a34a] transition"
+                  aria-label="Facebook"
+                >
+                  <FaFacebook size={20} />
+                </a>
+              )}
+              {companyInfo.socialMedia.instagram && (
+                <a
+                  href={companyInfo.socialMedia.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#9ca3af] hover:text-[#16a34a] transition"
+                  aria-label="Instagram"
+                >
+                  <FaInstagram size={20} />
+                </a>
+              )}
+              {companyInfo.socialMedia.youtube && (
+                <a
+                  href={companyInfo.socialMedia.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#9ca3af] hover:text-[#16a34a] transition"
+                  aria-label="YouTube"
+                >
+                  <FaYoutube size={20} />
+                </a>
+              )}
             </div>
           </div>
 
