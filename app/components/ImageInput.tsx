@@ -5,6 +5,8 @@ export type ImageInputProps = {
   name: string;
   label: string;
   defaultValue?: string | null;
+  value?: string;
+  onChange?: (value: string) => void;
   required?: boolean;
   folder: string;
   accept?: string;
@@ -86,19 +88,23 @@ export function ImageInput({
   name,
   label,
   defaultValue = "",
+  value: controlledValue,
+  onChange,
   required,
   folder,
   accept = "image/*",
   onLoadingChange,
   className = "",
 }: ImageInputProps) {
+  const isControlled = controlledValue !== undefined;
+  const initialUrl = isControlled ? controlledValue : (defaultValue ?? "");
   const [mode, setMode] = useState<"url" | "upload">(
-    defaultValue ? "url" : "url",
+    initialUrl ? "url" : "url",
   );
-  const [urlValue, setUrlValue] = useState(defaultValue ?? "");
+  const [urlValue, setUrlValue] = useState(initialUrl);
   const [file, setFile] = useState<File | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-  const [preview, setPreview] = useState<string | null>(defaultValue ?? null);
+  const [preview, setPreview] = useState<string | null>(initialUrl || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [compressionInfo, setCompressionInfo] = useState<{
@@ -109,7 +115,11 @@ export function ImageInput({
 
   const objectUrlRef = useRef<string | null>(null);
 
-  const hiddenValue = mode === "url" ? urlValue : (uploadedUrl ?? "");
+  const hiddenValue = isControlled
+    ? (controlledValue ?? "")
+    : mode === "url"
+      ? urlValue
+      : (uploadedUrl ?? "");
 
   useEffect(() => {
     return () => {
@@ -118,6 +128,13 @@ export function ImageInput({
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isControlled) {
+      setUrlValue(controlledValue ?? "");
+      setPreview(controlledValue || null);
+    }
+  }, [isControlled, controlledValue]);
 
   async function uploadFile(selectedFile: File) {
     setLoading(true);
@@ -155,6 +172,7 @@ export function ImageInput({
       setUploadedUrl(result.url);
       setPreview(result.url);
       setMode("upload");
+      onChange?.(result.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
       setUploadedUrl(null);
@@ -200,6 +218,9 @@ export function ImageInput({
     if (objectUrlRef.current) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
+    }
+    if (isControlled) {
+      onChange?.("");
     }
   }
 
@@ -249,10 +270,15 @@ export function ImageInput({
       {mode === "url" ? (
         <input
           type="url"
-          value={urlValue}
+          value={isControlled ? (controlledValue ?? "") : urlValue}
           onChange={(e) => {
-            setUrlValue(e.target.value);
-            setPreview(e.target.value || null);
+            const next = e.target.value;
+            if (isControlled) {
+              onChange?.(next);
+            } else {
+              setUrlValue(next);
+            }
+            setPreview(next || null);
           }}
           placeholder="https://..."
           className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"

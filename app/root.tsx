@@ -36,6 +36,7 @@ export async function loader(_args: LoaderFunctionArgs) {
       location: string;
       description: string;
       whatsapp: string;
+      logo: string;
       socialMedia: { facebook: string; instagram: string; youtube: string };
     };
   };
@@ -82,7 +83,7 @@ export default function App() {
   return (
     <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
       <Header mainNav={mainNav} companyInfo={companyInfo} />
-      <main className="flex-grow">
+      <main className="grow">
         <Outlet />
       </main>
       <Footer footerLinks={footerLinks} companyInfo={companyInfo} />

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { NavItem, FooterLink, CompanyInfo } from "~/data/nav";
+import { ImageInput } from "~/components/ImageInput";
 
 export interface ItineraryDay {
   day: number;
@@ -19,8 +20,10 @@ function inputClass(extra = "") {
 function buttonClass(variant: "primary" | "danger" | "secondary" = "primary") {
   const base =
     "px-3 py-1.5 rounded text-sm font-medium transition focus:outline-none";
-  if (variant === "primary") return `${base} bg-green-600 hover:bg-green-500 text-white`;
-  if (variant === "danger") return `${base} bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/30`;
+  if (variant === "primary")
+    return `${base} bg-green-600 hover:bg-green-500 text-white`;
+  if (variant === "danger")
+    return `${base} bg-red-600/20 hover:bg-red-600/30 text-red-400 border border-red-600/30`;
   return `${base} bg-gray-700 hover:bg-gray-600 text-gray-200`;
 }
 
@@ -147,8 +150,7 @@ export function FaqEditor({
     );
   };
 
-  const add = () =>
-    setItems((prev) => [...prev, { question: "", answer: "" }]);
+  const add = () => setItems((prev) => [...prev, { question: "", answer: "" }]);
 
   const remove = (index: number) =>
     setItems((prev) => prev.filter((_, i) => i !== index));
@@ -230,9 +232,7 @@ export function MainNavEditor({
     }));
   });
 
-  const serialized = JSON.stringify(
-    items.filter((item) => item.label.trim()),
-  );
+  const serialized = JSON.stringify(items.filter((item) => item.label.trim()));
 
   const updateItem = (index: number, patch: Partial<NavItem>) => {
     setItems((prev) =>
@@ -397,7 +397,11 @@ export function MainNavEditor({
         </div>
       ))}
 
-      <button type="button" onClick={addItem} className={buttonClass("primary")}>
+      <button
+        type="button"
+        onClick={addItem}
+        className={buttonClass("primary")}
+      >
         + Add Nav Item
       </button>
     </div>
@@ -431,7 +435,9 @@ export function FooterLinksEditor({
     categories
       .map((cat) => ({
         ...cat,
-        links: cat.links.filter((link) => link.label.trim() || link.href.trim()),
+        links: cat.links.filter(
+          (link) => link.label.trim() || link.href.trim(),
+        ),
       }))
       .filter((cat) => cat.category.trim() || cat.links.length > 0),
   );
@@ -450,7 +456,9 @@ export function FooterLinksEditor({
   const addLink = (catIndex: number) => {
     setCategories((prev) =>
       prev.map((cat, i) =>
-        i === catIndex ? { ...cat, links: [...cat.links, { label: "", href: "" }] } : cat,
+        i === catIndex
+          ? { ...cat, links: [...cat.links, { label: "", href: "" }] }
+          : cat,
       ),
     );
   };
@@ -539,7 +547,9 @@ export function FooterLinksEditor({
                       type="text"
                       value={link.href}
                       onChange={(e) =>
-                        updateLink(catIndex, linkIndex, { href: e.target.value })
+                        updateLink(catIndex, linkIndex, {
+                          href: e.target.value,
+                        })
                       }
                       className={inputClass()}
                       placeholder="e.g. /"
@@ -588,6 +598,7 @@ const defaultCompanyInfo: CompanyInfo = {
   location: "",
   description: "",
   whatsapp: "",
+  logo: "",
   socialMedia: {
     facebook: "",
     instagram: "",
@@ -623,7 +634,10 @@ export function CompanyInfoEditor({
     setInfo((prev) => ({ ...prev, [field]: value }));
   };
 
-  const updateSocial = (field: keyof CompanyInfo["socialMedia"], value: string) => {
+  const updateSocial = (
+    field: keyof CompanyInfo["socialMedia"],
+    value: string,
+  ) => {
     setInfo((prev) => ({
       ...prev,
       socialMedia: { ...prev.socialMedia, [field]: value },
@@ -657,6 +671,16 @@ export function CompanyInfoEditor({
       </div>
 
       <div>
+        <ImageInput
+          name="logo"
+          label="Logo"
+          folder="company"
+          value={info.logo}
+          onChange={(value) => update("logo", value)}
+        />
+      </div>
+
+      <div>
         <label className="block text-xs text-gray-400 mb-1">Description</label>
         <textarea
           value={info.description}
@@ -679,7 +703,9 @@ export function CompanyInfoEditor({
             ] as const
           ).map(([field, label]) => (
             <div key={field}>
-              <label className="block text-xs text-gray-400 mb-1">{label}</label>
+              <label className="block text-xs text-gray-400 mb-1">
+                {label}
+              </label>
               <input
                 type="url"
                 value={info.socialMedia[field]}

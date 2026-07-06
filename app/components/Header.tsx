@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, MapPin, Mail, Phone } from "lucide-react";
 import type { CompanyInfo, NavItem } from "~/data/nav";
 
 interface HeaderProps {
@@ -19,14 +19,14 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex gap-6">
             <div className="flex items-center gap-2">
-              <span>📍</span>
+              <MapPin size={14} className="text-[#16a34a]" />
               <span>{companyInfo.location}</span>
             </div>
             <a
               href={`mailto:${companyInfo.email}`}
               className="flex items-center gap-2 hover:text-[#16a34a] transition"
             >
-              <span>✉️</span>
+              <Mail size={14} className="text-[#16a34a]" />
               <span>{companyInfo.email}</span>
             </a>
           </div>
@@ -34,7 +34,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             href={`tel:${companyInfo.phone}`}
             className="flex items-center gap-2 hover:text-[#16a34a] transition"
           >
-            <span>📞</span>
+            <Phone size={14} className="text-[#16a34a]" />
             <span>{companyInfo.phone}</span>
           </a>
         </div>
@@ -43,11 +43,24 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
       {/* Main Navigation */}
       <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="flex-shrink-0">
-          <div className="text-2xl font-bold text-white">
-            <span className="text-[#16a34a]">Akhtar</span> Abbasi
-          </div>
-          <div className="text-xs text-[#9ca3af]">Hiking Adventures</div>
+        <Link to="/" className="shrink-0 flex items-center">
+          {companyInfo.logo ? (
+            <img
+              src={companyInfo.logo}
+              alt={companyInfo.name}
+              className="h-10 w-auto max-w-45 object-contain"
+            />
+          ) : (
+            <div>
+              <div className="text-2xl font-bold text-white">
+                <span className="text-[#16a34a]">
+                  {companyInfo.name.split(" ")[0]}
+                </span>{" "}
+                {companyInfo.name.split(" ").slice(1).join(" ")}
+              </div>
+              <div className="text-xs text-[#9ca3af]">Hiking Adventures</div>
+            </div>
+          )}
         </Link>
 
         {/* Desktop Navigation */}
