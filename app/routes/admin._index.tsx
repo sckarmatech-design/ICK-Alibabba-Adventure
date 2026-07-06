@@ -16,6 +16,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     destinations,
     galleryImages,
     galleryVideos,
+    inquiries,
   ] = await Promise.all([
     prisma.trip.count(),
     prisma.expedition.count(),
@@ -27,6 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     prisma.destination.count(),
     prisma.galleryImage.count(),
     prisma.galleryVideo.count(),
+    prisma.contactSubmission.count(),
   ]);
   return {
     trips,
@@ -39,6 +41,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     destinations,
     galleryImages,
     galleryVideos,
+    inquiries,
   };
 }
 
@@ -47,12 +50,29 @@ const statCards = [
   { label: "Expeditions", countKey: "expeditions", href: "/admin/expeditions" },
   { label: "Tours", countKey: "tours", href: "/admin/tours" },
   { label: "Blog Posts", countKey: "blogPosts", href: "/admin/blog" },
-  { label: "Testimonials", countKey: "testimonials", href: "/admin/testimonials" },
+  {
+    label: "Testimonials",
+    countKey: "testimonials",
+    href: "/admin/testimonials",
+  },
   { label: "Team Members", countKey: "teamMembers", href: "/admin/team" },
   { label: "FAQs", countKey: "faqs", href: "/admin/faqs" },
-  { label: "Destinations", countKey: "destinations", href: "/admin/destinations" },
-  { label: "Gallery Images", countKey: "galleryImages", href: "/admin/gallery" },
-  { label: "Gallery Videos", countKey: "galleryVideos", href: "/admin/gallery" },
+  {
+    label: "Destinations",
+    countKey: "destinations",
+    href: "/admin/destinations",
+  },
+  {
+    label: "Gallery Images",
+    countKey: "galleryImages",
+    href: "/admin/gallery",
+  },
+  {
+    label: "Gallery Videos",
+    countKey: "galleryVideos",
+    href: "/admin/gallery",
+  },
+  { label: "Inquiries", countKey: "inquiries", href: "/admin/inquiries" },
 ] as const;
 
 export default function AdminDashboard() {
@@ -69,9 +89,7 @@ export default function AdminDashboard() {
             className="block bg-gray-900 border border-gray-800 rounded-lg p-6 hover:border-green-500 transition"
           >
             <p className="text-gray-400 text-sm mb-1">{label}</p>
-            <p className="text-3xl font-bold text-white">
-              {counts[countKey]}
-            </p>
+            <p className="text-3xl font-bold text-white">{counts[countKey]}</p>
           </Link>
         ))}
       </div>

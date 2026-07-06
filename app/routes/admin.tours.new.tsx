@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from "react-router";
 import { redirect, Form, Link } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import {
@@ -11,6 +12,7 @@ import {
 } from "~/lib/admin";
 import { ItineraryEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay } from "~/components/admin-form-editors";
+import { ImageInput, ImageListInput } from "~/components/ImageInput";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
@@ -46,6 +48,8 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AdminNewTour() {
+  const [uploading, setUploading] = useState(false);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -149,18 +153,12 @@ export default function AdminNewTour() {
           </div>
 
           <div className="md:col-span-2">
-            <label
-              htmlFor="heroImage"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Hero Image URL
-            </label>
-            <input
-              id="heroImage"
+            <ImageInput
               name="heroImage"
-              type="url"
+              label="Hero Image"
+              folder="tours"
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -241,17 +239,12 @@ export default function AdminNewTour() {
           </div>
 
           <div>
-            <label
-              htmlFor="gallery"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Gallery URLs (one per line)
-            </label>
-            <textarea
-              id="gallery"
+            <ImageListInput
               name="gallery"
-              rows={4}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              label="Gallery Images"
+              defaultValues={[]}
+              folder="gallery"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -269,7 +262,8 @@ export default function AdminNewTour() {
         <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
           <button
             type="submit"
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition"
+            disabled={uploading}
+            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50"
           >
             Create Tour
           </button>

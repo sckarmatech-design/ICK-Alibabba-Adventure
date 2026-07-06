@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import {
   Form,
@@ -17,6 +18,7 @@ import {
 } from "~/lib/admin";
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
+import { ImageInput, ImageListInput } from "~/components/ImageInput";
 
 const CATEGORIES = ["SHORT_TREK", "MULTI_DAY_TREK", "DAY_HIKE"] as const;
 const DIFFICULTIES = ["EASY", "MODERATE", "CHALLENGING", "EXPERT"] as const;
@@ -139,12 +141,10 @@ export default function AdminTripsEdit() {
   const navigation = useNavigation();
   const errors = actionData?.errors ?? {};
   const isSubmitting = navigation.state === "submitting";
+  const [uploading, setUploading] = useState(false);
 
   const highlightsValue = Array.isArray(trip.highlights)
     ? trip.highlights.join("\n")
-    : "";
-  const galleryValue = Array.isArray(trip.gallery)
-    ? trip.gallery.join("\n")
     : "";
 
   return (
@@ -290,19 +290,13 @@ export default function AdminTripsEdit() {
           </div>
 
           <div>
-            <label
-              htmlFor="heroImage"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Hero Image URL
-            </label>
-            <input
-              id="heroImage"
+            <ImageInput
               name="heroImage"
-              type="url"
+              label="Hero Image"
               defaultValue={trip.heroImage}
+              folder="trips"
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -388,18 +382,12 @@ export default function AdminTripsEdit() {
           </div>
 
           <div className="md:col-span-2">
-            <label
-              htmlFor="gallery"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Gallery URLs (one per line)
-            </label>
-            <textarea
-              id="gallery"
+            <ImageListInput
               name="gallery"
-              rows={4}
-              defaultValue={galleryValue}
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              label="Gallery Images"
+              defaultValues={trip.gallery}
+              folder="gallery"
+              onLoadingChange={setUploading}
             />
           </div>
 
@@ -433,7 +421,7 @@ export default function AdminTripsEdit() {
           </Link>
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || uploading}
             className="px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-green-800 text-white rounded-md font-medium transition"
           >
             {isSubmitting ? "Saving..." : "Save Changes"}

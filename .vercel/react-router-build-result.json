@@ -1,0 +1,1018 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "routes/_index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/trips._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/trips.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/expeditions._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/expeditions.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/tours._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/tours.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/blog._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/blog.$slug": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/gallery": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/about": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/faq": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/contact": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/login": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/api.upload-image": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.logout": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.trips._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.trips.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.trips.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.expeditions._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.expeditions.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.expeditions.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.tours._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.tours.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.tours.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.blog._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.blog.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.blog.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.testimonials._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.testimonials.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.testimonials.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.team._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.team.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.team.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.faqs._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.faqs.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.faqs.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.destinations._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.destinations.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.destinations.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.gallery._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.gallery.images.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.gallery.videos.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.gallery.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.inquiries": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.settings": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "app/routes/_index.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/trips._index": {
+        "id": "routes/trips._index",
+        "parentId": "root",
+        "file": "app/routes/trips._index.tsx",
+        "path": "trips",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/trips.$slug": {
+        "id": "routes/trips.$slug",
+        "parentId": "root",
+        "file": "app/routes/trips.$slug.tsx",
+        "path": "trips/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/expeditions._index": {
+        "id": "routes/expeditions._index",
+        "parentId": "root",
+        "file": "app/routes/expeditions._index.tsx",
+        "path": "expeditions",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/expeditions.$slug": {
+        "id": "routes/expeditions.$slug",
+        "parentId": "root",
+        "file": "app/routes/expeditions.$slug.tsx",
+        "path": "expeditions/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/tours._index": {
+        "id": "routes/tours._index",
+        "parentId": "root",
+        "file": "app/routes/tours._index.tsx",
+        "path": "tours",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/tours.$slug": {
+        "id": "routes/tours.$slug",
+        "parentId": "root",
+        "file": "app/routes/tours.$slug.tsx",
+        "path": "tours/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/blog._index": {
+        "id": "routes/blog._index",
+        "parentId": "root",
+        "file": "app/routes/blog._index.tsx",
+        "path": "blog",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/blog.$slug": {
+        "id": "routes/blog.$slug",
+        "parentId": "root",
+        "file": "app/routes/blog.$slug.tsx",
+        "path": "blog/:slug",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/gallery": {
+        "id": "routes/gallery",
+        "parentId": "root",
+        "file": "app/routes/gallery.tsx",
+        "path": "gallery",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/about": {
+        "id": "routes/about",
+        "parentId": "root",
+        "file": "app/routes/about.tsx",
+        "path": "about",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "app/routes/faq.tsx",
+        "path": "faq",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/contact": {
+        "id": "routes/contact",
+        "parentId": "root",
+        "file": "app/routes/contact.tsx",
+        "path": "contact",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/login": {
+        "id": "routes/login",
+        "parentId": "root",
+        "file": "app/routes/login.tsx",
+        "path": "login",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/api.upload-image": {
+        "id": "routes/api.upload-image",
+        "parentId": "root",
+        "file": "app/routes/api.upload-image.tsx",
+        "path": "api/upload-image",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin": {
+        "id": "routes/admin",
+        "parentId": "root",
+        "file": "app/routes/admin.tsx",
+        "config": {}
+      },
+      "routes/admin._index": {
+        "id": "routes/admin._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin._index.tsx",
+        "path": "admin",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.logout": {
+        "id": "routes/admin.logout",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.logout.tsx",
+        "path": "admin/logout",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.trips._index": {
+        "id": "routes/admin.trips._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.trips._index.tsx",
+        "path": "admin/trips",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.trips.new": {
+        "id": "routes/admin.trips.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.trips.new.tsx",
+        "path": "admin/trips/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.trips.$id.edit": {
+        "id": "routes/admin.trips.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.trips.$id.edit.tsx",
+        "path": "admin/trips/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.expeditions._index": {
+        "id": "routes/admin.expeditions._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.expeditions._index.tsx",
+        "path": "admin/expeditions",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.expeditions.new": {
+        "id": "routes/admin.expeditions.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.expeditions.new.tsx",
+        "path": "admin/expeditions/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.expeditions.$id.edit": {
+        "id": "routes/admin.expeditions.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.expeditions.$id.edit.tsx",
+        "path": "admin/expeditions/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.tours._index": {
+        "id": "routes/admin.tours._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.tours._index.tsx",
+        "path": "admin/tours",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.tours.new": {
+        "id": "routes/admin.tours.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.tours.new.tsx",
+        "path": "admin/tours/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.tours.$id.edit": {
+        "id": "routes/admin.tours.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.tours.$id.edit.tsx",
+        "path": "admin/tours/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.blog._index": {
+        "id": "routes/admin.blog._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.blog._index.tsx",
+        "path": "admin/blog",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.blog.new": {
+        "id": "routes/admin.blog.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.blog.new.tsx",
+        "path": "admin/blog/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.blog.$id.edit": {
+        "id": "routes/admin.blog.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.blog.$id.edit.tsx",
+        "path": "admin/blog/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.testimonials._index": {
+        "id": "routes/admin.testimonials._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.testimonials._index.tsx",
+        "path": "admin/testimonials",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.testimonials.new": {
+        "id": "routes/admin.testimonials.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.testimonials.new.tsx",
+        "path": "admin/testimonials/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.testimonials.$id.edit": {
+        "id": "routes/admin.testimonials.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.testimonials.$id.edit.tsx",
+        "path": "admin/testimonials/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.team._index": {
+        "id": "routes/admin.team._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.team._index.tsx",
+        "path": "admin/team",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.team.new": {
+        "id": "routes/admin.team.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.team.new.tsx",
+        "path": "admin/team/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.team.$id.edit": {
+        "id": "routes/admin.team.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.team.$id.edit.tsx",
+        "path": "admin/team/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.faqs._index": {
+        "id": "routes/admin.faqs._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.faqs._index.tsx",
+        "path": "admin/faqs",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.faqs.new": {
+        "id": "routes/admin.faqs.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.faqs.new.tsx",
+        "path": "admin/faqs/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.faqs.$id.edit": {
+        "id": "routes/admin.faqs.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.faqs.$id.edit.tsx",
+        "path": "admin/faqs/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.destinations._index": {
+        "id": "routes/admin.destinations._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.destinations._index.tsx",
+        "path": "admin/destinations",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.destinations.new": {
+        "id": "routes/admin.destinations.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.destinations.new.tsx",
+        "path": "admin/destinations/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.destinations.$id.edit": {
+        "id": "routes/admin.destinations.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.destinations.$id.edit.tsx",
+        "path": "admin/destinations/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.gallery._index": {
+        "id": "routes/admin.gallery._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.gallery._index.tsx",
+        "path": "admin/gallery",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.gallery.images.new": {
+        "id": "routes/admin.gallery.images.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.gallery.images.new.tsx",
+        "path": "admin/gallery/images/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.gallery.videos.new": {
+        "id": "routes/admin.gallery.videos.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.gallery.videos.new.tsx",
+        "path": "admin/gallery/videos/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.gallery.$id.edit": {
+        "id": "routes/admin.gallery.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.gallery.$id.edit.tsx",
+        "path": "admin/gallery/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.inquiries": {
+        "id": "routes/admin.inquiries",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.inquiries.tsx",
+        "path": "admin/inquiries",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.settings": {
+        "id": "routes/admin.settings",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.settings.tsx",
+        "path": "admin/settings",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "D:/Real-Project/trecking-website/app",
+    "basename": "/",
+    "buildDirectory": "D:/Real-Project/trecking-website/build",
+    "future": {
+      "unstable_optimizeDeps": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "routes/_index": {
+        "id": "routes/_index",
+        "parentId": "root",
+        "file": "routes/_index.tsx",
+        "index": true
+      },
+      "routes/trips._index": {
+        "id": "routes/trips._index",
+        "parentId": "root",
+        "file": "routes/trips._index.tsx",
+        "path": "trips"
+      },
+      "routes/trips.$slug": {
+        "id": "routes/trips.$slug",
+        "parentId": "root",
+        "file": "routes/trips.$slug.tsx",
+        "path": "trips/:slug"
+      },
+      "routes/expeditions._index": {
+        "id": "routes/expeditions._index",
+        "parentId": "root",
+        "file": "routes/expeditions._index.tsx",
+        "path": "expeditions"
+      },
+      "routes/expeditions.$slug": {
+        "id": "routes/expeditions.$slug",
+        "parentId": "root",
+        "file": "routes/expeditions.$slug.tsx",
+        "path": "expeditions/:slug"
+      },
+      "routes/tours._index": {
+        "id": "routes/tours._index",
+        "parentId": "root",
+        "file": "routes/tours._index.tsx",
+        "path": "tours"
+      },
+      "routes/tours.$slug": {
+        "id": "routes/tours.$slug",
+        "parentId": "root",
+        "file": "routes/tours.$slug.tsx",
+        "path": "tours/:slug"
+      },
+      "routes/blog._index": {
+        "id": "routes/blog._index",
+        "parentId": "root",
+        "file": "routes/blog._index.tsx",
+        "path": "blog"
+      },
+      "routes/blog.$slug": {
+        "id": "routes/blog.$slug",
+        "parentId": "root",
+        "file": "routes/blog.$slug.tsx",
+        "path": "blog/:slug"
+      },
+      "routes/gallery": {
+        "id": "routes/gallery",
+        "parentId": "root",
+        "file": "routes/gallery.tsx",
+        "path": "gallery"
+      },
+      "routes/about": {
+        "id": "routes/about",
+        "parentId": "root",
+        "file": "routes/about.tsx",
+        "path": "about"
+      },
+      "routes/faq": {
+        "id": "routes/faq",
+        "parentId": "root",
+        "file": "routes/faq.tsx",
+        "path": "faq"
+      },
+      "routes/contact": {
+        "id": "routes/contact",
+        "parentId": "root",
+        "file": "routes/contact.tsx",
+        "path": "contact"
+      },
+      "routes/login": {
+        "id": "routes/login",
+        "parentId": "root",
+        "file": "routes/login.tsx",
+        "path": "login"
+      },
+      "routes/api.upload-image": {
+        "id": "routes/api.upload-image",
+        "parentId": "root",
+        "file": "routes/api.upload-image.tsx",
+        "path": "api/upload-image"
+      },
+      "routes/admin": {
+        "id": "routes/admin",
+        "parentId": "root",
+        "file": "routes/admin.tsx"
+      },
+      "routes/admin._index": {
+        "id": "routes/admin._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin._index.tsx",
+        "path": "admin"
+      },
+      "routes/admin.logout": {
+        "id": "routes/admin.logout",
+        "parentId": "routes/admin",
+        "file": "routes/admin.logout.tsx",
+        "path": "admin/logout"
+      },
+      "routes/admin.trips._index": {
+        "id": "routes/admin.trips._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.trips._index.tsx",
+        "path": "admin/trips"
+      },
+      "routes/admin.trips.new": {
+        "id": "routes/admin.trips.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.trips.new.tsx",
+        "path": "admin/trips/new"
+      },
+      "routes/admin.trips.$id.edit": {
+        "id": "routes/admin.trips.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.trips.$id.edit.tsx",
+        "path": "admin/trips/:id/edit"
+      },
+      "routes/admin.expeditions._index": {
+        "id": "routes/admin.expeditions._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.expeditions._index.tsx",
+        "path": "admin/expeditions"
+      },
+      "routes/admin.expeditions.new": {
+        "id": "routes/admin.expeditions.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.expeditions.new.tsx",
+        "path": "admin/expeditions/new"
+      },
+      "routes/admin.expeditions.$id.edit": {
+        "id": "routes/admin.expeditions.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.expeditions.$id.edit.tsx",
+        "path": "admin/expeditions/:id/edit"
+      },
+      "routes/admin.tours._index": {
+        "id": "routes/admin.tours._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.tours._index.tsx",
+        "path": "admin/tours"
+      },
+      "routes/admin.tours.new": {
+        "id": "routes/admin.tours.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.tours.new.tsx",
+        "path": "admin/tours/new"
+      },
+      "routes/admin.tours.$id.edit": {
+        "id": "routes/admin.tours.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.tours.$id.edit.tsx",
+        "path": "admin/tours/:id/edit"
+      },
+      "routes/admin.blog._index": {
+        "id": "routes/admin.blog._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.blog._index.tsx",
+        "path": "admin/blog"
+      },
+      "routes/admin.blog.new": {
+        "id": "routes/admin.blog.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.blog.new.tsx",
+        "path": "admin/blog/new"
+      },
+      "routes/admin.blog.$id.edit": {
+        "id": "routes/admin.blog.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.blog.$id.edit.tsx",
+        "path": "admin/blog/:id/edit"
+      },
+      "routes/admin.testimonials._index": {
+        "id": "routes/admin.testimonials._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.testimonials._index.tsx",
+        "path": "admin/testimonials"
+      },
+      "routes/admin.testimonials.new": {
+        "id": "routes/admin.testimonials.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.testimonials.new.tsx",
+        "path": "admin/testimonials/new"
+      },
+      "routes/admin.testimonials.$id.edit": {
+        "id": "routes/admin.testimonials.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.testimonials.$id.edit.tsx",
+        "path": "admin/testimonials/:id/edit"
+      },
+      "routes/admin.team._index": {
+        "id": "routes/admin.team._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.team._index.tsx",
+        "path": "admin/team"
+      },
+      "routes/admin.team.new": {
+        "id": "routes/admin.team.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.team.new.tsx",
+        "path": "admin/team/new"
+      },
+      "routes/admin.team.$id.edit": {
+        "id": "routes/admin.team.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.team.$id.edit.tsx",
+        "path": "admin/team/:id/edit"
+      },
+      "routes/admin.faqs._index": {
+        "id": "routes/admin.faqs._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.faqs._index.tsx",
+        "path": "admin/faqs"
+      },
+      "routes/admin.faqs.new": {
+        "id": "routes/admin.faqs.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.faqs.new.tsx",
+        "path": "admin/faqs/new"
+      },
+      "routes/admin.faqs.$id.edit": {
+        "id": "routes/admin.faqs.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.faqs.$id.edit.tsx",
+        "path": "admin/faqs/:id/edit"
+      },
+      "routes/admin.destinations._index": {
+        "id": "routes/admin.destinations._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.destinations._index.tsx",
+        "path": "admin/destinations"
+      },
+      "routes/admin.destinations.new": {
+        "id": "routes/admin.destinations.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.destinations.new.tsx",
+        "path": "admin/destinations/new"
+      },
+      "routes/admin.destinations.$id.edit": {
+        "id": "routes/admin.destinations.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.destinations.$id.edit.tsx",
+        "path": "admin/destinations/:id/edit"
+      },
+      "routes/admin.gallery._index": {
+        "id": "routes/admin.gallery._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.gallery._index.tsx",
+        "path": "admin/gallery"
+      },
+      "routes/admin.gallery.images.new": {
+        "id": "routes/admin.gallery.images.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.gallery.images.new.tsx",
+        "path": "admin/gallery/images/new"
+      },
+      "routes/admin.gallery.videos.new": {
+        "id": "routes/admin.gallery.videos.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.gallery.videos.new.tsx",
+        "path": "admin/gallery/videos/new"
+      },
+      "routes/admin.gallery.$id.edit": {
+        "id": "routes/admin.gallery.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.gallery.$id.edit.tsx",
+        "path": "admin/gallery/:id/edit"
+      },
+      "routes/admin.inquiries": {
+        "id": "routes/admin.inquiries",
+        "parentId": "routes/admin",
+        "file": "routes/admin.inquiries.tsx",
+        "path": "admin/inquiries"
+      },
+      "routes/admin.settings": {
+        "id": "routes/admin.settings",
+        "parentId": "routes/admin",
+        "file": "routes/admin.settings.tsx",
+        "path": "admin/settings"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "splitRouteModules": true,
+    "subResourceIntegrity": false,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "routes/_index.tsx",
+            "index": true
+          },
+          {
+            "file": "routes/trips._index.tsx",
+            "path": "trips"
+          },
+          {
+            "file": "routes/trips.$slug.tsx",
+            "path": "trips/:slug"
+          },
+          {
+            "file": "routes/expeditions._index.tsx",
+            "path": "expeditions"
+          },
+          {
+            "file": "routes/expeditions.$slug.tsx",
+            "path": "expeditions/:slug"
+          },
+          {
+            "file": "routes/tours._index.tsx",
+            "path": "tours"
+          },
+          {
+            "file": "routes/tours.$slug.tsx",
+            "path": "tours/:slug"
+          },
+          {
+            "file": "routes/blog._index.tsx",
+            "path": "blog"
+          },
+          {
+            "file": "routes/blog.$slug.tsx",
+            "path": "blog/:slug"
+          },
+          {
+            "file": "routes/gallery.tsx",
+            "path": "gallery"
+          },
+          {
+            "file": "routes/about.tsx",
+            "path": "about"
+          },
+          {
+            "file": "routes/faq.tsx",
+            "path": "faq"
+          },
+          {
+            "file": "routes/contact.tsx",
+            "path": "contact"
+          },
+          {
+            "file": "routes/login.tsx",
+            "path": "login"
+          },
+          {
+            "file": "routes/api.upload-image.tsx",
+            "path": "api/upload-image"
+          },
+          {
+            "file": "routes/admin.tsx",
+            "children": [
+              {
+                "file": "routes/admin._index.tsx",
+                "path": "admin"
+              },
+              {
+                "file": "routes/admin.logout.tsx",
+                "path": "admin/logout"
+              },
+              {
+                "file": "routes/admin.trips._index.tsx",
+                "path": "admin/trips"
+              },
+              {
+                "file": "routes/admin.trips.new.tsx",
+                "path": "admin/trips/new"
+              },
+              {
+                "file": "routes/admin.trips.$id.edit.tsx",
+                "path": "admin/trips/:id/edit"
+              },
+              {
+                "file": "routes/admin.expeditions._index.tsx",
+                "path": "admin/expeditions"
+              },
+              {
+                "file": "routes/admin.expeditions.new.tsx",
+                "path": "admin/expeditions/new"
+              },
+              {
+                "file": "routes/admin.expeditions.$id.edit.tsx",
+                "path": "admin/expeditions/:id/edit"
+              },
+              {
+                "file": "routes/admin.tours._index.tsx",
+                "path": "admin/tours"
+              },
+              {
+                "file": "routes/admin.tours.new.tsx",
+                "path": "admin/tours/new"
+              },
+              {
+                "file": "routes/admin.tours.$id.edit.tsx",
+                "path": "admin/tours/:id/edit"
+              },
+              {
+                "file": "routes/admin.blog._index.tsx",
+                "path": "admin/blog"
+              },
+              {
+                "file": "routes/admin.blog.new.tsx",
+                "path": "admin/blog/new"
+              },
+              {
+                "file": "routes/admin.blog.$id.edit.tsx",
+                "path": "admin/blog/:id/edit"
+              },
+              {
+                "file": "routes/admin.testimonials._index.tsx",
+                "path": "admin/testimonials"
+              },
+              {
+                "file": "routes/admin.testimonials.new.tsx",
+                "path": "admin/testimonials/new"
+              },
+              {
+                "file": "routes/admin.testimonials.$id.edit.tsx",
+                "path": "admin/testimonials/:id/edit"
+              },
+              {
+                "file": "routes/admin.team._index.tsx",
+                "path": "admin/team"
+              },
+              {
+                "file": "routes/admin.team.new.tsx",
+                "path": "admin/team/new"
+              },
+              {
+                "file": "routes/admin.team.$id.edit.tsx",
+                "path": "admin/team/:id/edit"
+              },
+              {
+                "file": "routes/admin.faqs._index.tsx",
+                "path": "admin/faqs"
+              },
+              {
+                "file": "routes/admin.faqs.new.tsx",
+                "path": "admin/faqs/new"
+              },
+              {
+                "file": "routes/admin.faqs.$id.edit.tsx",
+                "path": "admin/faqs/:id/edit"
+              },
+              {
+                "file": "routes/admin.destinations._index.tsx",
+                "path": "admin/destinations"
+              },
+              {
+                "file": "routes/admin.destinations.new.tsx",
+                "path": "admin/destinations/new"
+              },
+              {
+                "file": "routes/admin.destinations.$id.edit.tsx",
+                "path": "admin/destinations/:id/edit"
+              },
+              {
+                "file": "routes/admin.gallery._index.tsx",
+                "path": "admin/gallery"
+              },
+              {
+                "file": "routes/admin.gallery.images.new.tsx",
+                "path": "admin/gallery/images/new"
+              },
+              {
+                "file": "routes/admin.gallery.videos.new.tsx",
+                "path": "admin/gallery/videos/new"
+              },
+              {
+                "file": "routes/admin.gallery.$id.edit.tsx",
+                "path": "admin/gallery/:id/edit"
+              },
+              {
+                "file": "routes/admin.inquiries.tsx",
+                "path": "admin/inquiries"
+              },
+              {
+                "file": "routes/admin.settings.tsx",
+                "path": "admin/settings"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}

@@ -1,15 +1,17 @@
-import { Form, redirect } from "react-router";
+import { Form, redirect, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString } from "~/lib/admin";
+import { ImageInput } from "~/components/ImageInput";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
-  const title = getString(formData, "title");
   const image = getString(formData, "image");
+  const title = getString(formData, "title");
   const thumbnail = getOptionalString(formData, "thumbnail");
   const category = getString(formData, "category") as
     | "TREKS"
@@ -20,8 +22,12 @@ export async function action({ request }: ActionFunctionArgs) {
   const alt = getString(formData, "alt");
   const featured = formData.get("featured") === "on";
 
-  if (!title || !image || !category || !alt) {
-    return { error: "Title, image URL, category, and alt text are required." };
+  if (!title || !category || !alt) {
+    return { error: "Title, category, and alt text are required." };
+  }
+
+  if (!image) {
+    return { error: "Image URL is required." };
   }
 
   await prisma.galleryImage.create({
@@ -39,9 +45,18 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export default function AdminGalleryImageNew() {
+  const actionData = useActionData<typeof action>();
+  const [uploading, setUploading] = useState(false);
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-white mb-8">Add Gallery Image</h1>
+
+      {actionData?.error && (
+        <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-100">
+          {actionData.error}
+        </div>
+      )}
 
       <Form
         method="post"
@@ -60,33 +75,20 @@ export default function AdminGalleryImageNew() {
           />
         </div>
 
-        <div>
-          <label htmlFor="image" className="block text-sm text-gray-400 mb-1">
-            Image URL
-          </label>
-          <input
-            id="image"
-            name="image"
-            type="url"
-            required
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
-          />
-        </div>
+        <ImageInput
+          name="image"
+          label="Image"
+          folder="gallery"
+          required
+          onLoadingChange={setUploading}
+        />
 
-        <div>
-          <label
-            htmlFor="thumbnail"
-            className="block text-sm text-gray-400 mb-1"
-          >
-            Thumbnail URL (optional)
-          </label>
-          <input
-            id="thumbnail"
-            name="thumbnail"
-            type="url"
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
-          />
-        </div>
+        <ImageInput
+          name="thumbnail"
+          label="Thumbnail URL (optional)"
+          folder="gallery"
+          onLoadingChange={setUploading}
+        />
 
         <div>
           <label
@@ -137,7 +139,8 @@ export default function AdminGalleryImageNew() {
         <div className="flex items-center gap-3 pt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+            disabled={uploading}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Image
           </button>

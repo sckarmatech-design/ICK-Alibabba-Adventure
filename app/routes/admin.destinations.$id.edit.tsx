@@ -1,8 +1,10 @@
 import { redirect, Form, Link, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getNumber, getArray } from "~/lib/admin";
+import { ImageInput } from "~/components/ImageInput";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -39,6 +41,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function AdminDestinationsEdit() {
   const destination = useLoaderData<typeof loader>();
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div>
@@ -52,9 +55,15 @@ export default function AdminDestinationsEdit() {
         </Link>
       </div>
 
-      <Form method="post" className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6">
+      <Form
+        method="post"
+        className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6"
+      >
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Name
           </label>
           <input
@@ -68,7 +77,10 @@ export default function AdminDestinationsEdit() {
         </div>
 
         <div>
-          <label htmlFor="region" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="region"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Region
           </label>
           <input
@@ -82,21 +94,21 @@ export default function AdminDestinationsEdit() {
         </div>
 
         <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-1">
-            Image URL
-          </label>
-          <input
-            id="image"
+          <ImageInput
             name="image"
-            type="url"
-            required
+            label="Image"
             defaultValue={destination.image}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
+            folder="destinations"
+            required
+            onLoadingChange={setUploading}
           />
         </div>
 
         <div>
-          <label htmlFor="tripCount" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="tripCount"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Trip Count
           </label>
           <input
@@ -109,7 +121,10 @@ export default function AdminDestinationsEdit() {
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="description"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Description
           </label>
           <textarea
@@ -123,9 +138,14 @@ export default function AdminDestinationsEdit() {
         </div>
 
         <div>
-          <label htmlFor="highlights" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="highlights"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Highlights
-            <span className="text-gray-500 font-normal ml-2">(one per line)</span>
+            <span className="text-gray-500 font-normal ml-2">
+              (one per line)
+            </span>
           </label>
           <textarea
             id="highlights"
@@ -140,7 +160,8 @@ export default function AdminDestinationsEdit() {
           <div className="flex items-center gap-4">
             <button
               type="submit"
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+              disabled={uploading}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50"
             >
               Save Changes
             </button>

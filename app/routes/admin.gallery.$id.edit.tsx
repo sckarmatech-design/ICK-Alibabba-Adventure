@@ -1,8 +1,11 @@
 import { Form, redirect, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString } from "~/lib/admin";
+import { getYoutubeThumbnailUrl } from "~/lib/video";
+import { ImageInput } from "~/components/ImageInput";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -68,7 +71,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
     const featured = formData.get("featured") === "on";
 
     if (!title || !imageUrl || !category || !alt) {
-      return { error: "Title, image URL, category, and alt text are required." };
+      return {
+        error: "Title, image URL, category, and alt text are required.",
+      };
     }
 
     await prisma.galleryImage.update({
@@ -89,11 +94,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   if (video) {
     const title = getString(formData, "title");
     const videoUrl = getString(formData, "videoUrl");
-    const thumbnail = getOptionalString(formData, "thumbnail");
+    let thumbnail = getOptionalString(formData, "thumbnail");
     const alt = getString(formData, "alt");
 
     if (!title || !videoUrl || !alt) {
       return { error: "Title, video URL, and alt text are required." };
+    }
+
+    if (!thumbnail) {
+      thumbnail = getYoutubeThumbnailUrl(videoUrl) ?? undefined;
     }
 
     await prisma.galleryVideo.update({
@@ -114,6 +123,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function AdminGalleryEdit() {
   const { kind, item } = useLoaderData<typeof loader>();
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div>
@@ -141,38 +151,22 @@ export default function AdminGalleryEdit() {
 
         {kind === "image" ? (
           <>
-            <div>
-              <label
-                htmlFor="image"
-                className="block text-sm text-gray-400 mb-1"
-              >
-                Image URL
-              </label>
-              <input
-                id="image"
-                name="image"
-                type="url"
-                required
-                defaultValue={item.image}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
-              />
-            </div>
+            <ImageInput
+              name="image"
+              label="Image"
+              defaultValue={item.image}
+              folder="gallery"
+              required
+              onLoadingChange={setUploading}
+            />
 
-            <div>
-              <label
-                htmlFor="thumbnail"
-                className="block text-sm text-gray-400 mb-1"
-              >
-                Thumbnail URL (optional)
-              </label>
-              <input
-                id="thumbnail"
-                name="thumbnail"
-                type="url"
-                defaultValue={item.thumbnail ?? ""}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
-              />
-            </div>
+            <ImageInput
+              name="thumbnail"
+              label="Thumbnail URL (optional)"
+              defaultValue={item.thumbnail ?? ""}
+              folder="gallery"
+              onLoadingChange={setUploading}
+            />
 
             <div>
               <label
@@ -216,7 +210,7 @@ export default function AdminGalleryEdit() {
                 htmlFor="videoUrl"
                 className="block text-sm text-gray-400 mb-1"
               >
-                YouTube Video URL
+                Video URL
               </label>
               <input
                 id="videoUrl"
@@ -224,25 +218,22 @@ export default function AdminGalleryEdit() {
                 type="url"
                 required
                 defaultValue={item.videoUrl}
+                placeholder="https://..."
                 className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
               />
+              <p className="mt-1 text-xs text-gray-500">
+                Auto-thumbnail only works for YouTube links — for other
+                platforms, please upload a thumbnail image below.
+              </p>
             </div>
 
-            <div>
-              <label
-                htmlFor="thumbnail"
-                className="block text-sm text-gray-400 mb-1"
-              >
-                Thumbnail URL (optional)
-              </label>
-              <input
-                id="thumbnail"
-                name="thumbnail"
-                type="url"
-                defaultValue={item.thumbnail ?? ""}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
-              />
-            </div>
+            <ImageInput
+              name="thumbnail"
+              label="Thumbnail (optional)"
+              defaultValue={item.thumbnail ?? ""}
+              folder="gallery"
+              onLoadingChange={setUploading}
+            />
           </>
         )}
 
@@ -263,7 +254,8 @@ export default function AdminGalleryEdit() {
         <div className="flex items-center gap-3 pt-4">
           <button
             type="submit"
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+            disabled={uploading}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Changes
           </button>

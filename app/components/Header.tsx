@@ -13,7 +13,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-b from-[#0a0f1a] to-[#0a0f1a]/95 backdrop-blur-md border-b border-[#1f2937]">
+    <header className="sticky top-0 z-50 bg-linear-to-b from-[#0a0f1a] to-[#0a0f1a]/95 backdrop-blur-md border-b border-[#1f2937]">
       {/* Top Info Bar */}
       <div className="hidden md:block bg-[#111827] text-sm text-[#9ca3af] py-2 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">

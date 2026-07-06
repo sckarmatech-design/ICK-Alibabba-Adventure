@@ -178,6 +178,7 @@ export function mapBlogPostFromPrisma(post: PrismaBlogPost): BlogPost {
     content: post.content,
     image: post.image,
     readingTime: post.readingTime,
+    videoUrl: post.videoUrl ?? undefined,
   };
 }
 
@@ -213,6 +214,7 @@ export function mapGalleryVideoFromPrisma(
     id: video.id,
     title: video.title,
     youtubeId,
+    videoUrl: video.videoUrl,
     thumbnail: video.thumbnail ?? "",
     alt: video.alt,
   };

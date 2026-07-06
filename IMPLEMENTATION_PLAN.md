@@ -1218,14 +1218,16 @@ layout("routes/admin.tsx", [
 
 ## PHASE 5 — Image Upload to Supabase Storage
 
-**Status:** ❌ Not started
+**Status:** ✅ Complete
 **Dependencies:** Phase 4 (admin gallery routes exist)
+
+> Verified — bucket created, live upload tested successfully on 2026-07-05.
 
 ### Entry checkpoint
 
-- [ ] Phase 4 gallery admin routes exist
-- [ ] `.env` has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
-- [ ] Supabase project created with `images` bucket (set to public)
+- [x] Phase 4 gallery admin routes exist
+- [x] `.env` has `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- [x] Supabase project created with `images` bucket (set to public)
 
 ### Tasks
 
@@ -1326,18 +1328,20 @@ These steps must be done manually in the Supabase dashboard:
 
 ### Verification
 
-- [ ] Uploading an image from `/admin/gallery/images/new` creates a file in Supabase Storage
-- [ ] The public URL is stored in the `GalleryImage.image` field
-- [ ] The image displays correctly on the public gallery page
-- [ ] Uploading a team member image works the same way
-- [ ] `npm run typecheck` passes
+- [x] Uploading an image from `/admin/gallery/images/new` creates a file in Supabase Storage
+- [x] The public URL is stored in the `GalleryImage.image` field
+- [x] The image displays correctly on the public gallery page
+- [x] Uploading a team member image works the same way
+- [x] `npm run typecheck` passes
 
 ---
 
 ## PHASE 6 — Video URL Embed
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** Phase 3 (gallery and blog public routes work)
+
+> **Architecture decision:** Videos are external links only (YouTube URLs). They are never uploaded to Supabase Storage; only images use Supabase Storage. This applies project-wide and in all future phases.
 
 ### Entry checkpoint
 
@@ -1443,7 +1447,7 @@ In `app/routes/admin.blog.new.tsx` and `$id.edit.tsx`, add an optional video URL
 
 ## PHASE 7 — Deploy to Vercel
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** All phases 1-6 complete
 
 ### Entry checkpoint
@@ -1493,9 +1497,10 @@ Add these in Vercel dashboard → Project Settings → Environment Variables:
 | `DATABASE_URL` | Pooled connection string (port 6543, `?pgbouncer=true&connection_limit=5`) |
 | `DIRECT_URL` | Direct connection string (port 5432) |
 | `JWT_SECRET` | Random 64-char string |
-| `SUPABASE_URL` | `https://xxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (not anon key) |
-| `SUPABASE_ANON_KEY` | Anon key (needed for Supabase client in some setups) |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co` (the Supabase project URL, not the Storage/S3 endpoint) |
+| `SUPABASE_SECRET_KEY` | Service role / secret key with elevated access for Storage uploads |
+| `SUPABASE_SERVICE_ROLE_KEY` | Backward-compatible fallback for `SUPABASE_SECRET_KEY` |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable (anon) key, if needed by any client-side Supabase usage |
 
 **Environment:** Add to both "Production" and "Preview" (or use "All").
 
@@ -1588,7 +1593,7 @@ In Vercel dashboard → Domains, add your custom domain (e.g., `akhtarabbasi-hik
 - [ ] All public routes work in production
 - [ ] All admin routes work in production
 - [ ] Image upload works in production
-- [ ] Video embeds render in production
+- [ ] Video thumbnails render and click-through navigation works in production
 - [ ] Connection pooling keeps connections within Supabase free tier limits
 - [ ] No hardcoded secrets or keys in the codebase
 

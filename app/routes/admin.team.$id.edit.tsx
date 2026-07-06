@@ -1,8 +1,16 @@
-import { redirect, Form, Link, useLoaderData } from "react-router";
+import {
+  redirect,
+  Form,
+  Link,
+  useLoaderData,
+  useActionData,
+} from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
+import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString, getNumber } from "~/lib/admin";
+import { ImageInput } from "~/components/ImageInput";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -13,7 +21,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
   return member;
 }
 
-export async function action({ params, request }: ActionFunctionArgs) {
+export async function action({
+  params,
+  request,
+}: ActionFunctionArgs): Promise<{ error: string } | Response> {
   await requireAdmin(request);
   const formData = await request.formData();
 
@@ -22,13 +33,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect("/admin/team");
   }
 
+  const image = getOptionalString(formData, "image");
+
   await prisma.teamMember.update({
     where: { id: params.id },
     data: {
       name: getString(formData, "name"),
       role: getString(formData, "role"),
       bio: getString(formData, "bio"),
-      image: getOptionalString(formData, "image"),
+      image,
       specialization: getOptionalString(formData, "specialization"),
       experience: getOptionalString(formData, "experience"),
       sortOrder: getNumber(formData, "sortOrder"),
@@ -40,6 +53,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
 export default function AdminTeamEdit() {
   const member = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const [uploading, setUploading] = useState(false);
 
   return (
     <div>
@@ -53,9 +68,21 @@ export default function AdminTeamEdit() {
         </Link>
       </div>
 
-      <Form method="post" className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6">
+      {actionData?.error && (
+        <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-100">
+          {actionData.error}
+        </div>
+      )}
+
+      <Form
+        method="post"
+        className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6"
+      >
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="name"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Name
           </label>
           <input
@@ -69,7 +96,10 @@ export default function AdminTeamEdit() {
         </div>
 
         <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="role"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Role
           </label>
           <input
@@ -83,7 +113,10 @@ export default function AdminTeamEdit() {
         </div>
 
         <div>
-          <label htmlFor="bio" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="bio"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Bio
           </label>
           <textarea
@@ -96,21 +129,19 @@ export default function AdminTeamEdit() {
           />
         </div>
 
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-300 mb-1">
-            Image URL (optional)
-          </label>
-          <input
-            id="image"
-            name="image"
-            type="url"
-            defaultValue={member.image || ""}
-            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
-          />
-        </div>
+        <ImageInput
+          name="image"
+          label="Image (optional)"
+          defaultValue={member.image}
+          folder="team"
+          onLoadingChange={setUploading}
+        />
 
         <div>
-          <label htmlFor="specialization" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="specialization"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Specialization (optional)
           </label>
           <input
@@ -123,7 +154,10 @@ export default function AdminTeamEdit() {
         </div>
 
         <div>
-          <label htmlFor="experience" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="experience"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Experience (optional)
           </label>
           <input
@@ -136,7 +170,10 @@ export default function AdminTeamEdit() {
         </div>
 
         <div>
-          <label htmlFor="sortOrder" className="block text-sm font-medium text-gray-300 mb-1">
+          <label
+            htmlFor="sortOrder"
+            className="block text-sm font-medium text-gray-300 mb-1"
+          >
             Sort Order
           </label>
           <input
@@ -152,7 +189,8 @@ export default function AdminTeamEdit() {
           <div className="flex items-center gap-4">
             <button
               type="submit"
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition"
+              disabled={uploading}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Save Changes
             </button>
