@@ -1447,7 +1447,7 @@ In `app/routes/admin.blog.new.tsx` and `$id.edit.tsx`, add an optional video URL
 
 ## PHASE 7 — Deploy to Vercel
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** All phases 1-6 complete
 
 ### Entry checkpoint
@@ -1497,9 +1497,10 @@ Add these in Vercel dashboard → Project Settings → Environment Variables:
 | `DATABASE_URL` | Pooled connection string (port 6543, `?pgbouncer=true&connection_limit=5`) |
 | `DIRECT_URL` | Direct connection string (port 5432) |
 | `JWT_SECRET` | Random 64-char string |
-| `SUPABASE_URL` | `https://xxx.supabase.co` |
-| `SUPABASE_SERVICE_ROLE_KEY` | Service role key (not anon key) |
-| `SUPABASE_ANON_KEY` | Anon key (needed for Supabase client in some setups) |
+| `SUPABASE_URL` | `https://<project-ref>.supabase.co` (the Supabase project URL, not the Storage/S3 endpoint) |
+| `SUPABASE_SECRET_KEY` | Service role / secret key with elevated access for Storage uploads |
+| `SUPABASE_SERVICE_ROLE_KEY` | Backward-compatible fallback for `SUPABASE_SECRET_KEY` |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable (anon) key, if needed by any client-side Supabase usage |
 
 **Environment:** Add to both "Production" and "Preview" (or use "All").
 
@@ -1592,7 +1593,7 @@ In Vercel dashboard → Domains, add your custom domain (e.g., `akhtarabbasi-hik
 - [ ] All public routes work in production
 - [ ] All admin routes work in production
 - [ ] Image upload works in production
-- [ ] Video embeds render in production
+- [ ] Video thumbnails render and click-through navigation works in production
 - [ ] Connection pooling keeps connections within Supabase free tier limits
 - [ ] No hardcoded secrets or keys in the codebase
 
