@@ -243,8 +243,13 @@ export default function AdminBlogEdit() {
               name="videoUrl"
               type="url"
               defaultValue={post.videoUrl ?? ""}
+              placeholder="https://..."
               className={inputClass}
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Auto-thumbnail only works for YouTube links — for other platforms,
+              the blog post's hero image will be used as the video thumbnail.
+            </p>
           </div>
         </div>
 

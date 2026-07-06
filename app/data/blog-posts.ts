@@ -10,6 +10,7 @@ export interface BlogPost {
   content: string;
   image: string;
   readingTime: number; // minutes
+  videoUrl?: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -55,7 +56,8 @@ Invest in quality gear:
 - Trekking poles to reduce knee strain
 
 With proper preparation, you'll be ready to tackle this incredible adventure!`,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
     readingTime: 7,
   },
   {
@@ -94,7 +96,8 @@ Life at high altitude presents natural challenges that build resilience:
 - Clean air and water
 
 Visit Hunza Valley to experience this unique lifestyle firsthand. Our tours provide genuine interactions with local families and insights into their traditions.`,
-    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
     readingTime: 5,
   },
   {
@@ -153,7 +156,8 @@ Mountain weather changes rapidly:
 - Carry a satellite communicator on high-altitude treks
 
 With these precautions and our experienced guides, you'll have a safe and unforgettable mountain adventure.`,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
     readingTime: 8,
   },
   {
@@ -203,7 +207,8 @@ Limited trekking due to:
 - Only lower-altitude accessible areas
 
 Plan your trek based on season, difficulty level, and weather preferences. Contact us for season-specific recommendations.`,
-    image: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
     readingTime: 6,
   },
   {
@@ -253,8 +258,8 @@ Plan your trek based on season, difficulty level, and weather preferences. Conta
 - Insurance documents
 
 With this checklist, you'll be fully prepared for your mountain adventure!`,
-    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
     readingTime: 6,
   },
 ];
-

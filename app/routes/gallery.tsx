@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLoaderData } from "react-router";
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
+import { Play } from "lucide-react";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import { SectionTitle } from "~/components/SectionTitle";
 import { Lightbox } from "~/components/Lightbox";
@@ -134,26 +135,20 @@ export default function Gallery() {
             {videos.map((video) => (
               <a
                 key={video.id}
-                href={`https://www.youtube.com/watch?v=${video.youtubeId}`}
+                href={video.videoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative overflow-hidden rounded-lg group h-56 bg-[#111827] block"
+                className="relative aspect-video block rounded-lg overflow-hidden group bg-[#111827]"
               >
                 <img
-                  src={video.thumbnail}
+                  src={video.thumbnail || "/images/video-placeholder.jpg"}
                   alt={video.alt}
                   className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/50 group-hover:bg-black/70 transition flex items-center justify-center">
-                  <div className="w-16 h-16 bg-[#16a34a] rounded-full flex items-center justify-center group-hover:bg-[#15803d] transition">
-                    <svg
-                      className="w-8 h-8 text-white ml-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M6.3 2.841A1.5 1.5 0 004 4.11V15.89a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z" />
-                    </svg>
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center pl-1">
+                    <Play className="w-7 h-7 text-gray-900 fill-current" />
                   </div>
                 </div>
               </a>

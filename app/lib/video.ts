@@ -1,40 +1,13 @@
-// Architecture decision: Videos are external links only (YouTube URLs).
+// Architecture decision: Videos are external links only.
 // They are never uploaded to Supabase Storage; only images use Supabase Storage.
-
-export function getVideoEmbedUrl(url: string): string | null {
-  if (!url) return null;
-
-  const videoId = extractYoutubeId(url);
-  if (videoId) {
-    return `https://www.youtube.com/embed/${videoId}`;
-  }
-
-  return null;
-}
+// Videos are displayed as click-through thumbnail cards, not inline embeds.
 
 export function getYoutubeThumbnailUrl(url: string): string | null {
-  if (!url) return null;
-
-  const videoId = extractYoutubeId(url);
-  if (videoId) {
-    return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+  const ytMatch = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+  );
+  if (ytMatch) {
+    return `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
   }
-
-  return null;
-}
-
-function extractYoutubeId(url: string): string | null {
-  const patterns = [
-    /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,
-    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,
-    /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = url.match(pattern);
-    if (match) return match[1];
-  }
-
   return null;
 }

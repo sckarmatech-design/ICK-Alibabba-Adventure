@@ -208,8 +208,12 @@ export default function AdminBlogNew() {
               name="videoUrl"
               type="url"
               className={inputClass}
-              placeholder="https://youtube.com/..."
+              placeholder="https://..."
             />
+            <p className="mt-1 text-xs text-gray-500">
+              Auto-thumbnail only works for YouTube links — for other platforms,
+              the blog post's hero image will be used as the video thumbnail.
+            </p>
           </div>
         </div>
 

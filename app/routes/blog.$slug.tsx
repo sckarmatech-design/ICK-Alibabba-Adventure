@@ -2,6 +2,7 @@ import { useLoaderData } from "react-router";
 import type { LoaderFunctionArgs } from "react-router";
 import type { MetaFunction } from "react-router";
 import { useState, useEffect } from "react";
+import { Play } from "lucide-react";
 import { Breadcrumb } from "~/components/Breadcrumb";
 import prisma from "~/lib/prisma.server";
 import { mapBlogPostFromPrisma } from "~/lib/mappers";
@@ -125,6 +126,31 @@ export default function BlogPost() {
             );
           })}
         </div>
+
+        {/* Video */}
+        {post.videoUrl && (
+          <div className="mt-12">
+            <h4 className="text-white font-semibold mb-4">Watch the video</h4>
+            <a
+              href={post.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative aspect-video block rounded-lg overflow-hidden group bg-[#111827]"
+            >
+              <img
+                src={post.image || "/images/video-placeholder.jpg"}
+                alt={post.title}
+                className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center pl-1">
+                  <Play className="w-7 h-7 text-gray-900 fill-current" />
+                </div>
+              </div>
+            </a>
+          </div>
+        )}
 
         {/* Social Share */}
         <div className="mt-12 pt-8 border-t border-[#1f2937]">
