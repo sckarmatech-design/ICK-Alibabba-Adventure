@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, MapPin, Mail, Phone } from "lucide-react";
 import type { CompanyInfo, NavItem } from "~/data/nav";
 
 interface HeaderProps {
@@ -19,14 +19,14 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex gap-6">
             <div className="flex items-center gap-2">
-              <span>📍</span>
+              <MapPin size={14} className="text-[#16a34a]" />
               <span>{companyInfo.location}</span>
             </div>
             <a
               href={`mailto:${companyInfo.email}`}
               className="flex items-center gap-2 hover:text-[#16a34a] transition"
             >
-              <span>✉️</span>
+              <Mail size={14} className="text-[#16a34a]" />
               <span>{companyInfo.email}</span>
             </a>
           </div>
@@ -34,7 +34,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             href={`tel:${companyInfo.phone}`}
             className="flex items-center gap-2 hover:text-[#16a34a] transition"
           >
-            <span>📞</span>
+            <Phone size={14} className="text-[#16a34a]" />
             <span>{companyInfo.phone}</span>
           </a>
         </div>
