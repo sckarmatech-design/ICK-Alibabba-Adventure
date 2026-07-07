@@ -39,15 +39,15 @@ export const trips: Trip[] = [
     duration: "17 Days",
     difficulty: "Challenging",
     bestSeason: "June – September",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1632133915653-8ded5c72e329?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1677103036843-df9e5ad74eea?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-a_beihLZ2Eo?w=800&h=600&fit=crop",
     ],
     highlights: ["Baltoro Glacier", "Concordia", "K2 Views", "Alpine Lakes", "Expert Guides"],
     overview:
-      "Experience one of the world's most iconic mountain treks. The K2 Base Camp Trek takes you through stunning alpine landscapes, across the legendary Baltoro Glacier, and to the base of K2, the world's second-highest mountain. This challenging trek is perfect for experienced hikers seeking an unforgettable adventure in the Karakoram. Walk among crystalline glaciers, camp beneath towering peaks, and achieve views that few people on Earth have experienced.",
+      "Trek deep into the heart of the Karakoram to the foot of K2, the world's second-highest mountain. Starting from Askole, the last inhabited village, the trail follows the Braldu River, crosses the mighty Baltoro Glacier, and reaches Concordia — the junction of the greatest concentration of high peaks on Earth. Marvel at K2, Broad Peak, and the Gasherbrum massif from camps on glacial moraine.",
     itinerary: [
       {
         day: 1,
@@ -129,15 +129,15 @@ export const trips: Trip[] = [
     region: "Nanga Parbat",
     duration: "5 Days",
     difficulty: "Moderate",
-    bestSeason: "July – September",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    bestSeason: "May – September",
+    heroImage: "https://images.unsplash.com/photo-a_beihLZ2Eo?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-SWo3ZS-cQ6U?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-nv-HceGCO0A?w=800&h=600&fit=crop",
     ],
     highlights: ["Nanga Parbat Views", "Alpine Meadows", "Mountain Wildlife", "Local Culture"],
     overview:
-      "Trek to the magical Fairy Meadows nestled at the base of Nanga Parbat. Known for its lush green meadows and stunning mountain vistas, this trek offers a perfect blend of adventure and natural beauty. Experience the hospitality of Nanga Parbat Base Camp, surrounded by some of the most dramatic mountain scenery in the world.",
+      "Trek to the legendary Fairy Meadows, a lush alpine plateau at the foot of Nanga Parbat (8,126 m) — the ninth-highest mountain on Earth. The journey begins with a thrilling jeep ride from Raikot Bridge up a winding dirt road to Tato Village, followed by a forested hike through pine and juniper to the meadows. Soak in close-up views of the Rupal Face, one of the world's largest mountain walls.",
     itinerary: [
       {
         day: 1,
@@ -146,8 +146,8 @@ export const trips: Trip[] = [
       },
       {
         day: 2,
-        title: "Gilgit to Bunji",
-        description: "Drive to Bunji (about 3 hours) and begin trek to Astore. Trek through scenic valleys. 5 hours.",
+        title: "Gilgit to Raikot Bridge – Tato Village",
+        description: "Drive to Raikot Bridge (about 1.5 hours), then take a thrilling 4WD jeep up to Tato Village. Begin trek through pine forests toward Fairy Meadows. 4-5 hours.",
       },
       {
         day: 3,
@@ -162,13 +162,13 @@ export const trips: Trip[] = [
       {
         day: 5,
         title: "Return to Gilgit",
-        description: "Trek down and drive back to Gilgit. Arrive evening. Celebration dinner with the team.",
+        description: "Trek down to Tato, jeep ride to Raikot Bridge, and drive back to Gilgit. Arrive evening. Celebration dinner with the team.",
       },
     ],
     faqs: [
       {
         question: "When is the best time to visit?",
-        answer: "July to September offers the best weather and accessible trails. August is peak season with stable weather.",
+        answer: "May to September offers the best weather and accessible trails. July and August are peak season with stable conditions.",
       },
       {
         question: "Is this trek suitable for beginners?",
@@ -187,11 +187,14 @@ export const trips: Trip[] = [
     duration: "3 Days",
     difficulty: "Easy",
     bestSeason: "April – October",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
-    gallery: ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop", "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop"],
+    heroImage: "https://images.unsplash.com/photo-1632133915653-8ded5c72e329?w=1200&h=600&fit=crop",
+    gallery: [
+      "https://images.unsplash.com/photo-1611834473980-502e0a1220d7?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
+    ],
     highlights: ["Alpine Villages", "Panoramic Views", "Apricot Gardens", "Local Hospitality", "Photography"],
     overview:
-      "Explore the picturesque Hunza Valley, known for its terraced fields, fruit gardens, and friendly locals. This easy trek is perfect for families and beginners seeking a relaxing introduction to mountain trekking. Learn about the famous longevity of Hunza people and experience their authentic culture and cuisine.",
+      "Explore the picturesque Hunza Valley, known for its terraced fields, apricot orchards, and famously hospitable people. This easy trek winds through ancient villages like Karimabad, Ganish, and Duikar, with sweeping views of Rakaposhi, Ultar Sar, and the Passu Cones. Learn about the legendary longevity of Hunza's residents and sample their nutrient-rich traditional cuisine.",
     itinerary: [
       {
         day: 1,
@@ -215,51 +218,51 @@ export const trips: Trip[] = [
     endPoint: "Gilgit",
   },
   {
-    slug: "nanda-devi-trek",
+    slug: "rakaposhi-base-camp-trek",
     title: "Rakaposhi Base Camp Trek",
     category: "Multi-Day Trek",
-    region: "Hunza",
+    region: "Nagar Valley",
     duration: "6 Days",
     difficulty: "Moderate",
     bestSeason: "May – September",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1683548503315-bb949615f80b?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1632133915653-8ded5c72e329?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
     ],
-    highlights: ["Rakaposhi Peak", "Mountain Views", "Local Villages", "Alpine Forests"],
+    highlights: ["Rakaposhi Peak", "Mountain Views", "Nagar Villages", "Alpine Forests"],
     overview:
-      "Trek to the base of Rakaposhi, one of the most beautiful peaks in the Karakoram. This moderate trek offers stunning views and excellent photography opportunities.",
+      "Trek to the base of Rakaposhi (7,788 m), one of the most perfectly shaped peaks in the Karakoram. Starting from Gilgit, the route goes through the lush Nagar Valley to the village of Minapin, then climbs through juniper and birch forests to the Rakaposhi Base Camp meadow. The close-up view of Rakaposhi's southeast ridge from camp is among the finest mountain vistas in Pakistan.",
     itinerary: [
       {
         day: 1,
         title: "Gilgit to Minapin",
-        description: "Drive to Minapin and begin trek. Set up camp in beautiful setting.",
+        description: "Drive from Gilgit through Nagar Valley (2 hours) to Minapin village. Fine views of Rakaposhi en route. Overnight at guesthouse.",
       },
       {
         day: 2,
-        title: "Minapin Exploration",
-        description: "Trek around Minapin area. Visit local villages and explore hiking trails.",
+        title: "Minapin to Rakaposhi Base Camp",
+        description: "Trek from Minapin (1,350m) through irrigated fields and juniper forest. Steady climb to the base camp meadow at 3,500m. 5-6 hours.",
       },
       {
         day: 3,
-        title: "Trek to Base Camp",
-        description: "Trek to Rakaposhi Base Camp. Stunning views of the peak.",
+        title: "Base Camp Exploration Day",
+        description: "Full day at base camp. Photography of Rakaposhi's southeast ridge. Optional hike toward the Hapakun Glacier moraine.",
       },
       {
         day: 4,
-        title: "Base Camp Day",
-        description: "Full day at base camp. Photography and relaxation.",
+        title: "Return to Minapin",
+        description: "Descend back through forests and villages to Minapin. Overnight at guesthouse.",
       },
       {
         day: 5,
-        title: "Return Trek",
-        description: "Trek back down to Minapin.",
+        title: "Minapin – Nagar Valley Tour",
+        description: "Explore the Nagar Valley — visit Hopper, Pisan, and the Nagar Fort area. Experience local culture and apricot orchards.",
       },
       {
         day: 6,
         title: "Return to Gilgit",
-        description: "Drive back to Gilgit.",
+        description: "Drive back to Gilgit. Departure or onward transfer.",
       },
     ],
     faqs: [],
