@@ -55,8 +55,10 @@ export default function BlogPost() {
           alt={post.title}
           className="w-full h-full object-cover"
         />
+        {/* Dark image overlay — not a theme color */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 p-8">
+          {/* text-white on dark image overlay stays */}
           <h1 className="text-4xl md:text-5xl font-bold text-white">
             {post.title}
           </h1>
@@ -74,34 +76,34 @@ export default function BlogPost() {
         />
 
         {/* Meta Info */}
-        <div className="flex gap-4 text-[#9ca3af] text-sm my-6">
+        <div className="flex gap-4 text-muted text-sm my-6">
           <span>{post.date}</span>
           <span>•</span>
           <span>By {post.author}</span>
           <span>•</span>
           <span>{post.readingTime} min read</span>
           <span>•</span>
-          <span className="text-[#16a34a]">{post.category}</span>
+          <span className="text-accent">{post.category}</span>
         </div>
 
         {/* Article Body */}
         <div className="prose prose-invert max-w-none">
           <div
             dangerouslySetInnerHTML={{ __html: post.content }}
-            className="space-y-4 text-[#9ca3af] leading-relaxed"
+            className="space-y-4 text-muted leading-relaxed"
           >
             {/* Content rendered as HTML */}
           </div>
         </div>
 
-        {/* Article Content as Text (since we don't have HTML parser) */}
-        <div className="space-y-4 text-[#9ca3af] leading-relaxed mt-8">
+        {/* Article Content as Text */}
+        <div className="space-y-4 text-muted leading-relaxed mt-8">
           {post.content.split("\n\n").map((paragraph, index) => {
             if (paragraph.startsWith("##")) {
               return (
                 <h3
                   key={index}
-                  className="text-xl md:text-2xl font-bold text-white mt-8 mb-4"
+                  className="text-xl md:text-2xl font-bold text-ink mt-8 mb-4"
                 >
                   {paragraph.replace(/^#+\s*/, "")}
                 </h3>
@@ -130,12 +132,12 @@ export default function BlogPost() {
         {/* Video */}
         {post.videoUrl && (
           <div className="mt-12">
-            <h4 className="text-white font-semibold mb-4">Watch the video</h4>
+            <h4 className="text-ink font-semibold mb-4">Watch the video</h4>
             <a
               href={post.videoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="relative aspect-video block rounded-lg overflow-hidden group bg-[#111827]"
+              className="relative aspect-video block rounded-lg overflow-hidden group bg-surface"
             >
               <img
                 src={post.image || "/images/video-placeholder.jpg"}
@@ -153,14 +155,14 @@ export default function BlogPost() {
         )}
 
         {/* Social Share */}
-        <div className="mt-12 pt-8 border-t border-[#1f2937]">
-          <h4 className="text-white font-semibold mb-4">Share this article</h4>
+        <div className="mt-12 pt-8 border-t border-border">
+          <h4 className="text-ink font-semibold mb-4">Share this article</h4>
           <div className="flex gap-4">
             <a
               href={`https://www.facebook.com/sharer/sharer.php?u=${currentUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"
+              className="px-4 py-2 bg-surface text-ink rounded border border-border hover:bg-accent hover:text-white transition"
             >
               Facebook
             </a>
@@ -168,7 +170,7 @@ export default function BlogPost() {
               href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${currentUrl}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"
+              className="px-4 py-2 bg-surface text-ink rounded border border-border hover:bg-accent hover:text-white transition"
             >
               Twitter
             </a>
@@ -176,7 +178,7 @@ export default function BlogPost() {
               href={`https://wa.me/?text=${encodeURIComponent(post.title + " " + currentUrl)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-4 py-2 bg-[#1f2937] text-white rounded hover:bg-[#16a34a] transition"
+              className="px-4 py-2 bg-surface text-ink rounded border border-border hover:bg-accent hover:text-white transition"
             >
               WhatsApp
             </a>

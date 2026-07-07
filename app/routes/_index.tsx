@@ -1,11 +1,5 @@
 import { useState } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-  MapPin,
-  Calendar,
-  Filter,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, MapPin, Filter } from "lucide-react";
 import { useLoaderData } from "react-router";
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
 import { TripCard } from "~/components/TripCard";
@@ -103,6 +97,7 @@ function HeroSlider() {
             alt={slide.headline}
             className="w-full h-full object-cover"
           />
+          {/* Dark image overlay — not a theme color */}
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
 
           {/* Content */}
@@ -114,15 +109,16 @@ function HeroSlider() {
                   : "opacity-0 translate-y-4"
               }`}
             >
+              {/* text-white on dark image overlay stays */}
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
                 {slide.headline}
               </h1>
-              <p className="text-xl text-[#9ca3af] mb-8 max-w-2xl">
+              <p className="text-xl text-white/80 mb-8 max-w-2xl">
                 {slide.subheadline}
               </p>
               <a
                 href={slide.href}
-                className="inline-block px-8 py-3 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-semibold"
+                className="inline-block px-8 py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
               >
                 {slide.cta}
               </a>
@@ -131,7 +127,7 @@ function HeroSlider() {
         </div>
       ))}
 
-      {/* Navigation Buttons */}
+      {/* Navigation Buttons — light overlays on image stay */}
       <button
         onClick={prevSlide}
         className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white/20 hover:bg-white/40 text-white rounded-full transition"
@@ -154,7 +150,7 @@ function HeroSlider() {
             key={index}
             onClick={() => setCurrentSlide(index)}
             className={`w-3 h-3 rounded-full transition ${
-              index === currentSlide ? "bg-[#16a34a]" : "bg-white/50"
+              index === currentSlide ? "bg-accent" : "bg-white/50"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
@@ -167,9 +163,9 @@ function HeroSlider() {
 // Search/Filter Bar Component
 function SearchBar() {
   return (
-    <div className="bg-[#111827] border border-[#1f2937] rounded-lg p-6 mb-12">
-      <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-        <Filter size={20} className="text-[#16a34a]" />
+    <div className="bg-surface border border-border rounded-lg p-6 mb-12">
+      <h3 className="text-xl font-semibold text-ink mb-6 flex items-center gap-2">
+        <Filter size={20} className="text-accent" />
         Find Your Adventure
       </h3>
 
@@ -177,14 +173,14 @@ function SearchBar() {
         <div>
           <label
             htmlFor="search-destination"
-            className="block text-sm text-[#9ca3af] mb-2"
+            className="block text-sm text-muted mb-2"
           >
             Destination
           </label>
           <select
             id="search-destination"
             name="destination"
-            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+            className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select destination</option>
             <option value="skardu">Skardu</option>
@@ -196,14 +192,14 @@ function SearchBar() {
         <div>
           <label
             htmlFor="search-month"
-            className="block text-sm text-[#9ca3af] mb-2"
+            className="block text-sm text-muted mb-2"
           >
             Month
           </label>
           <select
             id="search-month"
             name="month"
-            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+            className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select month</option>
             <option value="june">June</option>
@@ -216,14 +212,14 @@ function SearchBar() {
         <div>
           <label
             htmlFor="search-type"
-            className="block text-sm text-[#9ca3af] mb-2"
+            className="block text-sm text-muted mb-2"
           >
             Type
           </label>
           <select
             id="search-type"
             name="type"
-            className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+            className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select type</option>
             <option value="trek">Trek</option>
@@ -233,7 +229,8 @@ function SearchBar() {
         </div>
 
         <div className="flex items-end">
-          <button className="w-full px-6 py-2 bg-[#16a34a] text-white rounded hover:bg-[#15803d] transition font-semibold">
+          {/* CTA — fixed brand green */}
+          <button className="w-full px-6 py-2 bg-cta text-white rounded hover:bg-cta-hover transition font-semibold">
             Search
           </button>
         </div>
@@ -283,9 +280,10 @@ export default function Home() {
           ))}
         </div>
         <div className="text-center mt-8">
+          {/* CTA — fixed brand green */}
           <a
             href="/trips"
-            className="inline-block px-8 py-3 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-semibold"
+            className="inline-block px-8 py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
           >
             View All Trips
           </a>
@@ -321,36 +319,31 @@ export default function Home() {
           {testimonials.slice(0, 3).map((testimonial) => (
             <div
               key={testimonial.id}
-              className="bg-[#111827] rounded-lg border border-[#1f2937] p-6"
+              className="bg-surface rounded-lg border border-border p-6"
             >
               <div className="flex items-center gap-3 mb-4">
                 <div>
-                  <p className="font-semibold text-[#f9fafb]">
-                    {testimonial.name}
-                  </p>
-                  <p className="text-sm text-[#9ca3af]">
-                    {testimonial.country}
-                  </p>
+                  <p className="font-semibold text-ink">{testimonial.name}</p>
+                  <p className="text-sm text-muted">{testimonial.country}</p>
                 </div>
               </div>
+              {/* Star ratings — secondary (amber) on Midnight/Golden Hour, with border-color empty stars */}
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <span
                     key={i}
                     className={`text-lg ${
-                      i < testimonial.rating
-                        ? "text-[#d97706]"
-                        : "text-[#1f2937]"
+                      i < testimonial.rating ? "text-secondary" : "text-border"
                     }`}
                   >
                     ★
                   </span>
                 ))}
               </div>
-              <p className="text-[#9ca3af] text-sm mb-3 italic">
+              <p className="text-muted text-sm mb-3 italic">
                 "{testimonial.review}"
               </p>
-              <p className="text-xs text-[#16a34a] font-medium">
+              <p className="text-xs text-accent font-medium">
                 {testimonial.tripName}
               </p>
             </div>
@@ -366,7 +359,7 @@ export default function Home() {
             <a
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="group bg-[#111827] rounded-lg border border-[#1f2937] overflow-hidden hover:border-[#16a34a] transition"
+              className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-accent transition"
             >
               <div className="h-48 overflow-hidden">
                 <img
@@ -377,13 +370,13 @@ export default function Home() {
                 />
               </div>
               <div className="p-4">
-                <p className="text-xs text-[#16a34a] font-medium mb-2">
+                <p className="text-xs text-accent font-medium mb-2">
                   {post.date}
                 </p>
-                <h3 className="font-semibold text-[#f9fafb] mb-2 line-clamp-2 group-hover:text-[#16a34a] transition">
+                <h3 className="font-semibold text-ink mb-2 line-clamp-2 group-hover:text-accent transition">
                   {post.title}
                 </h3>
-                <p className="text-sm text-[#9ca3af] line-clamp-2">
+                <p className="text-sm text-muted line-clamp-2">
                   {post.excerpt}
                 </p>
               </div>
@@ -393,18 +386,19 @@ export default function Home() {
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-[#111827] border-y border-[#1f2937] mb-16">
+      <section className="bg-surface border-y border-border mb-16">
         <div className="max-w-7xl mx-auto px-4 py-12 md:py-16 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
             Ready to Explore Gilgit Baltistan?
           </h2>
-          <p className="text-lg text-[#9ca3af] mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-muted mb-8 max-w-2xl mx-auto">
             Start your mountain adventure today. Our expert guides and
             experienced team are ready to make your trek unforgettable.
           </p>
+          {/* CTA — fixed brand green */}
           <a
             href="/contact"
-            className="inline-block px-8 py-3 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-semibold"
+            className="inline-block px-8 py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
           >
             Contact Us Today
           </a>

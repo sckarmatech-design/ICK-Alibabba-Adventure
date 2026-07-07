@@ -64,7 +64,7 @@ export default function BlogIndex() {
 
             return (
               <div key={category}>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-ink mb-6">
                   {category}
                 </h2>
 
@@ -73,7 +73,7 @@ export default function BlogIndex() {
                     <a
                       key={post.slug}
                       href={`/blog/${post.slug}`}
-                      className="group bg-[#111827] rounded-lg border border-[#1f2937] overflow-hidden hover:border-[#16a34a] transition"
+                      className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-accent transition"
                     >
                       <div className="h-48 overflow-hidden">
                         <img
@@ -85,17 +85,17 @@ export default function BlogIndex() {
                       </div>
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-2">
-                          <p className="text-xs text-[#16a34a] font-medium">
+                          <p className="text-xs text-accent font-medium">
                             {post.date}
                           </p>
-                          <p className="text-xs text-[#9ca3af]">
+                          <p className="text-xs text-muted">
                             {post.readingTime} min read
                           </p>
                         </div>
-                        <h3 className="font-semibold text-[#f9fafb] mb-2 line-clamp-2 group-hover:text-[#16a34a] transition">
+                        <h3 className="font-semibold text-ink mb-2 line-clamp-2 group-hover:text-accent transition">
                           {post.title}
                         </h3>
-                        <p className="text-sm text-[#9ca3af] line-clamp-2">
+                        <p className="text-sm text-muted line-clamp-2">
                           {post.excerpt}
                         </p>
                       </div>

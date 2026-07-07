@@ -69,7 +69,7 @@ export default function FAQ() {
 
             return (
               <div key={category}>
-                <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-ink mb-6">
                   {category}
                 </h2>
 
@@ -86,16 +86,17 @@ export default function FAQ() {
         </div>
 
         {/* CTA */}
-        <div className="bg-[#111827] border border-[#1f2937] rounded-lg p-8 text-center mt-16">
-          <h3 className="text-2xl font-bold text-white mb-4">
+        <div className="bg-surface border border-border rounded-lg p-8 text-center mt-16">
+          <h3 className="text-2xl font-bold text-ink mb-4">
             Didn't find your answer?
           </h3>
-          <p className="text-[#9ca3af] mb-6">
+          <p className="text-muted mb-6">
             Contact us directly and our team will be happy to help.
           </p>
+          {/* CTA — fixed brand green */}
           <a
             href="/contact"
-            className="inline-block px-8 py-3 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-semibold"
+            className="inline-block px-8 py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
           >
             Contact Us
           </a>

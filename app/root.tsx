@@ -16,8 +16,14 @@ import { Footer } from "./components/Footer";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import prisma from "./lib/prisma.server";
 import { SITE_CONFIG } from "./lib/seo";
+import {
+  DEFAULT_THEME,
+  parseThemeFromCookieHeader,
+  ThemeProvider,
+  type ThemeName,
+} from "./lib/theme";
 
-export async function loader(_args: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
   const settings = await prisma.siteSetting.findMany();
   const map = Object.fromEntries(settings.map((s) => [s.key, s.value])) as {
     mainNav: Array<{
@@ -40,7 +46,17 @@ export async function loader(_args: LoaderFunctionArgs) {
       socialMedia: { facebook: string; instagram: string; youtube: string };
     };
   };
-  return map;
+
+  // Admin CMS is intentionally theme-agnostic and visually locked to
+  // Midnight Summit. Force the theme for any /admin route so the data-theme
+  // attribute on <html> stays consistent even if a public cookie is set.
+  const url = new URL(request.url);
+  const isAdminRoute = url.pathname.startsWith("/admin");
+  const theme: ThemeName = isAdminRoute
+    ? DEFAULT_THEME
+    : parseThemeFromCookieHeader(request.headers.get("Cookie"));
+
+  return { ...map, theme };
 }
 
 export const links: Route.LinksFunction = () => [
@@ -61,15 +77,20 @@ export const links: Route.LinksFunction = () => [
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  // Theme is resolved server-side from the cookie and injected into <html>
+  // so SSR markup already has the right data-theme attribute — no FOUC.
+  const data = useLoaderData<typeof loader>() as { theme?: ThemeName };
+  const theme = data?.theme ?? DEFAULT_THEME;
+
   return (
-    <html lang="en">
+    <html lang="en" data-theme={theme}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className="bg-[#0a0f1a]">
+      <body className="bg-primary">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -79,16 +100,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { mainNav, footerLinks, companyInfo } = useLoaderData<typeof loader>();
+  const { mainNav, footerLinks, companyInfo, theme } =
+    useLoaderData<typeof loader>();
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb]">
-      <Header mainNav={mainNav} companyInfo={companyInfo} />
-      <main className="grow">
-        <Outlet />
-      </main>
-      <Footer footerLinks={footerLinks} companyInfo={companyInfo} />
-      <WhatsAppButton companyInfo={companyInfo} />
-    </div>
+    <ThemeProvider initialTheme={theme}>
+      <div className="flex flex-col min-h-screen bg-primary text-ink">
+        <Header mainNav={mainNav} companyInfo={companyInfo} />
+        <main className="grow">
+          <Outlet />
+        </main>
+        <Footer footerLinks={footerLinks} companyInfo={companyInfo} />
+        <WhatsAppButton companyInfo={companyInfo} />
+      </div>
+    </ThemeProvider>
   );
 }
 
@@ -109,12 +133,12 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#0a0f1a] text-[#f9fafb] items-center justify-center p-4">
+    <div className="flex flex-col min-h-screen bg-primary text-ink items-center justify-center p-4">
       <div className="text-center">
-        <h1 className="text-6xl font-bold text-[#16a34a] mb-4">{message}</h1>
-        <p className="text-xl text-[#9ca3af] mb-8">{details}</p>
+        <h1 className="text-6xl font-bold text-accent mb-4">{message}</h1>
+        <p className="text-xl text-muted mb-8">{details}</p>
         {stack && (
-          <pre className="w-full p-4 overflow-x-auto bg-[#111827] rounded-lg border border-[#1f2937] text-sm text-left">
+          <pre className="w-full p-4 overflow-x-auto bg-surface rounded-lg border border-border text-sm text-left">
             <code>{stack}</code>
           </pre>
         )}

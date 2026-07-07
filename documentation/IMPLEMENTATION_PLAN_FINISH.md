@@ -1,4 +1,4 @@
-# Implementation Plan — Akhtar Abbasi Hiking (Full-Stack Conversion)
+  # Implementation Plan — Akhtar Abbasi Hiking (Full-Stack Conversion)
 
 **Project:** Convert static React Router v7 frontend to database-backed full-stack app
 **Date:** 2026-07-04

@@ -14,7 +14,7 @@ export function WhatsAppButton({ companyInfo }: WhatsAppButtonProps) {
       href={whatsappLink}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 z-40 flex items-center gap-2 bg-[#16a34a] text-white rounded-full p-4 shadow-lg hover:bg-[#15803d] transition transform hover:scale-110 group"
+      className="fixed bottom-8 right-8 z-40 flex items-center gap-2 bg-cta text-white rounded-full p-4 shadow-lg hover:bg-cta-hover transition transform hover:scale-110 group"
       aria-label="Chat with us on WhatsApp"
     >
       <MessageCircle size={24} />

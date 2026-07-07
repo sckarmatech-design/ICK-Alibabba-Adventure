@@ -89,8 +89,8 @@ export default function Contact() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-8">
-              <h3 className="text-2xl font-bold text-white mb-6">
+            <div className="bg-surface rounded-lg border border-border p-8">
+              <h3 className="text-2xl font-bold text-ink mb-6">
                 Send us a Message
               </h3>
 
@@ -107,7 +107,7 @@ export default function Contact() {
                     <div>
                       <label
                         htmlFor="fullName"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Full Name *
                       </label>
@@ -116,7 +116,7 @@ export default function Contact() {
                         name="fullName"
                         type="text"
                         required
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent transition"
                         placeholder="Your name"
                       />
                       {actionData?.errors?.fullName && (
@@ -128,7 +128,7 @@ export default function Contact() {
                     <div>
                       <label
                         htmlFor="email"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Email *
                       </label>
@@ -137,7 +137,7 @@ export default function Contact() {
                         name="email"
                         type="email"
                         required
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent transition"
                         placeholder="your@email.com"
                       />
                       {actionData?.errors?.email && (
@@ -152,7 +152,7 @@ export default function Contact() {
                     <div>
                       <label
                         htmlFor="phone"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Phone / WhatsApp
                       </label>
@@ -160,21 +160,21 @@ export default function Contact() {
                         id="phone"
                         name="phone"
                         type="tel"
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent transition"
                         placeholder="+92 300 1234567"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="tripInterest"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Trip of Interest
                       </label>
                       <select
                         id="tripInterest"
                         name="tripInterest"
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded hover:border-accent transition"
                       >
                         <option value="">Select a trip</option>
                         <option value="k2">K2 Base Camp Trek</option>
@@ -190,14 +190,14 @@ export default function Contact() {
                     <div>
                       <label
                         htmlFor="travelMonth"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Preferred Travel Month
                       </label>
                       <select
                         id="travelMonth"
                         name="travelMonth"
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded hover:border-accent transition"
                       >
                         <option value="">Select month</option>
                         <option value="april">April</option>
@@ -212,7 +212,7 @@ export default function Contact() {
                     <div>
                       <label
                         htmlFor="groupSize"
-                        className="block text-sm font-medium text-[#9ca3af] mb-2"
+                        className="block text-sm font-medium text-muted mb-2"
                       >
                         Group Size
                       </label>
@@ -221,7 +221,7 @@ export default function Contact() {
                         name="groupSize"
                         type="number"
                         min="1"
-                        className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+                        className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent transition"
                         placeholder="Number of people"
                       />
                     </div>
@@ -230,7 +230,7 @@ export default function Contact() {
                   <div>
                     <label
                       htmlFor="message"
-                      className="block text-sm font-medium text-[#9ca3af] mb-2"
+                      className="block text-sm font-medium text-muted mb-2"
                     >
                       Message / Questions
                     </label>
@@ -238,22 +238,23 @@ export default function Contact() {
                       id="message"
                       name="message"
                       rows={5}
-                      className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition resize-none"
+                      className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent transition resize-none"
                       placeholder="Tell us about your adventure plans..."
                     ></textarea>
                   </div>
 
+                  {/* CTA — fixed brand green */}
                   <button
                     type="submit"
-                    className="w-full px-6 py-3 bg-[#16a34a] hover:bg-[#15803d] text-white rounded-lg transition font-semibold"
+                    className="w-full px-6 py-3 bg-cta hover:bg-cta-hover text-white rounded-lg transition font-semibold"
                   >
                     Send Message
                   </button>
                 </Form>
               )}
 
-              <div className="mt-6 bg-[#0a0f1a] p-4 rounded border border-[#1f2937]">
-                <p className="text-sm text-[#9ca3af]">
+              <div className="mt-6 bg-primary p-4 rounded border border-border">
+                <p className="text-sm text-muted">
                   <span className="font-semibold">Prefer direct contact?</span>{" "}
                   Reach us via WhatsApp or email for the fastest response.
                 </p>
@@ -264,67 +265,67 @@ export default function Contact() {
           {/* Contact Information */}
           <div className="space-y-6">
             {/* Email */}
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-6">
+            <div className="bg-surface rounded-lg border border-border p-6">
               <div className="flex items-center gap-3 mb-3">
-                <Mail className="w-6 h-6 text-[#16a34a]" />
-                <h4 className="font-semibold text-white">Email</h4>
+                <Mail className="w-6 h-6 text-accent" />
+                <h4 className="font-semibold text-ink">Email</h4>
               </div>
               <a
                 href={`mailto:${companyInfo.email}`}
-                className="text-[#16a34a] hover:text-[#15803d] transition break-all"
+                className="text-accent hover:text-accent-hover transition break-all"
               >
                 {companyInfo.email}
               </a>
             </div>
 
             {/* Phone */}
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-6">
+            <div className="bg-surface rounded-lg border border-border p-6">
               <div className="flex items-center gap-3 mb-3">
-                <Phone className="w-6 h-6 text-[#16a34a]" />
-                <h4 className="font-semibold text-white">Phone</h4>
+                <Phone className="w-6 h-6 text-accent" />
+                <h4 className="font-semibold text-ink">Phone</h4>
               </div>
               <a
                 href={`tel:${companyInfo.phone}`}
-                className="text-[#16a34a] hover:text-[#15803d] transition"
+                className="text-accent hover:text-accent-hover transition"
               >
                 {companyInfo.phone}
               </a>
             </div>
 
             {/* WhatsApp */}
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-6">
+            <div className="bg-surface rounded-lg border border-border p-6">
               <div className="flex items-center gap-3 mb-3">
-                <MessageCircle className="w-6 h-6 text-[#16a34a]" />
-                <h4 className="font-semibold text-white">WhatsApp</h4>
+                <MessageCircle className="w-6 h-6 text-accent" />
+                <h4 className="font-semibold text-ink">WhatsApp</h4>
               </div>
               <a
                 href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#16a34a] hover:text-[#15803d] transition"
+                className="text-accent hover:text-accent-hover transition"
               >
                 {companyInfo.whatsapp}
               </a>
             </div>
 
             {/* Location */}
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-6">
+            <div className="bg-surface rounded-lg border border-border p-6">
               <div className="flex items-center gap-3 mb-3">
-                <MapPin className="w-6 h-6 text-[#16a34a]" />
-                <h4 className="font-semibold text-white">Location</h4>
+                <MapPin className="w-6 h-6 text-accent" />
+                <h4 className="font-semibold text-ink">Location</h4>
               </div>
-              <p className="text-[#9ca3af]">{companyInfo.location}</p>
+              <p className="text-muted">{companyInfo.location}</p>
             </div>
 
             {/* Social Media */}
-            <div className="bg-[#111827] rounded-lg border border-[#1f2937] p-6">
-              <h4 className="font-semibold text-white mb-4">Follow Us</h4>
+            <div className="bg-surface rounded-lg border border-border p-6">
+              <h4 className="font-semibold text-ink mb-4">Follow Us</h4>
               <div className="space-y-2">
                 <a
                   href={companyInfo.socialMedia.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-[#16a34a] hover:text-[#15803d] transition text-sm"
+                  className="block text-accent hover:text-accent-hover transition text-sm"
                 >
                   → Facebook
                 </a>
@@ -332,7 +333,7 @@ export default function Contact() {
                   href={companyInfo.socialMedia.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-[#16a34a] hover:text-[#15803d] transition text-sm"
+                  className="block text-accent hover:text-accent-hover transition text-sm"
                 >
                   → Instagram
                 </a>
@@ -340,7 +341,7 @@ export default function Contact() {
                   href={companyInfo.socialMedia.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-[#16a34a] hover:text-[#15803d] transition text-sm"
+                  className="block text-accent hover:text-accent-hover transition text-sm"
                 >
                   → YouTube
                 </a>

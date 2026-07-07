@@ -44,8 +44,8 @@ export default function ToursIndex() {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-[#111827] border border-[#1f2937] rounded-lg p-6 mb-8">
-        <h3 className="font-semibold text-white mb-4">Filter by Region</h3>
+      <div className="bg-surface border border-border rounded-lg p-6 mb-8">
+        <h3 className="font-semibold text-ink mb-4">Filter by Region</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {[
             { label: "All Tours", value: "all" },
@@ -56,7 +56,7 @@ export default function ToursIndex() {
           ].map((region) => (
             <button
               key={region.value}
-              className="px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-[#9ca3af] hover:bg-[#16a34a] hover:border-[#16a34a] hover:text-white transition text-sm font-medium"
+              className="px-4 py-2 bg-surface border border-border rounded text-muted hover:bg-accent hover:border-accent hover:text-white transition text-sm font-medium"
             >
               {region.label}
             </button>

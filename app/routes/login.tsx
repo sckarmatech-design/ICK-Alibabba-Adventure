@@ -38,20 +38,20 @@ export default function Login() {
   const actionData = useActionData<typeof action>();
 
   return (
-    <div className="min-h-screen bg-[#0a0f1a] flex items-center justify-center px-4">
-      <div className="w-full max-w-md bg-[#111827] border border-[#1f2937] rounded-lg p-8">
+    <div className="min-h-screen bg-primary flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-surface border border-border rounded-lg p-8">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">
-            <span className="text-[#16a34a]">Akhtar</span> CMS
+          <h1 className="text-2xl font-bold text-ink">
+            <span className="text-accent">Akhtar</span> CMS
           </h1>
-          <p className="text-[#9ca3af] mt-2">Sign in to manage your content</p>
+          <p className="text-muted mt-2">Sign in to manage your content</p>
         </div>
 
         <Form method="post" className="space-y-6">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-[#9ca3af] mb-2"
+              className="block text-sm font-medium text-muted mb-2"
             >
               Email
             </label>
@@ -60,7 +60,7 @@ export default function Login() {
               name="email"
               type="email"
               required
-              className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+              className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent focus:outline-none focus:border-accent transition"
               placeholder="admin@akhtarabbasi.com"
             />
           </div>
@@ -68,7 +68,7 @@ export default function Login() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-[#9ca3af] mb-2"
+              className="block text-sm font-medium text-muted mb-2"
             >
               Password
             </label>
@@ -77,7 +77,7 @@ export default function Login() {
               name="password"
               type="password"
               required
-              className="w-full px-4 py-2 bg-[#0a0f1a] border border-[#1f2937] rounded text-[#f9fafb] placeholder-[#9ca3af] hover:border-[#16a34a] focus:outline-none focus:border-[#16a34a] transition"
+              className="w-full px-4 py-2 rounded placeholder-muted hover:border-accent focus:outline-none focus:border-accent transition"
               placeholder="••••••••"
             />
           </div>
@@ -88,9 +88,10 @@ export default function Login() {
             </div>
           )}
 
+          {/* CTA — fixed brand green */}
           <button
             type="submit"
-            className="w-full px-6 py-2 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-semibold"
+            className="w-full px-6 py-2 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
           >
             Sign In
           </button>

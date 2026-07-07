@@ -26,15 +26,16 @@ export function Lightbox({ images, initialIndex = 0, onClose }: LightboxProps) {
 
   return (
     <div
+      // bg-black/95 is an intentional dark backdrop for the image viewer
       className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
       onKeyDown={handleKeyDown}
       role="dialog"
       aria-modal="true"
     >
-      {/* Close Button */}
+      {/* Close Button — text-white on dark backdrop stays */}
       <button
         onClick={onClose}
-        className="absolute top-4 right-4 text-white hover:text-[#16a34a] transition z-10"
+        className="absolute top-4 right-4 text-white hover:text-accent transition z-10"
         aria-label="Close lightbox"
       >
         <X size={32} />
@@ -48,25 +49,25 @@ export function Lightbox({ images, initialIndex = 0, onClose }: LightboxProps) {
           className="max-w-full max-h-full object-contain"
         />
 
-        {/* Navigation Buttons */}
+        {/* Navigation Buttons — text-white on dark backdrop stays */}
         {images.length > 1 && (
           <>
             <button
               onClick={goToPrevious}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-[#16a34a] transition p-2"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-accent transition p-2"
               aria-label="Previous image"
             >
               <ChevronLeft size={40} />
             </button>
             <button
               onClick={goToNext}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-[#16a34a] transition p-2"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-accent transition p-2"
               aria-label="Next image"
             >
               <ChevronRight size={40} />
             </button>
 
-            {/* Image Counter */}
+            {/* Image Counter — on dark backdrop */}
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-sm bg-black/50 px-4 py-2 rounded-full">
               {currentIndex + 1} / {images.length}
             </div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router";
 import { Menu, X, ChevronDown, MapPin, Mail, Phone } from "lucide-react";
 import type { CompanyInfo, NavItem } from "~/data/nav";
+import { ThemeSwitcher } from "~/components/ThemeSwitcher";
 
 interface HeaderProps {
   mainNav: NavItem[];
@@ -13,30 +14,33 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
-    <header className="sticky top-0 z-50 bg-linear-to-b from-[#0a0f1a] to-[#0a0f1a]/95 backdrop-blur-md border-b border-[#1f2937]">
+    <header className="sticky top-0 z-50 bg-linear-to-b from-primary to-primary/95 backdrop-blur-md border-b border-border">
       {/* Top Info Bar */}
-      <div className="hidden md:block bg-[#111827] text-sm text-[#9ca3af] py-2 px-4">
+      <div className="hidden md:block bg-surface text-sm text-muted py-2 px-4">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <div className="flex gap-6">
             <div className="flex items-center gap-2">
-              <MapPin size={14} className="text-[#16a34a]" />
+              <MapPin size={14} className="text-accent" />
               <span>{companyInfo.location}</span>
             </div>
             <a
               href={`mailto:${companyInfo.email}`}
-              className="flex items-center gap-2 hover:text-[#16a34a] transition"
+              className="flex items-center gap-2 hover:text-accent transition"
             >
-              <Mail size={14} className="text-[#16a34a]" />
+              <Mail size={14} className="text-accent" />
               <span>{companyInfo.email}</span>
             </a>
           </div>
-          <a
-            href={`tel:${companyInfo.phone}`}
-            className="flex items-center gap-2 hover:text-[#16a34a] transition"
-          >
-            <Phone size={14} className="text-[#16a34a]" />
-            <span>{companyInfo.phone}</span>
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href={`tel:${companyInfo.phone}`}
+              className="flex items-center gap-2 hover:text-accent transition"
+            >
+              <Phone size={14} className="text-accent" />
+              <span>{companyInfo.phone}</span>
+            </a>
+            <ThemeSwitcher variant="desktop" />
+          </div>
         </div>
       </div>
 
@@ -52,13 +56,13 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             />
           ) : (
             <div>
-              <div className="text-2xl font-bold text-white">
-                <span className="text-[#16a34a]">
+              <div className="text-2xl font-bold text-ink">
+                <span className="text-accent">
                   {companyInfo.name.split(" ")[0]}
                 </span>{" "}
                 {companyInfo.name.split(" ").slice(1).join(" ")}
               </div>
-              <div className="text-xs text-[#9ca3af]">Hiking Adventures</div>
+              <div className="text-xs text-muted">Hiking Adventures</div>
             </div>
           )}
         </Link>
@@ -69,7 +73,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             <div key={item.label} className="relative group">
               <Link
                 to={item.href || "#"}
-                className="text-[#f9fafb] hover:text-[#16a34a] transition flex items-center gap-1 py-2"
+                className="text-ink hover:text-accent transition flex items-center gap-1 py-2"
               >
                 {item.label}
                 {item.submenu && (
@@ -82,12 +86,12 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
 
               {/* Desktop Dropdown */}
               {item.submenu && (
-                <div className="absolute left-0 mt-0 w-48 bg-[#1f2937] rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
+                <div className="absolute left-0 mt-0 w-48 bg-surface rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2 border border-border">
                   {item.submenu.map((subitem) => (
                     <Link
                       key={subitem.label}
                       to={subitem.href || "#"}
-                      className="block px-4 py-2 text-sm text-[#9ca3af] hover:text-[#16a34a] hover:bg-[#111827] transition"
+                      className="block px-4 py-2 text-sm text-muted hover:text-accent hover:bg-primary transition"
                     >
                       {subitem.label}
                     </Link>
@@ -104,7 +108,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-block px-6 py-2 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-medium text-sm"
+            className="hidden sm:inline-block px-6 py-2 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-medium text-sm"
           >
             Contact Us
           </a>
@@ -112,7 +116,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden text-[#f9fafb] hover:text-[#16a34a] transition"
+            className="lg:hidden text-ink hover:text-accent transition"
           >
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -121,7 +125,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
 
       {/* Mobile Navigation */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#111827] border-t border-[#1f2937] max-h-96 overflow-y-auto">
+        <div className="lg:hidden bg-surface border-t border-border max-h-96 overflow-y-auto">
           {mainNav.map((item) => (
             <div key={item.label}>
               <button
@@ -130,7 +134,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
                     openDropdown === item.label ? null : item.label,
                   )
                 }
-                className="w-full text-left px-4 py-3 text-[#f9fafb] hover:bg-[#1f2937] transition flex items-center justify-between"
+                className="w-full text-left px-4 py-3 text-ink hover:bg-primary transition flex items-center justify-between"
               >
                 {item.label}
                 {item.submenu && (
@@ -143,12 +147,12 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
 
               {/* Mobile Dropdown */}
               {item.submenu && openDropdown === item.label && (
-                <div className="bg-[#0a0f1a]">
+                <div className="bg-primary">
                   {item.submenu.map((subitem) => (
                     <Link
                       key={subitem.label}
                       to={subitem.href || "#"}
-                      className="block px-8 py-2 text-sm text-[#9ca3af] hover:text-[#16a34a] hover:bg-[#1f2937] transition"
+                      className="block px-8 py-2 text-sm text-muted hover:text-accent hover:bg-surface transition"
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {subitem.label}
@@ -159,12 +163,14 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             </div>
           ))}
 
-          <div className="border-t border-[#1f2937] px-4 py-3">
+          <ThemeSwitcher variant="mobile" />
+
+          <div className="border-t border-border px-4 py-3">
             <a
               href={`https://wa.me/${companyInfo.whatsapp.replace(/\D/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="block w-full px-4 py-2 bg-[#16a34a] text-white rounded-lg hover:bg-[#15803d] transition font-medium text-center text-sm"
+              className="block w-full px-4 py-2 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-medium text-center text-sm"
               onClick={() => setMobileMenuOpen(false)}
             >
               Contact Us
