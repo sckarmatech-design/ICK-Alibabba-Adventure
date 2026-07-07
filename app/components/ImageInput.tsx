@@ -358,32 +358,104 @@ export function ImageListInput({
 
   function removeItem(id: number) {
     setItems((prev) => prev.filter((item) => item.id !== id));
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
+
+  function toggleItem(id: number) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  // Collapsible. With <=3 images everything is expanded; with more, only empty
+  // slots stay expanded. Newly added images always auto-expand.
+  const [expanded, setExpanded] = useState<Set<number>>(() => {
+    if (items.length <= 3) return new Set(items.map((item) => item.id));
+    const next = new Set<number>();
+    items.forEach((item) => {
+      if (!item.value) next.add(item.id);
+    });
+    return next;
+  });
 
   return (
     <div className={`space-y-3 ${className}`}>
       <label className="block text-sm font-medium text-gray-300">{label}</label>
       <div className="space-y-3">
-        {items.map((item, index) => (
-          <div key={item.id} className="flex items-start gap-2">
-            <div className="flex-1">
-              <ImageInput
-                name={name}
-                label={`Image ${index + 1}`}
-                defaultValue={item.value}
-                folder={folder}
-                onLoadingChange={onLoadingChange}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => removeItem(item.id)}
-              className="mt-6 px-3 py-2 bg-red-900/50 hover:bg-red-900 text-red-200 rounded transition"
+        {items.map((item, index) => {
+          const isOpen = expanded.has(item.id);
+          const summary = item.value
+            ? `Image ${index + 1}: ${item.value}`
+            : `Image ${index + 1} (empty)`;
+
+          return (
+            <div
+              key={item.id}
+              className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden"
             >
-              Remove
-            </button>
-          </div>
-        ))}
+              <div className="flex items-center justify-between p-3">
+                <button
+                  type="button"
+                  onClick={() => toggleItem(item.id)}
+                  aria-expanded={isOpen}
+                  aria-controls={`image-panel-${item.id}`}
+                  className="flex items-center gap-2 text-left text-sm font-semibold text-green-400 hover:text-green-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded px-1 py-0.5 grow min-w-0"
+                >
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 14 14"
+                    aria-hidden="true"
+                    className={`shrink-0 transition-transform duration-200 ${
+                      isOpen ? "" : "-rotate-90"
+                    }`}
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      d="M3 5l4 4 4-4"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  <span className="truncate text-xs font-normal">
+                    {summary}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => removeItem(item.id)}
+                  className="shrink-0 px-3 py-1.5 bg-red-900/50 hover:bg-red-900 text-red-200 rounded transition text-sm"
+                >
+                  Remove
+                </button>
+              </div>
+
+              {isOpen && (
+                <div
+                  id={`image-panel-${item.id}`}
+                  className="px-4 pb-4 border-t border-gray-700 pt-3"
+                >
+                  <ImageInput
+                    name={name}
+                    label={`Image ${index + 1}`}
+                    defaultValue={item.value}
+                    folder={folder}
+                    onLoadingChange={onLoadingChange}
+                  />
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
       <button
         type="button"

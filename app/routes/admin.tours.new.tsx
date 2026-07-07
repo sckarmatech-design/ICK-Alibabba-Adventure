@@ -1,5 +1,5 @@
+import { Form, Link, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
-import { redirect, Form, Link } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
@@ -13,41 +13,58 @@ import {
 import { ItineraryEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
+
+const inputClass =
+  "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
-  const title = getString(formData, "title");
-  const slug = slugify(title);
+  try {
+    const title = getString(formData, "title");
+    const slug = slugify(title);
 
-  await prisma.tour.create({
-    data: {
-      slug,
-      title,
-      region: getString(formData, "region"),
-      duration: getString(formData, "duration"),
-      difficulty: getString(formData, "difficulty") as
-        | "EASY"
-        | "MODERATE"
-        | "CHALLENGING"
-        | "EXPERT",
-      bestSeason: getString(formData, "bestSeason"),
-      heroImage: getString(formData, "heroImage"),
-      overview: getString(formData, "overview"),
-      accommodation: getOptionalString(formData, "accommodation"),
-      mealPlan: getOptionalString(formData, "mealPlan"),
-      transport: getOptionalString(formData, "transport"),
-      highlights: getArray(formData, "highlights"),
-      gallery: getArray(formData, "gallery"),
-      itinerary: parseJsonField(getString(formData, "itinerary"), []),
-    },
-  });
-
-  return redirect("/admin/tours");
+    await prisma.tour.create({
+      data: {
+        slug,
+        title,
+        region: getString(formData, "region"),
+        duration: getString(formData, "duration"),
+        difficulty: getString(formData, "difficulty") as
+          | "EASY"
+          | "MODERATE"
+          | "CHALLENGING"
+          | "EXPERT",
+        bestSeason: getString(formData, "bestSeason"),
+        heroImage: getString(formData, "heroImage"),
+        overview: getString(formData, "overview"),
+        accommodation: getOptionalString(formData, "accommodation"),
+        mealPlan: getOptionalString(formData, "mealPlan"),
+        transport: getOptionalString(formData, "transport"),
+        highlights: getArray(formData, "highlights"),
+        gallery: getArray(formData, "gallery"),
+        itinerary: parseJsonField(getString(formData, "itinerary"), []),
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to create tour:", err);
+    return {
+      ok: false,
+      error: "Failed to create tour. Please try again.",
+    } as const;
+  }
 }
 
 export default function AdminNewTour() {
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: "/admin/tours/new" },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -58,13 +75,14 @@ export default function AdminNewTour() {
           to="/admin/tours"
           className="text-gray-400 hover:text-white transition"
         >
-          Cancel
+          Back to list
         </Link>
       </div>
 
       <Form
         method="post"
-        className="space-y-6 max-w-4xl bg-gray-900 border border-gray-800 rounded-lg p-6"
+        id="tour-new-form"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
@@ -79,7 +97,7 @@ export default function AdminNewTour() {
               name="title"
               type="text"
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -95,7 +113,7 @@ export default function AdminNewTour() {
               name="region"
               type="text"
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -112,7 +130,7 @@ export default function AdminNewTour() {
               type="text"
               required
               placeholder="e.g. 7 days"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -127,7 +145,7 @@ export default function AdminNewTour() {
               id="difficulty"
               name="difficulty"
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
+              className={inputClass}
             >
               <option value="EASY">Easy</option>
               <option value="MODERATE">Moderate</option>
@@ -148,7 +166,7 @@ export default function AdminNewTour() {
               name="bestSeason"
               type="text"
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -174,7 +192,7 @@ export default function AdminNewTour() {
               name="overview"
               rows={5}
               required
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -189,7 +207,7 @@ export default function AdminNewTour() {
               id="accommodation"
               name="accommodation"
               type="text"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -204,7 +222,7 @@ export default function AdminNewTour() {
               id="mealPlan"
               name="mealPlan"
               type="text"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -219,7 +237,7 @@ export default function AdminNewTour() {
               id="transport"
               name="transport"
               type="text"
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -234,7 +252,7 @@ export default function AdminNewTour() {
               id="highlights"
               name="highlights"
               rows={4}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -259,21 +277,21 @@ export default function AdminNewTour() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4 pt-4 border-t border-gray-800">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50"
-          >
-            Create Tour
-          </button>
-          <Link
-            to="/admin/tours"
-            className="text-gray-400 hover:text-white transition"
-          >
-            Cancel
-          </Link>
-        </div>
+        <AdminSaveBar
+          formId="tour-new-form"
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/tours"
+          saveLabel="Create Tour"
+          submittingLabel="Creating…"
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

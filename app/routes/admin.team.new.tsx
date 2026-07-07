@@ -1,36 +1,49 @@
-import { redirect, Form, Link, useActionData } from "react-router";
+import { Form, Link, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString, getNumber } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 export async function action({
   request,
-}: ActionFunctionArgs): Promise<{ error: string } | Response> {
+}: ActionFunctionArgs): Promise<{ ok: true } | { ok: false; error: string }> {
   await requireAdmin(request);
   const formData = await request.formData();
 
   const image = getOptionalString(formData, "image");
 
-  await prisma.teamMember.create({
-    data: {
-      name: getString(formData, "name"),
-      role: getString(formData, "role"),
-      bio: getString(formData, "bio"),
-      image,
-      specialization: getOptionalString(formData, "specialization"),
-      experience: getOptionalString(formData, "experience"),
-      sortOrder: getNumber(formData, "sortOrder"),
-    },
-  });
-
-  return redirect("/admin/team");
+  try {
+    await prisma.teamMember.create({
+      data: {
+        name: getString(formData, "name"),
+        role: getString(formData, "role"),
+        bio: getString(formData, "bio"),
+        image,
+        specialization: getOptionalString(formData, "specialization"),
+        experience: getOptionalString(formData, "experience"),
+        sortOrder: getNumber(formData, "sortOrder"),
+      },
+    });
+    return { ok: true };
+  } catch (err) {
+    console.error("Failed to create team member:", err);
+    return {
+      ok: false,
+      error: "Failed to create team member. Please try again.",
+    };
+  }
 }
 
 export default function AdminTeamNew() {
   const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: "/admin/team/new" },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -45,15 +58,10 @@ export default function AdminTeamNew() {
         </Link>
       </div>
 
-      {actionData?.error && (
-        <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-100">
-          {actionData.error}
-        </div>
-      )}
-
       <Form
         method="post"
-        className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6"
+        id="team-new-form"
+        className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
           <label
@@ -156,21 +164,21 @@ export default function AdminTeamNew() {
           />
         </div>
 
-        <div className="flex items-center gap-4 pt-2">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Create Member
-          </button>
-          <Link
-            to="/admin/team"
-            className="text-gray-400 hover:text-white transition"
-          >
-            Cancel
-          </Link>
-        </div>
+        <AdminSaveBar
+          formId="team-new-form"
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/team"
+          saveLabel="Create Member"
+          submittingLabel="Creating…"
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

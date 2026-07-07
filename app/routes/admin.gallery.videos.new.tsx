@@ -1,4 +1,4 @@
-import { Form, redirect } from "react-router";
+import { Form, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
@@ -6,6 +6,8 @@ import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString } from "~/lib/admin";
 import { getYoutubeThumbnailUrl } from "~/lib/video";
 import { ImageInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
@@ -17,26 +19,41 @@ export async function action({ request }: ActionFunctionArgs) {
   const alt = getString(formData, "alt");
 
   if (!title || !videoUrl || !alt) {
-    return { error: "Title, video URL, and alt text are required." };
+    return {
+      ok: false,
+      error: "Title, video URL, and alt text are required.",
+    } as const;
   }
 
   if (!thumbnail) {
     thumbnail = getYoutubeThumbnailUrl(videoUrl) ?? undefined;
   }
 
-  await prisma.galleryVideo.create({
-    data: {
-      title,
-      videoUrl,
-      thumbnail,
-      alt,
-    },
-  });
-
-  return redirect("/admin/gallery");
+  try {
+    await prisma.galleryVideo.create({
+      data: {
+        title,
+        videoUrl,
+        thumbnail,
+        alt,
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to create gallery video:", err);
+    return {
+      ok: false,
+      error: "Failed to save gallery video. Please try again.",
+    } as const;
+  }
 }
 
 export default function AdminGalleryVideoNew() {
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: "/admin/gallery/videos/new" },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -45,6 +62,7 @@ export default function AdminGalleryVideoNew() {
 
       <Form
         method="post"
+        id="gallery-video-new-form"
         className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
@@ -101,21 +119,21 @@ export default function AdminGalleryVideoNew() {
           />
         </div>
 
-        <div className="flex items-center gap-3 pt-4">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Save Video
-          </button>
-          <a
-            href="/admin/gallery"
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
-          >
-            Cancel
-          </a>
-        </div>
+        <AdminSaveBar
+          formId="gallery-video-new-form"
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/gallery"
+          saveLabel="Save Video"
+          submittingLabel="Saving…"
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

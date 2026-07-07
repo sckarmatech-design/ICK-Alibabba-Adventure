@@ -47,6 +47,18 @@ export function ItineraryEditor({
     }));
   });
 
+  // Collapsible by default. With <=3 days everything is expanded; with more,
+  // only empty (placeholder) days stay expanded so an admin can fill them in.
+  // Newly added days always auto-expand.
+  const [expanded, setExpanded] = useState<Set<number>>(() => {
+    if (items.length <= 3) return new Set(items.map((_, i) => i));
+    const next = new Set<number>();
+    items.forEach((item, i) => {
+      if (!item.title.trim() && !item.description.trim()) next.add(i);
+    });
+    return next;
+  });
+
   const serialized = JSON.stringify(
     items
       .filter((item) => item.title.trim() || item.description.trim())
@@ -59,62 +71,117 @@ export function ItineraryEditor({
     );
   };
 
-  const add = () =>
+  const add = () => {
     setItems((prev) => [
       ...prev,
       { day: prev.length + 1, title: "", description: "" },
     ]);
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.add(items.length);
+      return next;
+    });
+  };
 
-  const remove = (index: number) =>
+  const remove = (index: number) => {
     setItems((prev) => prev.filter((_, i) => i !== index));
+    // Rebuild the expanded set so existing indices stay accurate after the shift.
+    setExpanded((prev) => {
+      const next = new Set<number>();
+      prev.forEach((i) => {
+        if (i < index) next.add(i);
+        else if (i > index) next.add(i - 1);
+      });
+      return next;
+    });
+  };
+
+  const toggle = (index: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-4">
       <input type="hidden" name={name} value={serialized} />
 
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-green-400">
-              Day {index + 1}
-            </span>
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className={buttonClass("danger")}
-            >
-              Remove
-            </button>
-          </div>
+      {items.map((item, index) => {
+        const isOpen = expanded.has(index);
+        const summary = item.title.trim()
+          ? `Day ${index + 1}: ${item.title.trim()}`
+          : `Day ${index + 1} (empty)`;
 
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Title</label>
-            <input
-              type="text"
-              value={item.title}
-              onChange={(e) => update(index, "title", e.target.value)}
-              className={inputClass()}
-              placeholder="e.g. Islamabad Arrival"
-            />
-          </div>
+        return (
+          <div
+            key={index}
+            className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden"
+          >
+            <div className="flex items-center justify-between p-3">
+              <button
+                type="button"
+                onClick={() => toggle(index)}
+                aria-expanded={isOpen}
+                aria-controls={`itinerary-panel-${index}`}
+                className="flex items-center gap-2 text-left text-sm font-semibold text-green-400 hover:text-green-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded px-1 py-0.5 grow min-w-0"
+              >
+                <ChevronDown
+                  size={14}
+                  className={`shrink-0 transition-transform duration-200 ${
+                    isOpen ? "" : "-rotate-90"
+                  }`}
+                />
+                <span className="truncate">{summary}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className={buttonClass("danger")}
+              >
+                Remove
+              </button>
+            </div>
 
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">
-              Description
-            </label>
-            <textarea
-              value={item.description}
-              onChange={(e) => update(index, "description", e.target.value)}
-              rows={3}
-              className={inputClass()}
-              placeholder="What happens on this day?"
-            />
+            {isOpen && (
+              <div
+                id={`itinerary-panel-${index}`}
+                className="px-4 pb-4 space-y-3 border-t border-gray-700 pt-3"
+              >
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={item.title}
+                    onChange={(e) => update(index, "title", e.target.value)}
+                    className={inputClass()}
+                    placeholder="e.g. Islamabad Arrival"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">
+                    Description
+                  </label>
+                  <textarea
+                    value={item.description}
+                    onChange={(e) =>
+                      update(index, "description", e.target.value)
+                    }
+                    rows={3}
+                    className={inputClass()}
+                    placeholder="What happens on this day?"
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <button type="button" onClick={add} className={buttonClass("primary")}>
         + Add Day
@@ -141,6 +208,17 @@ export function FaqEditor({
     }));
   });
 
+  // Collapsible. With <=3 FAQs everything is expanded; with more, only empty
+  // FAQs stay expanded. Newly added FAQs always auto-expand.
+  const [expanded, setExpanded] = useState<Set<number>>(() => {
+    if (items.length <= 3) return new Set(items.map((_, i) => i));
+    const next = new Set<number>();
+    items.forEach((item, i) => {
+      if (!item.question.trim() && !item.answer.trim()) next.add(i);
+    });
+    return next;
+  });
+
   const serialized = JSON.stringify(
     items.filter((item) => item.question.trim() || item.answer.trim()),
   );
@@ -151,56 +229,111 @@ export function FaqEditor({
     );
   };
 
-  const add = () => setItems((prev) => [...prev, { question: "", answer: "" }]);
+  const add = () => {
+    setItems((prev) => [...prev, { question: "", answer: "" }]);
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      next.add(items.length);
+      return next;
+    });
+  };
 
-  const remove = (index: number) =>
+  const remove = (index: number) => {
     setItems((prev) => prev.filter((_, i) => i !== index));
+    setExpanded((prev) => {
+      const next = new Set<number>();
+      prev.forEach((i) => {
+        if (i < index) next.add(i);
+        else if (i > index) next.add(i - 1);
+      });
+      return next;
+    });
+  };
+
+  const toggle = (index: number) => {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  };
 
   return (
     <div className="space-y-4">
       <input type="hidden" name={name} value={serialized} />
 
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-green-400">
-              FAQ #{index + 1}
-            </span>
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className={buttonClass("danger")}
-            >
-              Remove
-            </button>
-          </div>
+      {items.map((item, index) => {
+        const isOpen = expanded.has(index);
+        const summary = item.question.trim()
+          ? `FAQ #${index + 1}: ${item.question.trim()}`
+          : `FAQ #${index + 1} (empty)`;
 
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Question</label>
-            <input
-              type="text"
-              value={item.question}
-              onChange={(e) => update(index, "question", e.target.value)}
-              className={inputClass()}
-              placeholder="e.g. What is the fitness level required?"
-            />
-          </div>
+        return (
+          <div
+            key={index}
+            className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden"
+          >
+            <div className="flex items-center justify-between p-3">
+              <button
+                type="button"
+                onClick={() => toggle(index)}
+                aria-expanded={isOpen}
+                aria-controls={`faq-panel-${index}`}
+                className="flex items-center gap-2 text-left text-sm font-semibold text-green-400 hover:text-green-300 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded px-1 py-0.5 grow min-w-0"
+              >
+                <ChevronDown
+                  size={14}
+                  className={`shrink-0 transition-transform duration-200 ${
+                    isOpen ? "" : "-rotate-90"
+                  }`}
+                />
+                <span className="truncate">{summary}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => remove(index)}
+                className={buttonClass("danger")}
+              >
+                Remove
+              </button>
+            </div>
 
-          <div>
-            <label className="block text-xs text-gray-400 mb-1">Answer</label>
-            <textarea
-              value={item.answer}
-              onChange={(e) => update(index, "answer", e.target.value)}
-              rows={3}
-              className={inputClass()}
-              placeholder="Write the answer here..."
-            />
+            {isOpen && (
+              <div
+                id={`faq-panel-${index}`}
+                className="px-4 pb-4 space-y-3 border-t border-gray-700 pt-3"
+              >
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">
+                    Question
+                  </label>
+                  <input
+                    type="text"
+                    value={item.question}
+                    onChange={(e) => update(index, "question", e.target.value)}
+                    className={inputClass()}
+                    placeholder="e.g. What is the fitness level required?"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs text-gray-400 mb-1">
+                    Answer
+                  </label>
+                  <textarea
+                    value={item.answer}
+                    onChange={(e) => update(index, "answer", e.target.value)}
+                    rows={3}
+                    className={inputClass()}
+                    placeholder="Write the answer here..."
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <button type="button" onClick={add} className={buttonClass("primary")}>
         + Add FAQ

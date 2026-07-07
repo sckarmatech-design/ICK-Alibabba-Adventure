@@ -1,4 +1,4 @@
-import { Form, redirect, useLoaderData } from "react-router";
+import { Form, useActionData, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
@@ -6,6 +6,8 @@ import { requireAdmin } from "~/lib/auth.server";
 import { getString, getOptionalString } from "~/lib/admin";
 import { getYoutubeThumbnailUrl } from "~/lib/video";
 import { ImageInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -17,13 +19,8 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
     prisma.galleryVideo.findUnique({ where: { id } }),
   ]);
 
-  if (image) {
-    return { kind: "image" as const, item: image };
-  }
-
-  if (video) {
-    return { kind: "video" as const, item: video };
-  }
+  if (image) return { kind: "image" as const, item: image };
+  if (video) return { kind: "video" as const, item: video };
 
   throw new Response("Not Found", { status: 404 });
 }
@@ -41,15 +38,23 @@ export async function action({ params, request }: ActionFunctionArgs) {
       prisma.galleryVideo.findUnique({ where: { id } }),
     ]);
 
-    if (image) {
-      await prisma.galleryImage.delete({ where: { id } });
-    } else if (video) {
-      await prisma.galleryVideo.delete({ where: { id } });
-    } else {
-      throw new Response("Not Found", { status: 404 });
+    try {
+      if (image) {
+        await prisma.galleryImage.delete({ where: { id } });
+      } else if (video) {
+        await prisma.galleryVideo.delete({ where: { id } });
+      } else {
+        throw new Response("Not Found", { status: 404 });
+      }
+    } catch (err) {
+      if (err instanceof Response) throw err;
+      console.error("Failed to delete gallery item:", err);
+      return {
+        ok: false,
+        error: "Failed to delete gallery item. Please try again.",
+      } as const;
     }
-
-    return redirect("/admin/gallery");
+    return { ok: true } as const;
   }
 
   const [image, video] = await Promise.all([
@@ -57,72 +62,74 @@ export async function action({ params, request }: ActionFunctionArgs) {
     prisma.galleryVideo.findUnique({ where: { id } }),
   ]);
 
-  if (image) {
-    const title = getString(formData, "title");
-    const imageUrl = getString(formData, "image");
-    const thumbnail = getOptionalString(formData, "thumbnail");
-    const category = getString(formData, "category") as
-      | "TREKS"
-      | "EXPEDITIONS"
-      | "TOURS"
-      | "NATURE"
-      | "CULTURE";
-    const alt = getString(formData, "alt");
-    const featured = formData.get("featured") === "on";
+  try {
+    if (image) {
+      const title = getString(formData, "title");
+      const imageUrl = getString(formData, "image");
+      const thumbnail = getOptionalString(formData, "thumbnail");
+      const category = getString(formData, "category") as
+        | "TREKS"
+        | "EXPEDITIONS"
+        | "TOURS"
+        | "NATURE"
+        | "CULTURE";
+      const alt = getString(formData, "alt");
+      const featured = formData.get("featured") === "on";
 
-    if (!title || !imageUrl || !category || !alt) {
-      return {
-        error: "Title, image URL, category, and alt text are required.",
-      };
+      if (!title || !imageUrl || !category || !alt) {
+        return {
+          ok: false,
+          error: "Title, image URL, category, and alt text are required.",
+        } as const;
+      }
+
+      await prisma.galleryImage.update({
+        where: { id },
+        data: { title, image: imageUrl, thumbnail, category, alt, featured },
+      });
+    } else if (video) {
+      const title = getString(formData, "title");
+      const videoUrl = getString(formData, "videoUrl");
+      let thumbnail = getOptionalString(formData, "thumbnail");
+      const alt = getString(formData, "alt");
+
+      if (!title || !videoUrl || !alt) {
+        return {
+          ok: false,
+          error: "Title, video URL, and alt text are required.",
+        } as const;
+      }
+
+      if (!thumbnail) {
+        thumbnail = getYoutubeThumbnailUrl(videoUrl) ?? undefined;
+      }
+
+      await prisma.galleryVideo.update({
+        where: { id },
+        data: { title, videoUrl, thumbnail, alt },
+      });
+    } else {
+      throw new Response("Not Found", { status: 404 });
     }
-
-    await prisma.galleryImage.update({
-      where: { id },
-      data: {
-        title,
-        image: imageUrl,
-        thumbnail,
-        category,
-        alt,
-        featured,
-      },
-    });
-
-    return redirect("/admin/gallery");
+  } catch (err) {
+    if (err instanceof Response) throw err;
+    console.error("Failed to update gallery item:", err);
+    return {
+      ok: false,
+      error: "Failed to save gallery item. Please try again.",
+    } as const;
   }
 
-  if (video) {
-    const title = getString(formData, "title");
-    const videoUrl = getString(formData, "videoUrl");
-    let thumbnail = getOptionalString(formData, "thumbnail");
-    const alt = getString(formData, "alt");
-
-    if (!title || !videoUrl || !alt) {
-      return { error: "Title, video URL, and alt text are required." };
-    }
-
-    if (!thumbnail) {
-      thumbnail = getYoutubeThumbnailUrl(videoUrl) ?? undefined;
-    }
-
-    await prisma.galleryVideo.update({
-      where: { id },
-      data: {
-        title,
-        videoUrl,
-        thumbnail,
-        alt,
-      },
-    });
-
-    return redirect("/admin/gallery");
-  }
-
-  throw new Response("Not Found", { status: 404 });
+  return { ok: true } as const;
 }
 
 export default function AdminGalleryEdit() {
   const { kind, item } = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: `/admin/gallery/${item.id}/edit` },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -133,6 +140,7 @@ export default function AdminGalleryEdit() {
 
       <Form
         method="post"
+        id={`gallery-edit-form-${item.id}`}
         className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
@@ -251,21 +259,25 @@ export default function AdminGalleryEdit() {
           />
         </div>
 
-        <div className="flex items-center gap-3 pt-4">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Save Changes
-          </button>
-          <a
-            href="/admin/gallery"
-            className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
-          >
-            Cancel
-          </a>
-        </div>
+        <AdminSaveBar
+          formId={`gallery-edit-form-${item.id}`}
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/gallery"
+          saveLabel="Save Changes"
+          submittingLabel="Saving…"
+          deleteButton={{
+            label: `Delete ${kind === "image" ? "Image" : "Video"}`,
+            confirmMessage: `Delete this ${kind}? This cannot be undone.`,
+          }}
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );
