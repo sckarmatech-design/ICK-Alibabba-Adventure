@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import type { NavItem, FooterLink, CompanyInfo } from "~/data/nav";
 import { ImageInput } from "~/components/ImageInput";
 
@@ -232,6 +233,11 @@ export function MainNavEditor({
     }));
   });
 
+  // Collapsed by default — user clicks the submenu header to expand.
+  const [expandedSubmenus, setExpandedSubmenus] = useState<Set<number>>(
+    () => new Set(),
+  );
+
   const serialized = JSON.stringify(items.filter((item) => item.label.trim()));
 
   const updateItem = (index: number, patch: Partial<NavItem>) => {
@@ -240,7 +246,16 @@ export function MainNavEditor({
     );
   };
 
-  const addItem = () => setItems((prev) => [...prev, { label: "" }]);
+  const addItem = () => {
+    setItems((prev) => [...prev, { label: "" }]);
+    // Auto-expand the newly added nav item's submenu so the user can edit
+    // it immediately without an extra click.
+    setExpandedSubmenus((prev) => {
+      const next = new Set(prev);
+      next.add(items.length);
+      return next;
+    });
+  };
   const removeItem = (index: number) =>
     setItems((prev) => prev.filter((_, i) => i !== index));
 
@@ -252,6 +267,12 @@ export function MainNavEditor({
           : item,
       ),
     );
+    // Auto-expand the submenu when adding the first link to it.
+    setExpandedSubmenus((prev) => {
+      const next = new Set(prev);
+      next.add(index);
+      return next;
+    });
   };
 
   const updateSubmenu = (
@@ -286,116 +307,163 @@ export function MainNavEditor({
     );
   };
 
+  const toggleSubmenu = (index: number) => {
+    setExpandedSubmenus((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
   return (
     <div className="space-y-4">
       <input type="hidden" name={name} value={serialized} />
 
-      {items.map((item, index) => (
-        <div
-          key={index}
-          className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-green-400">
-              Nav Item #{index + 1}
-            </span>
-            <button
-              type="button"
-              onClick={() => removeItem(index)}
-              className={buttonClass("danger")}
-            >
-              Remove
-            </button>
-          </div>
+      {items.map((item, index) => {
+        const isSubmenuExpanded = expandedSubmenus.has(index);
+        const submenuCount = item.submenu?.length ?? 0;
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Label</label>
-              <input
-                type="text"
-                value={item.label}
-                onChange={(e) => updateItem(index, { label: e.target.value })}
-                className={inputClass()}
-                placeholder="e.g. Trips"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-gray-400 mb-1">Href</label>
-              <input
-                type="text"
-                value={item.href ?? ""}
-                onChange={(e) =>
-                  updateItem(index, {
-                    href: e.target.value ? e.target.value : undefined,
-                  })
-                }
-                className={inputClass()}
-                placeholder="e.g. /trips"
-              />
-            </div>
-          </div>
-
-          <div className="pl-4 border-l-2 border-gray-700 space-y-3">
+        return (
+          <div
+            key={index}
+            className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-gray-400">Submenu</span>
+              <span className="text-sm font-semibold text-green-400">
+                Nav Item #{index + 1}
+              </span>
               <button
                 type="button"
-                onClick={() => addSubmenu(index)}
-                className={buttonClass("secondary")}
+                onClick={() => removeItem(index)}
+                className={buttonClass("danger")}
               >
-                + Add Submenu Link
+                Remove
               </button>
             </div>
 
-            {item.submenu?.map((sub, subIndex) => (
-              <div
-                key={subIndex}
-                className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end"
-              >
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">
-                    Label
-                  </label>
-                  <input
-                    type="text"
-                    value={sub.label}
-                    onChange={(e) =>
-                      updateSubmenu(index, subIndex, { label: e.target.value })
-                    }
-                    className={inputClass()}
-                    placeholder="e.g. All Trips"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs text-gray-400 mb-1">
-                      Href
-                    </label>
-                    <input
-                      type="text"
-                      value={sub.href ?? ""}
-                      onChange={(e) =>
-                        updateSubmenu(index, subIndex, {
-                          href: e.target.value ? e.target.value : undefined,
-                        })
-                      }
-                      className={inputClass()}
-                      placeholder="e.g. /trips"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeSubmenu(index, subIndex)}
-                    className={buttonClass("danger")}
-                  >
-                    Remove
-                  </button>
-                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">
+                  Label
+                </label>
+                <input
+                  type="text"
+                  value={item.label}
+                  onChange={(e) => updateItem(index, { label: e.target.value })}
+                  className={inputClass()}
+                  placeholder="e.g. Trips"
+                />
               </div>
-            ))}
+              <div>
+                <label className="block text-xs text-gray-400 mb-1">Href</label>
+                <input
+                  type="text"
+                  value={item.href ?? ""}
+                  onChange={(e) =>
+                    updateItem(index, {
+                      href: e.target.value ? e.target.value : undefined,
+                    })
+                  }
+                  className={inputClass()}
+                  placeholder="e.g. /trips"
+                />
+              </div>
+            </div>
+
+            {/* Submenu — header always visible, items collapse/expand on click */}
+            <div className="pl-4 border-l-2 border-gray-700">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => toggleSubmenu(index)}
+                  aria-expanded={isSubmenuExpanded}
+                  aria-controls={`submenu-panel-${index}`}
+                  className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-gray-200 transition focus:outline-none focus-visible:text-white py-1"
+                >
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 ${
+                      isSubmenuExpanded ? "" : "-rotate-90"
+                    }`}
+                  />
+                  <span>
+                    Submenu
+                    {submenuCount > 0 && (
+                      <span className="text-gray-500"> ({submenuCount})</span>
+                    )}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addSubmenu(index)}
+                  className={buttonClass("secondary")}
+                >
+                  + Add Submenu Link
+                </button>
+              </div>
+
+              {isSubmenuExpanded && (
+                <div id={`submenu-panel-${index}`} className="space-y-3 mt-3">
+                  {item.submenu?.map((sub, subIndex) => (
+                    <div
+                      key={subIndex}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end"
+                    >
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">
+                          Label
+                        </label>
+                        <input
+                          type="text"
+                          value={sub.label}
+                          onChange={(e) =>
+                            updateSubmenu(index, subIndex, {
+                              label: e.target.value,
+                            })
+                          }
+                          className={inputClass()}
+                          placeholder="e.g. All Trips"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <label className="block text-xs text-gray-400 mb-1">
+                            Href
+                          </label>
+                          <input
+                            type="text"
+                            value={sub.href ?? ""}
+                            onChange={(e) =>
+                              updateSubmenu(index, subIndex, {
+                                href: e.target.value
+                                  ? e.target.value
+                                  : undefined,
+                              })
+                            }
+                            className={inputClass()}
+                            placeholder="e.g. /trips"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeSubmenu(index, subIndex)}
+                          className={buttonClass("danger")}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <button
         type="button"
@@ -431,6 +499,11 @@ export function FooterLinksEditor({
     }));
   });
 
+  // Collapsed by default — user clicks the category header to expand links.
+  const [expandedCategories, setExpandedCategories] = useState<Set<number>>(
+    () => new Set(),
+  );
+
   const serialized = JSON.stringify(
     categories
       .map((cat) => ({
@@ -448,8 +521,15 @@ export function FooterLinksEditor({
     );
   };
 
-  const addCategory = () =>
+  const addCategory = () => {
     setCategories((prev) => [...prev, { category: "", links: [] }]);
+    // Auto-expand the new category so the user can immediately add links.
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      next.add(categories.length);
+      return next;
+    });
+  };
   const removeCategory = (index: number) =>
     setCategories((prev) => prev.filter((_, i) => i !== index));
 
@@ -461,6 +541,11 @@ export function FooterLinksEditor({
           : cat,
       ),
     );
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      next.add(catIndex);
+      return next;
+    });
   };
 
   const updateLink = (
@@ -486,96 +571,145 @@ export function FooterLinksEditor({
     setCategories((prev) =>
       prev.map((cat, i) =>
         i === catIndex
-          ? { ...cat, links: cat.links.filter((_, j) => j !== linkIndex) }
+          ? {
+              ...cat,
+              links: cat.links.filter((_, j) => j !== linkIndex),
+            }
           : cat,
       ),
     );
+  };
+
+  const toggleCategory = (catIndex: number) => {
+    setExpandedCategories((prev) => {
+      const next = new Set(prev);
+      if (next.has(catIndex)) {
+        next.delete(catIndex);
+      } else {
+        next.add(catIndex);
+      }
+      return next;
+    });
   };
 
   return (
     <div className="space-y-4">
       <input type="hidden" name={name} value={serialized} />
 
-      {categories.map((cat, catIndex) => (
-        <div
-          key={catIndex}
-          className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
-        >
-          <div className="flex items-center justify-between">
-            <input
-              type="text"
-              value={cat.category}
-              onChange={(e) => updateCategory(catIndex, e.target.value)}
-              className={`${inputClass()} max-w-xs`}
-              placeholder="Category name"
-            />
-            <button
-              type="button"
-              onClick={() => removeCategory(catIndex)}
-              className={buttonClass("danger")}
-            >
-              Remove Category
-            </button>
-          </div>
+      {categories.map((cat, catIndex) => {
+        const isExpanded = expandedCategories.has(catIndex);
+        const linkCount = cat.links.length;
 
-          <div className="pl-4 border-l-2 border-gray-700 space-y-3">
-            {cat.links.map((link, linkIndex) => (
-              <div
-                key={linkIndex}
-                className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end"
+        return (
+          <div
+            key={catIndex}
+            className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 space-y-3"
+          >
+            <div className="flex items-center justify-between">
+              <input
+                type="text"
+                value={cat.category}
+                onChange={(e) => updateCategory(catIndex, e.target.value)}
+                className={`${inputClass()} max-w-xs`}
+                placeholder="Category name"
+              />
+              <button
+                type="button"
+                onClick={() => removeCategory(catIndex)}
+                className={buttonClass("danger")}
               >
-                <div>
-                  <label className="block text-xs text-gray-400 mb-1">
-                    Label
-                  </label>
-                  <input
-                    type="text"
-                    value={link.label}
-                    onChange={(e) =>
-                      updateLink(catIndex, linkIndex, { label: e.target.value })
-                    }
-                    className={inputClass()}
-                    placeholder="e.g. Home"
-                  />
-                </div>
-                <div className="flex gap-2">
-                  <div className="flex-1">
-                    <label className="block text-xs text-gray-400 mb-1">
-                      Href
-                    </label>
-                    <input
-                      type="text"
-                      value={link.href}
-                      onChange={(e) =>
-                        updateLink(catIndex, linkIndex, {
-                          href: e.target.value,
-                        })
-                      }
-                      className={inputClass()}
-                      placeholder="e.g. /"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => removeLink(catIndex, linkIndex)}
-                    className={buttonClass("danger")}
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
+                Remove Category
+              </button>
+            </div>
 
-            <button
-              type="button"
-              onClick={() => addLink(catIndex)}
-              className={buttonClass("secondary")}
-            >
-              + Add Link
-            </button>
+            {/* Links — header always visible, items collapse/expand on click */}
+            <div className="pl-4 border-l-2 border-gray-700">
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => toggleCategory(catIndex)}
+                  aria-expanded={isExpanded}
+                  aria-controls={`links-panel-${catIndex}`}
+                  className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-gray-200 transition focus:outline-none focus-visible:text-white py-1"
+                >
+                  <ChevronDown
+                    size={14}
+                    className={`transition-transform duration-200 ${
+                      isExpanded ? "" : "-rotate-90"
+                    }`}
+                  />
+                  <span>
+                    Links
+                    {linkCount > 0 && (
+                      <span className="text-gray-500"> ({linkCount})</span>
+                    )}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addLink(catIndex)}
+                  className={buttonClass("secondary")}
+                >
+                  + Add Link
+                </button>
+              </div>
+
+              {isExpanded && (
+                <div id={`links-panel-${catIndex}`} className="space-y-3 mt-3">
+                  {cat.links.map((link, linkIndex) => (
+                    <div
+                      key={linkIndex}
+                      className="grid grid-cols-1 md:grid-cols-2 gap-3 items-end"
+                    >
+                      <div>
+                        <label className="block text-xs text-gray-400 mb-1">
+                          Label
+                        </label>
+                        <input
+                          type="text"
+                          value={link.label}
+                          onChange={(e) =>
+                            updateLink(catIndex, linkIndex, {
+                              label: e.target.value,
+                            })
+                          }
+                          className={inputClass()}
+                          placeholder="e.g. Home"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="flex-1">
+                          <label className="block text-xs text-gray-400 mb-1">
+                            Href
+                          </label>
+                          <input
+                            type="text"
+                            value={link.href}
+                            onChange={(e) =>
+                              updateLink(catIndex, linkIndex, {
+                                href: e.target.value,
+                              })
+                            }
+                            className={inputClass()}
+                            placeholder="e.g. /"
+                          />
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeLink(catIndex, linkIndex)}
+                          className={buttonClass("danger")}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <button
         type="button"

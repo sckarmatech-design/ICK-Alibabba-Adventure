@@ -6,6 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -99,18 +100,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Routes that should NOT render the public Header / Footer / WhatsApp
+// floating button. Admin uses its own sidebar layout; /login is a
+// standalone auth page that should be free of marketing chrome.
+function shouldHidePublicChrome(pathname: string): boolean {
+  return pathname.startsWith("/admin") || pathname === "/login";
+}
+
 export default function App() {
   const { mainNav, footerLinks, companyInfo, theme } =
     useLoaderData<typeof loader>();
+  const location = useLocation();
+  const hideChrome = shouldHidePublicChrome(location.pathname);
+
   return (
     <ThemeProvider initialTheme={theme}>
       <div className="flex flex-col min-h-screen bg-primary text-ink">
-        <Header mainNav={mainNav} companyInfo={companyInfo} />
+        {!hideChrome && <Header mainNav={mainNav} companyInfo={companyInfo} />}
         <main className="grow">
           <Outlet />
         </main>
-        <Footer footerLinks={footerLinks} companyInfo={companyInfo} />
-        <WhatsAppButton companyInfo={companyInfo} />
+        {!hideChrome && (
+          <Footer footerLinks={footerLinks} companyInfo={companyInfo} />
+        )}
+        {!hideChrome && <WhatsAppButton companyInfo={companyInfo} />}
       </div>
     </ThemeProvider>
   );
