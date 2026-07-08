@@ -26,7 +26,7 @@ export default function AdminHeroIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left text-sm text-gray-300">
           <thead className="bg-gray-800 text-gray-100 uppercase text-xs">
             <tr>
@@ -87,6 +87,79 @@ export default function AdminHeroIndex() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {slides.map((slide) => (
+          <div
+            key={slide.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Order
+                </p>
+                <p className="text-gray-400">{slide.sortOrder}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Title
+                </p>
+                <p className="text-white font-medium">{slide.title}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Subtitle
+                </p>
+                <p className="text-gray-300 truncate">{slide.subtitle}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  CTA
+                </p>
+                <p className="text-gray-300 truncate">{slide.cta}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Image
+                </p>
+                <p className="text-gray-400 truncate">
+                  {slide.image.length > 40
+                    ? slide.image.slice(0, 40) + "..."
+                    : slide.image}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <Link
+                to={`/admin/hero/${slide.id}/edit`}
+                className="text-green-400 hover:text-green-300 font-medium"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/hero/${slide.id}/edit`}
+                className="inline"
+              >
+                <button
+                  type="submit"
+                  name="_action"
+                  value="delete"
+                  className="text-red-400 hover:text-red-300 font-medium"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
+        {slides.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-500">
+            No hero slides yet.
+          </div>
+        )}
       </div>
     </div>
   );

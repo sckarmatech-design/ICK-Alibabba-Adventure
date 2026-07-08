@@ -26,7 +26,8 @@ export default function AdminTripsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
+      {/* Desktop table */}
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -95,6 +96,80 @@ export default function AdminTripsIndex() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-4">
+        {trips.map((trip) => (
+          <div
+            key={trip.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Title
+                </p>
+                <p className="text-white font-medium truncate">{trip.title}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Category
+                </p>
+                <p className="text-gray-300 truncate">{trip.category}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Region
+                </p>
+                <p className="text-gray-300 truncate">{trip.region}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Duration
+                </p>
+                <p className="text-gray-300 truncate">{trip.duration}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Difficulty
+                </p>
+                <p className="text-gray-300 truncate">{trip.difficulty}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                to={`/admin/trips/${trip.id}/edit`}
+                className="px-3 py-1.5 text-sm bg-gray-800 hover:bg-gray-700 text-white rounded transition"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/trips/${trip.id}/edit`}
+                className="inline"
+                onSubmit={(e) => {
+                  if (!confirm("Delete this trip?")) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="_action" value="delete" />
+                <button
+                  type="submit"
+                  className="px-3 py-1.5 text-sm bg-red-900/50 hover:bg-red-800 text-red-100 rounded transition"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
+        {trips.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
+            No trips yet.
+          </div>
+        )}
       </div>
     </div>
   );

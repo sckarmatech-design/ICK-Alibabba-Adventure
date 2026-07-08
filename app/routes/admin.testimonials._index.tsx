@@ -26,7 +26,7 @@ export default function AdminTestimonialsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left text-sm text-gray-300">
           <thead className="bg-gray-800 text-gray-100 uppercase text-xs">
             <tr>
@@ -96,6 +96,90 @@ export default function AdminTestimonialsIndex() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {testimonials.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-500">
+            No testimonials yet.
+          </div>
+        )}
+        {testimonials.map((testimonial) => (
+          <div
+            key={testimonial.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Name
+                </div>
+                <div className="text-sm text-white font-medium">
+                  {testimonial.name}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Country
+                </div>
+                <div className="text-sm text-gray-300">
+                  {testimonial.country} ({testimonial.countryCode})
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Rating
+                </div>
+                <div className="text-sm text-gray-300">
+                  <span className="text-yellow-400">
+                    {"★".repeat(testimonial.rating)}
+                  </span>
+                  <span className="text-gray-600">
+                    {"★".repeat(5 - testimonial.rating)}
+                  </span>
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Trip
+                </div>
+                <div className="text-sm text-gray-300">
+                  {testimonial.tripName}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Review
+                </div>
+                <div className="text-sm text-gray-300">
+                  {testimonial.review}
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                to={`/admin/testimonials/${testimonial.id}/edit`}
+                className="text-green-400 hover:text-green-300 font-medium text-sm"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/testimonials/${testimonial.id}/edit`}
+                className="inline"
+              >
+                <button
+                  type="submit"
+                  name="_action"
+                  value="delete"
+                  className="text-red-400 hover:text-red-300 font-medium text-sm"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

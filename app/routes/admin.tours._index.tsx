@@ -26,7 +26,8 @@ export default function AdminToursIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
+      {/* Desktop table */}
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left text-gray-300">
           <thead className="bg-gray-800 text-gray-100 uppercase text-xs">
             <tr>
@@ -94,6 +95,81 @@ export default function AdminToursIndex() {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-4">
+        {tours.map((tour) => (
+          <div
+            key={tour.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Title
+                </p>
+                <p className="text-white font-medium truncate">{tour.title}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Region
+                </p>
+                <p className="text-gray-300 truncate">{tour.region}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Duration
+                </p>
+                <p className="text-gray-300 truncate">{tour.duration}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Difficulty
+                </p>
+                <p className="text-gray-300 truncate">{tour.difficulty}</p>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                to={`/admin/tours/${tour.id}/edit`}
+                className="px-3 py-1.5 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded transition"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/tours/${tour.id}/edit`}
+                className="inline"
+                onSubmit={(event) => {
+                  if (!confirm("Delete this tour?")) {
+                    event.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="_action" value="delete" />
+                <button
+                  type="submit"
+                  className="px-3 py-1.5 text-sm bg-red-600 hover:bg-red-700 text-white rounded transition"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
+        {tours.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-500">
+            No tours yet.{" "}
+            <Link
+              to="/admin/tours/new"
+              className="text-green-500 hover:underline"
+            >
+              Create one
+            </Link>
+            .
+          </div>
+        )}
       </div>
     </div>
   );
