@@ -84,6 +84,12 @@ export default function AdminLayout() {
             Destinations
           </Link>
           <Link
+            to="/admin/hero"
+            className="block px-3 py-2 rounded hover:bg-gray-800"
+          >
+            Hero
+          </Link>
+          <Link
             to="/admin/inquiries"
             className="block px-3 py-2 rounded hover:bg-gray-800"
           >

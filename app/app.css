@@ -141,10 +141,6 @@
   a {
     @apply text-accent hover:text-secondary no-underline transition-colors duration-200;
   }
-
-  a:hover {
-    @apply underline;
-  }
 }
 
 @layer utilities {

@@ -1,361 +1,506 @@
-# Theme System + UX Polish — Implementation
+## PHASE 8 — Hero Slides Admin Control
 
-## Overview
+**Status:** ✅ Complete
+**Dependencies:** Phase 4 (admin CRUD patterns, ImageInput, AdminSaveBar), Phase 3 (home page loader)
 
-Implement 4 visual themes for Akhtar Abbasi Hiking using CSS custom properties mapped through Tailwind v4's `@theme` block. Refactor 29 public-facing files to use token-based utility classes. Admin CMS stays fixed on Midnight Summit.
+### Background
 
----
+The homepage hero carousel currently uses **3 hardcoded slides** in `app/routes/_index.tsx` (lines 53–75). A partial implementation was attempted: a Prisma migration `20260707103451_add_hero_slides` already exists and creates a `HeroSlide` table in the database, and three admin route files were written (`admin.hero._index.tsx`, `admin.hero.new.tsx`, `admin.hero.$id.edit.tsx`). However, the implementation was left incomplete — the `HeroSlide` model is missing from `schema.prisma`, routes are not registered in `routes.ts`, no sidebar link exists, and the frontend still uses hardcoded data.
 
-## Progress Tracking
-
-| Step | Description | Status |
-|------|-------------|--------|
-| 1 | CSS Variables + Tailwind Mappings | ✅ Complete |
-| 2 | ThemeProvider + Cookie Persistence | ✅ Complete |
-| 3 | Root Loader & Layout (SSR + admin lock) | ✅ Complete |
-| 4 | Theme Switcher UI (desktop + mobile) | ✅ Complete |
-| 5 | Header Integration | ✅ Complete |
-| 6 | Audit & Refactor 29 Public Files | ✅ Complete |
-| 7 | Admin Exclusion (forced `midnight-summit`) | ✅ Complete (handled in Step 3) |
-| 8 | Per-Theme Gradient Verification | ✅ Complete (user confirmed all themes render correctly, no muddy gradient) |
-| 9 | Final Verification (`typecheck` + `build`) | ✅ Complete (both pass) |
-
-**Last verified state:** All 9 steps complete. User confirmed all 4 themes (Midnight Summit, Golden Hour, Glacier Blue, Pine Shadow) render correctly across the site. `npx tsc --noEmit` and `npm run build` both pass. Admin CMS remains visually locked to Midnight Summit.
-
-**Pause point:** All steps complete. Theme system + UX polish implementation is done.
-
-### Files changed in Steps 1–5
-
-| Action | Path |
-|--------|------|
-| **Edit** | `app/app.css` — full rewrite with 11 independent `@theme` tokens, 4 `[data-theme]` blocks, body uses `bg-primary text-ink`, `.text-gradient` theme-aware |
-| **Create** | `app/lib/theme.tsx` — `ThemeProvider`, `useTheme`, `parseThemeFromCookieHeader`, `DEFAULT_THEME`, `THEMES` |
-| **Edit** | `app/root.tsx` — loader reads cookie + forces `midnight-summit` for `/admin/*`; `Layout` sets `data-theme` on `<html>`; `App` wraps in `<ThemeProvider>` |
-| **Create** | `app/components/ThemeSwitcher.tsx` — desktop dropdown pill + mobile dots row, click-outside + Escape close |
-| **Edit** | `app/components/Header.tsx` — added `<ThemeSwitcher variant="desktop" />` to top info bar, `<ThemeSwitcher variant="mobile" />` inside mobile nav |
-
----
-
-## Final Approved Palette
-
-### CSS Variable Tokens
-
-| Token | Purpose |
-|-------|---------|
-| `--color-bg` | Page background |
-| `--color-surface` | Card/section backgrounds |
-| `--color-border` | Borders, dividers |
-| `--color-ink` | Primary text (headings, body) |
-| `--color-muted` | Secondary/muted text |
-| `--color-accent` | Primary accent — leads links, highlights, badges, focus rings |
-| `--color-accent-hover` | Hover state for accent |
-| `--color-cta` | **Brand green fixed** — CTA/WhatsApp buttons only |
-| `--color-cta-hover` | Hover state for CTA |
-| `--color-secondary` | Warm/amber — ratings, difficulty badges, warnings |
-| `--color-secondary-hover` | Hover state for secondary |
-
-### Tailwind Utility Mappings
-
-> **Naming rule:** `--color-primary` exists in `@theme` only to power the `bg-primary` utility (it points to `var(--color-bg)`). Tailwind will auto-generate a `text-primary` utility from that same variable, but **`text-primary` must NEVER be used** — it would resolve to the page background color. Use `text-ink` for all text color. If `text-primary` appears anywhere in a component, treat it as a bug and replace with `text-ink`.
-
-| Token Class | CSS Variable |
-|-------------|--------------|
-| `bg-primary` | `var(--color-bg)` |
-| `bg-surface` | `var(--color-surface)` |
-| `border-surface` | `var(--color-border)` |
-| `text-ink` | `var(--color-ink)` |
-| `text-muted` | `var(--color-muted)` |
-| `text-accent` / `border-accent` / `bg-accent` / `ring-accent` / `from-accent` | `var(--color-accent)` |
-| `hover:bg-accent-hover` / `hover:text-accent-hover` | `var(--color-accent-hover)` |
-| `bg-cta` / `text-cta` / `border-cta` | `var(--color-cta)` |
-| `hover:bg-cta-hover` | `var(--color-cta-hover)` |
-| `text-secondary` / `border-secondary` / `bg-secondary` / `to-secondary` | `var(--color-secondary)` |
-| `hover:text-secondary-hover` | `var(--color-secondary-hover)` |
-
----
-
-### Theme 1: Midnight Summit *(Dark — Default)*
-
-- Concept: Deep mountain night under a star-filled sky
-- Preserves the existing brand palette 1:1
-
+**Current hardcoded slide structure (used by the carousel component):**
 ```
---color-bg:              #0a0f1a
---color-surface:         #111827
---color-border:          #1f2937
---color-text:            #f9fafb
---color-muted:           #9ca3af
---color-accent:          #16a34a
---color-accent-hover:    #15803d
---color-cta:             #16a34a
---color-cta-hover:       #15803d
---color-secondary:       #d97706
---color-secondary-hover: #b45309
+{ image: string, headline: string, subheadline: string, cta: string, href: string }
 ```
 
-### Theme 2: Golden Hour *(Light-Warm)*
-
-- Concept: Warm sunset light on the peaks of Hunza Valley
-- Replaces green with burnt orange; CTA stays brand green
-
+**Database column structure (already migrated):**
 ```
---color-bg:              #faf7f2
---color-surface:         #ffffff
---color-border:          #e8ddd0
---color-text:            #1c1917
---color-muted:           #78716c
---color-accent:          #c2410c
---color-accent-hover:    #9a3412
---color-cta:             #16a34a    ← brand green fixed
---color-cta-hover:       #15803d
---color-secondary:       #f59e0b
---color-secondary-hover: #d97706
+id, title, subtitle, image, cta, ctaLink, sortOrder, createdAt, updatedAt
 ```
 
-### Theme 3: Glacier Blue *(Light-Cool)*
+The mapping between them is: `title`→`headline`, `subtitle`→`subheadline`, `ctaLink`→`href`.
 
-- Concept: Crystalline ice and glacial melt under a high-altitude sky
-- Replaces green with sky blue; CTA stays brand green; amber kept for ratings
+### Entry checkpoint
 
-```
---color-bg:              #f0f9ff
---color-surface:         #ffffff
---color-border:          #dbeafe
---color-text:            #1e293b
---color-muted:           #64748b
---color-accent:          #0284c7
---color-accent-hover:    #0369a1
---color-cta:             #16a34a    ← brand green fixed
---color-cta-hover:       #15803d
---color-secondary:       #d97706    ← amber kept distinct from cool palette
---color-secondary-hover: #b45309
-```
+- [x] Phase 3 complete — home page loader exists at `app/routes/_index.tsx`
+- [x] Phase 4 complete — admin CRUD patterns, `ImageInput`, `AdminSaveBar` exist
+- [x] Migration `20260707103451_add_hero_slides` exists (table created in DB)
+- [x] Admin hero route files exist at `app/routes/admin.hero.*.tsx` (list, new, edit+delete)
 
-### Theme 4: Pine Shadow *(Dark-Warm)*
+### Tasks
 
-- Concept: Ancient deodar forests and earthy mountain trails
-- Fresh green-500 leads; warm gold for ratings
+#### 8.1 Add `HeroSlide` model to Prisma schema
 
-```
---color-bg:              #0f1a0f
---color-surface:         #1a2a1a
---color-border:          #2a3f2a
---color-text:            #f0faf0
---color-muted:           #9ca3af
---color-accent:          #22c55e
---color-accent-hover:    #16a34a
---color-cta:             #16a34a
---color-cta-hover:       #15803d
---color-secondary:       #f59e0b    ← warm gold (not violet)
---color-secondary-hover: #d97706
+Add the following model to `prisma/schema.prisma` (after the `SiteSetting` model):
+
+```prisma
+// ===== HERO SLIDES (added in Phase 8) =====
+
+model HeroSlide {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String
+  image     String
+  cta       String
+  ctaLink   String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 ```
 
----
+This model matches the existing migration exactly.
 
-## Implementation Steps
-
-### Step 1 — CSS Variables + Tailwind Mappings ✅ Complete
-
-**File:** `app/app.css`
-
-- Remove hardcoded `bg-[#0a0f1a]` / `text-[#f9fafb]` from `html`/`body` rules
-- Define `:root` with Midnight Summit token values
-- Add `[data-theme="midnight-summit"]`, `[data-theme="golden-hour"]`, `[data-theme="glacier-blue"]`, `[data-theme="pine-shadow"]` blocks overriding the 11 tokens
-- Map all tokens into the `@theme` block as `--color-*` so Tailwind generates `bg-primary`, `text-ink`, `text-accent`, etc. Note: `--color-primary` exists only to power the `bg-primary` utility; `--color-ink` is the dedicated text-color token (see naming rule above).
-- Update `body` to use `bg-primary text-ink`
-- Update `.text-gradient` to be theme-aware (per-theme `from`/`to` stops)
-- Update `input`/`textarea`/`select` defaults to use token variables
-- Update `a` link defaults to use token variables
-- Remove hardcoded `color-scheme: dark` — use token or inline per-theme `color-scheme`
-
-### Step 2 — ThemeProvider + Cookie Persistence ✅ Complete
-
-**New file:** `app/lib/theme.tsx`
-
-- React Context with `{ theme, setTheme }`
-- `setTheme(name)`: writes cookie `theme=<name>; Max-Age=31536000; Path=/; SameSite=Lax`, sets `data-theme` on `<html>`
-- On mount: reads cookie, falls back to `"midnight-summit"`
-- Export `ThemeProvider` component (wraps children) and `useTheme` hook
-
-### Step 3 — Root Loader & Layout ✅ Complete
-
-**File:** `app/root.tsx`
-
-- Root `loader` reads `theme` cookie from `request.headers.get("Cookie")`
-- Returns `theme` alongside existing data
-- `Layout()` sets `data-theme={theme}` on `<html>` — SSR renders correct theme immediately, no FOUC
-- `App()` wraps content in `<ThemeProvider>` (client-only hydration context)
-- Utility: `parseCookies()` helper in root or inline
-
-### Step 4 — Theme Switcher UI ✅ Complete
-
-**New file:** `app/components/ThemeSwitcher.tsx`
-
-Props: `variant: "desktop" | "mobile"`
-
-Desktop:
-- Small dropdown pill showing current theme name + color swatch
-- On click: reveals 4 options with name + small dot swatch
-- Clicking an option calls `setTheme()`
-- Positioned in the header top info bar next to location/email/phone
-
-Mobile:
-- Compact row with 4 theme dots (no labels, or short labels)
-- Clicking a dot calls `setTheme()`
-- Rendered inside the mobile nav menu below nav items
-
-### Step 5 — Header Integration ✅ Complete
-
-**File:** `app/components/Header.tsx`
-
-- Add `<ThemeSwitcher variant="desktop" />` to the top info bar (`hidden md:flex` row)
-- Add `<ThemeSwitcher variant="mobile" />` inside the mobile nav menu, below nav items and above the Contact Us button
-- No layout structure changes, only insertion points
-
-### Step 6 — Audit & Refactor Public Files ✅ Complete
-
-Replace hardcoded hex/Tailwind colors with CSS variable token classes in 29 files:
-
-**12 Components:**
-1. `Accordion.tsx`
-2. `Breadcrumb.tsx`
-3. `DetailSidebar.tsx`
-4. `DestinationCard.tsx`
-5. `Footer.tsx`
-6. `Header.tsx`
-7. `HeroSection.tsx`
-8. `Lightbox.tsx`
-9. `SectionTitle.tsx`
-10. `StatsBar.tsx`
-11. `TripCard.tsx`
-12. `WhatsAppButton.tsx`
-
-**17 Route files:**
-1. `root.tsx`
-2. `routes/_index.tsx`
-3. `routes/about.tsx`
-4. `routes/blog._index.tsx`
-5. `routes/blog.$slug.tsx`
-6. `routes/contact.tsx`
-7. `routes/expeditions._index.tsx`
-8. `routes/expeditions.$slug.tsx`
-9. `routes/faq.tsx`
-10. `routes/gallery.tsx`
-11. `routes/login.tsx`
-12. `routes/tours._index.tsx`
-13. `routes/tours.$slug.tsx`
-14. `routes/trips._index.tsx`
-15. `routes/trips.$slug.tsx`
-
-**Refactor rules per file:**
-- `bg-[#0a0f1a]` or `bg-gray-950` → `bg-primary`
-- `bg-[#111827]` or `bg-gray-900` → `bg-surface`
-- `border-[#1f2937]` or `border-gray-800` → `border-surface`
-- `text-[#f9fafb]` or `text-white` → `text-ink` (NEVER `text-primary` — that's a bg color)
-- `text-[#9ca3af]` or `text-gray-400` → `text-muted`
-- `text-[#16a34a]` or `text-green-500` → `text-accent`
-- `bg-[#16a34a]` or `bg-green-600` → `bg-accent` (non-CTA) or `bg-cta` (CTA buttons)
-- `hover:bg-[#15803d]` or `hover:bg-green-700` → `hover:bg-accent-hover` or `hover:bg-cta-hover`
-- `focus:border-[#16a34a]` or `focus:ring-[#16a34a]` → `focus:border-accent focus:ring-accent`
-- `text-[#d97706]` or `text-yellow-400` → `text-secondary`
-- `text-[#6b7280]` or `text-gray-500` → `text-muted` (unify to one muted token)
-- `placeholder-[#6b7280]` or `placeholder-gray-500` → `placeholder-muted`
-
-**CTA button identification** (these use `bg-cta` / `hover:bg-cta-hover`):
-- WhatsAppButton.tsx (floating chat button)
-- Header.tsx "Contact Us" button (both desktop and mobile)
-- TripCard.tsx "View Details" button
-- DetailSidebar.tsx "Enquire Now" button
-- Any primary CTA button on contact page, home page hero, etc.
-- All other green buttons (badges, category tags, icon highlights) use `bg-accent` not `bg-cta`
-
-### Step 7 — Admin Exclusion ✅ Complete (handled in Step 3 — `loader` forces `DEFAULT_THEME` for any `/admin/*` URL)
-
-**No changes to:**
-- `app/routes/admin.tsx`
-- `app/routes/admin.*.tsx` (all 14+ admin route files)
-- `app/components/admin-form-editors.tsx`
-- `app/components/ImageInput.tsx`
-
-Admin layout gets `<html data-theme="midnight-summit">` enforced by its own layout wrapper or by ThemeProvider defaulting to Midnight Summit when no cookie matches admin routes.
-
-### Step 8 — Per-Theme Gradient Verification ✅ Complete — User confirmed all 4 themes render correctly. Glacier Blue `from #0284c7 → to #d97706` gradient is acceptable as-is, no muddy transition.
-
-`.text-gradient` gets per-theme custom stops:
-
-| Theme | `from-` | `to-` |
-|-------|---------|-------|
-| Midnight Summit | `#16a34a` | `#d97706` |
-| Golden Hour | `#c2410c` | `#f59e0b` |
-| Glacier Blue | `#0284c7` | `#d97706` |
-| Pine Shadow | `#22c55e` | `#f59e0b` |
-
-**Visual check priority:** Glacier Blue's blue→amber gradient. If it looks muddy, adjust Glacier Blue's `to-` to a lighter amber like `#fbbf24` or a warm white. Do NOT change the other themes unless they also look off.
-
-### Step 9 — Verification ✅ Complete — `npx tsc --noEmit` and `npm run build` both pass after Step 6.
+#### 8.2 Regenerate Prisma client
 
 ```bash
-npm run typecheck
-npm run build
+npx prisma generate
 ```
 
-Manual visual checks:
-- Home page, trip listing, trip detail, blog, gallery, contact, FAQ, about, login — each with all 4 themes
-- CTA/WhatsApp buttons stay green across all themes
-- Amber/gold rating token remains distinct in Glacier Blue
-- Mobile theme switcher works in mobile nav
-- Desktop theme switcher works in top bar
-- Theme persists across page reload (cookie)
-- No flash of wrong theme on page load (SSR)
-- Admin panel completely unchanged
+This will create the `prisma.heroSlide` type used by the existing admin route files.
+
+#### 8.3 Register hero routes in `routes.ts`
+
+Add to `app/routes.ts` inside the admin layout (after the settings route):
+
+```typescript
+// Hero
+route("admin/hero", "routes/admin.hero._index.tsx"),
+route("admin/hero/new", "routes/admin.hero.new.tsx"),
+route("admin/hero/:id/edit", "routes/admin.hero.$id.edit.tsx"),
+```
+
+#### 8.4 Add "Hero" link to admin sidebar
+
+In `app/routes/admin.tsx`, add a "Hero Slides" link to the sidebar nav (between "Destinations" and "Inquiries", alphabetical order):
+
+```tsx
+<Link
+  to="/admin/hero"
+  className="block px-3 py-2 rounded hover:bg-gray-800"
+>
+  Hero
+</Link>
+```
+
+#### 8.5 Convert home page hero carousel to DB-driven
+
+In `app/routes/_index.tsx`:
+
+- **Loader:** Add `prisma.heroSlide.findMany({ orderBy: { sortOrder: "asc" } })` to the existing `Promise.all` loader. Return the slides mapped to the frontend's expected shape:
+  ```typescript
+  heroSlides: slides.map(s => ({
+    image: s.image,
+    headline: s.title,
+    subheadline: s.subtitle,
+    cta: s.cta,
+    href: s.ctaLink,
+  }))
+  ```
+- **Component:** Change `HeroSlider` to receive slides as props (or use `useLoaderData`). Remove the hardcoded `slides` array and the static image imports (`import k2BaseCamp from "..."`, etc.).
+- If no slides exist in the DB, render nothing or a placeholder.
+
+#### 8.6 Seed default hero slides
+
+Update `prisma/seed.ts` to create 3 default `HeroSlide` records matching the original hardcoded content:
+
+```typescript
+await prisma.heroSlide.createMany({
+  data: [
+    {
+      title: "K2 Base Camp Trek",
+      subtitle: "Walk across the legendary Baltoro Glacier",
+      image: "/images/hero/k2-base-camp.webp",
+      cta: "Explore Trek",
+      ctaLink: "/trips/k2-base-camp-trek",
+      sortOrder: 0,
+    },
+    {
+      title: "Fairy Meadows Adventure",
+      subtitle: "Experience the magic of alpine meadows",
+      image: "/images/hero/toomas-tartes-Yizrl9N_eDA-unsplash.jpg",
+      cta: "View Expedition",
+      ctaLink: "/expeditions",
+      sortOrder: 1,
+    },
+    {
+      title: "Hunza Valley Tour",
+      subtitle: "Discover the secrets of longevity",
+      image: "/images/hero/sebastien-goldberg-BKLHxgbYFDI-unsplash.jpg",
+      cta: "Explore Tours",
+      ctaLink: "/tours",
+      sortOrder: 2,
+    },
+  ],
+});
+```
+
+### Verification
+
+- [x] `prisma generate` succeeds and produces `HeroSlide` type
+- [x] `GET /admin/hero` lists hero slides with edit/delete actions
+- [x] `GET /admin/hero/new` renders the creation form with ImageInput
+- [x] `POST /admin/hero/new` creates a slide and redirects
+- [x] `GET /admin/hero/:id/edit` pre-fills the form with existing data
+- [x] `POST /admin/hero/:id/edit` updates the slide
+- [x] Delete action removes the slide and redirects
+- [x] Home page hero carousel reads slides from the database (not hardcoded)
+- [x] All 3 default slides exist after re-seeding
+- [x] "Hero" link appears in the admin sidebar
+- [x] `npm run typecheck` passes
 
 ---
 
-## Scope Boundary
+## PHASE 9 — Public Page Responsiveness
 
-| In scope | Out of scope |
-|----------|-------------|
-| 29 public files refactor | Admin CMS theming |
-| CSS variable architecture | Layout/structure changes |
-| Theme switcher UI | New route creation |
-| Cookie persistence | Business logic changes |
-| Per-theme gradient stops | Prisma/backend changes |
-| TypeScript type-check pass | Package.json dependency adds |
+**Status:** ❌ Not started
+**Dependencies:** Phase 3 (public routes all work), Phase 8 (hero carousel is DB-driven)
+
+### Background
+
+The public-facing pages have reasonable responsiveness thanks to Tailwind breakpoint classes applied during the initial development. All card grids (trips, destinations, testimonials, blog) already use proper responsive patterns like `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`. The footer stacks correctly. The search/filter bar uses `grid-cols-1 md:grid-cols-4`.
+
+**The main gap is the hero carousel** — it was never given mobile-responsive treatment and breaks at smaller viewports. Other components need only minor adjustments.
+
+### Responsiveness audit (at 375px and 768px)
+
+| Component | 375px (mobile) | 768px (tablet) | Issue |
+|---|---|---|---|
+| **Hero carousel** | ⚠️ Broken | ⚠️ Tight | `h-screen` too tall, `text-5xl` headline too large, `px-8 py-3` CTA too wide, 32px nav arrows oversized |
+| **Hero carousel subheadline** | ⚠️ Too large | ✅ Fine | Fixed `text-xl` (20px) on all screens — needs `text-base sm:text-lg md:text-xl` |
+| **Header info bar** | ✅ Hidden | ✅ Visible | Uses `hidden md:block` — intentionally hidden on mobile, acceptable |
+| **Header CTA button** | ✅ Hidden | ✅ Visible | Uses `hidden sm:inline-block` — replaced in mobile menu, acceptable |
+| **Header logo** | ⚠️ Slightly small | ⚠️ Slightly small | Fixed `h-10` on all sizes — could be larger on desktop |
+| **Card grids** | ✅ Fine | ✅ Fine | Proper responsive column patterns already applied |
+| **Footer** | ✅ Fine | ✅ Fine | Stacks to 1-col on mobile, 4-col on desktop |
+| **Nav mobile menu** | ✅ Works | ✅ Works | Hamburger toggle, dropdowns, theme switcher, CTA button |
+
+### Entry checkpoint
+
+- [x] Phase 3 complete — all public routes work
+- [x] Phase 8 complete — hero carousel is DB-driven (ready for responsive edits)
+
+### Tasks
+
+#### 9.1 Hero carousel — responsive height
+
+In `app/routes/_index.tsx` — the `HeroSlider` container (currently `h-screen`):
+
+- Change `h-screen` to `min-h-[60vh] md:h-screen` (or `min-h-[50vh] sm:min-h-[70vh] md:h-screen`)
+- This prevents the hero from being taller than the viewport on mobile while keeping full-screen on desktop
+
+#### 9.2 Hero carousel — responsive headline text
+
+Change the headline `<h1>` classes from:
+```
+text-5xl md:text-6xl
+```
+to:
+```
+text-3xl sm:text-4xl md:text-5xl lg:text-6xl
+```
+
+This gives: 30px on 375px phones, 36px on larger phones, 48px on tablets, 60px on desktop.
+
+#### 9.3 Hero carousel — responsive subheadline
+
+Change the subheadline `<p>` classes from:
+```
+text-xl
+```
+to:
+```
+text-base sm:text-lg md:text-xl
+```
+
+This gives: 16px on phones, 18px on larger phones, 20px on desktop.
+
+#### 9.4 Hero carousel — responsive CTA button padding
+
+Change the CTA `<a>` classes from:
+```
+px-8 py-3
+```
+to:
+```
+px-6 sm:px-8 py-2 sm:py-3
+```
+
+This reduces button width and height on very small screens.
+
+#### 9.5 Hero carousel — smaller nav arrows on mobile
+
+The `<ChevronLeft>` and `<ChevronRight>` icons use fixed `size={32}`. On mobile, reduce these.
+
+Option 1: Remove `size={32}` and use responsive CSS via a wrapper:
+```
+className="... p-1 sm:p-2"
+```
+And set the icon via a responsive container. Since lucide-react `size` prop doesn't support responsive values, either:
+- Wrap in a `<div>` with font-size control (icons scale with font-size)
+- Or render two icon instances with `className="sm:hidden"` / `className="hidden sm:block"` at different sizes
+
+Simplest approach: use `className="sm:hidden"` for a `size={24}` icon and `className="hidden sm:block"` for `size={32}`.
+
+#### 9.6 Hero carousel — tighter bottom spacing on mobile
+
+The dots container uses `bottom-8`. Change to `bottom-4 md:bottom-8` to move them closer to the bottom on mobile.
+
+The content container uses `p-8 md:p-12`. Change to `p-6 sm:p-8 md:p-12` for tighter inset padding on small screens.
+
+#### 9.7 Header — responsive logo height
+
+In `app/components/Header.tsx`, line 55:
+```
+className="h-10 w-auto max-w-45 object-contain"
+```
+Change to:
+```
+className="h-10 md:h-12 w-auto max-w-48 object-contain"
+```
+
+This gives 40px on mobile, 48px on desktop, with a slightly wider max width.
+
+### Verification
+
+- [ ] Home page hero carousel renders correctly at 375px (no overflow, readable text, usable CTA)
+- [ ] Home page hero carousel renders correctly at 768px (proportional to viewport)
+- [ ] Home page hero carousel renders correctly at 1440px (full-screen, large text)
+- [ ] Nav arrows are touch-friendly on mobile (not oversized)
+- [ ] Logo renders at 40px height on mobile, 48px on desktop
+- [ ] All card grids reflow correctly at all breakpoints (no horizontal scroll)
+- [ ] `npm run typecheck` passes
+- [ ] `npm run build` passes
 
 ---
 
-## File Change Summary
+## PHASE 10 — Admin Dashboard Responsiveness
 
-| Action | Path |
-|--------|------|
-| **Edit** | `app/app.css` |
-| **Create** | `app/lib/theme.tsx` |
-| **Edit** | `app/root.tsx` |
-| **Create** | `app/components/ThemeSwitcher.tsx` |
-| **Edit** | `app/components/Header.tsx` |
-| **Edit** | `app/components/Accordion.tsx` |
-| **Edit** | `app/components/Breadcrumb.tsx` |
-| **Edit** | `app/components/DetailSidebar.tsx` |
-| **Edit** | `app/components/DestinationCard.tsx` |
-| **Edit** | `app/components/Footer.tsx` |
-| **Edit** | `app/components/HeroSection.tsx` |
-| **Edit** | `app/components/Lightbox.tsx` |
-| **Edit** | `app/components/SectionTitle.tsx` |
-| **Edit** | `app/components/StatsBar.tsx` |
-| **Edit** | `app/components/TripCard.tsx` |
-| **Edit** | `app/components/WhatsAppButton.tsx` |
-| **Edit** | `app/routes/_index.tsx` |
-| **Edit** | `app/routes/about.tsx` |
-| **Edit** | `app/routes/blog._index.tsx` |
-| **Edit** | `app/routes/blog.$slug.tsx` |
-| **Edit** | `app/routes/contact.tsx` |
-| **Edit** | `app/routes/expeditions._index.tsx` |
-| **Edit** | `app/routes/expeditions.$slug.tsx` |
-| **Edit** | `app/routes/faq.tsx` |
-| **Edit** | `app/routes/gallery.tsx` |
-| **Edit** | `app/routes/login.tsx` |
-| **Edit** | `app/routes/tours._index.tsx` |
-| **Edit** | `app/routes/tours.$slug.tsx` |
-| **Edit** | `app/routes/trips._index.tsx` |
-| **Edit** | `app/routes/trips.$slug.tsx` |
-| **Edit** | `IMPLEMENTATION_PLAN.md` (update PHASE 6/7 status after completion) |
+**Status:** ❌ Not started
+**Dependencies:** Phase 4 (admin CRUD routes, admin.tsx layout)
+
+### Background
+
+The admin layout (`app/routes/admin.tsx`) has **zero responsive handling**. The sidebar uses a fixed `w-64` (256px) with no breakpoint variants, no mobile hamburger toggle, and no overlay/drawer pattern. On a 375px phone, the sidebar (256px) + the main content padding (`p-8` = 32px each side) leaves roughly 55px of usable content width. The sidebar will either overflow the viewport or squeeze the content to unreadable narrowness.
+
+The forms within admin pages already use `grid-cols-1 md:grid-cols-2` patterns, so they will stack correctly once the layout shell is fixed.
+
+### Responsiveness audit (at 375px and 768px)
+
+| Element | 375px (mobile) | 768px (tablet) | Issue |
+|---|---|---|---|
+| **Sidebar** | ⚠️ Broken | ⚠️ Broken | Always visible at 256px, dominates viewport |
+| **Mobile menu toggle** | ❌ Missing | ❌ Missing | No hamburger button exists |
+| **Main content padding** | ⚠️ Too large | ⚠️ Moderate | `p-8` = 32px on all sides — too much on mobile |
+| **Form grids** | ✅ Fine | ✅ Fine | Already use `grid-cols-1 md:grid-cols-2` |
+| **Top bar (brand + user)** | ❌ Missing | ❌ Missing | No collapsible top bar pattern |
+
+### Entry checkpoint
+
+- [x] Phase 4 complete — admin layout and all CRUD routes exist
+- [x] Phase 8 complete — hero sidebar link added (can be included in the responsive sidebar)
+
+### Tasks
+
+#### 10.1 Add responsive sidebar with mobile drawer
+
+Modify `app/routes/admin.tsx`:
+
+**Add state for sidebar open/close:**
+```typescript
+const [sidebarOpen, setSidebarOpen] = useState(false);
+```
+
+**Desktop sidebar (lg: 1024px+):**
+- Keep the existing `w-64` sidebar as a permanent column
+- Wrap it in `hidden lg:flex` (hidden below lg, flex at lg+)
+
+**Mobile sidebar (below lg):**
+- Render as an overlay drawer: absolute/fixed position on the left, full-height, with a semi-transparent backdrop
+- Slide in/out using a CSS transition (`translate-x` transform)
+- Show/hide based on `sidebarOpen` state
+- Clicking the backdrop closes the drawer
+
+**Top bar (visible on all screens, but only has hamburger on mobile):**
+- At the top of the main content area, render a flex row with:
+  - `lg:hidden` hamburger button (`<Menu size={24} />` / `<X size={24} />`)
+  - `lg:hidden` brand text ("Akhtar CMS")
+  - User name + logout (visible on desktop, optionally on mobile)
+
+**Sidebar structure for mobile drawer:**
+```
+<aside className={`
+  fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 border-r border-gray-800 p-4 flex flex-col
+  transform transition-transform duration-200 ease-in-out
+  lg:relative lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+`}>
+  {/* (same sidebar content as before) */}
+</aside>
+{/* Backdrop (mobile only) */}
+{sidebarOpen && (
+  <div
+    className="fixed inset-0 z-40 bg-black/50 lg:hidden"
+    onClick={() => setSidebarOpen(false)}
+  />
+)}
+```
+
+**Note:** The sidebar should remain a flex column on desktop. The `fixed` positioning + `translate-x` animation only applies below `lg:`.
+
+#### 10.2 Responsive main content padding
+
+Change the `<main>` element's classes from:
+```
+flex-1 p-8 overflow-auto
+```
+to:
+```
+flex-1 p-4 md:p-6 lg:p-8 overflow-auto
+```
+
+#### 10.3 Verify admin form responsiveness
+
+Check a complex form (e.g., Edit Trip with itinerary, highlights, gallery) at 375px. The form fields should already stack vertically via `grid-cols-1 md:grid-cols-2`. If any field has a fixed width that causes overflow, add `w-full` or `max-w-full` overrides.
+
+#### 10.4 Ensure sidebar scrolls properly on mobile
+
+The admin sidebar contains ~12 nav links plus user info. On a small phone, the sidebar content may exceed the viewport height. Ensure the sidebar has `overflow-y-auto` so all links remain reachable by scrolling.
+
+The existing sidebar already has `flex flex-col` structure but lacks `overflow-y-auto` — add it to the sidebar container.
+
+### Verification
+
+- [ ] At 1440px: sidebar is permanently visible on the left, main content fills the rest (unchanged behavior)
+- [ ] At 768px (tablet): sidebar is hidden by default, hamburger button is visible, clicking it slides in the drawer, clicking backdrop closes it
+- [ ] At 375px (phone): same behavior as tablet, sidebar content is scrollable if it overflows viewport
+- [ ] Main content padding is reasonable at all sizes (not excessive on mobile)
+- [ ] All admin forms render correctly in the responsive layout (no horizontal overflow)
+- [ ] Logout still works
+- [ ] `npm run typecheck` passes
+
+---
+
+## PHASE 11 — Logo Sizing Fix
+
+**Status:** ❌ Not started
+**Dependencies:** Phase 9 (Header responsiveness for the logo)
+
+### Background
+
+When a logo image is uploaded via `/admin/settings`, it renders at `h-10` (40px height) in the header. When no logo is set, the text fallback renders at `text-2xl` (24px font, roughly 32–36px total height with line-height). The text fallback appears visually larger and more prominent than a 40px-tall logo image, especially if the logo has a horizontal/wide aspect ratio. Additionally, the `max-w-45` (180px) constraint can clip wider logos.
+
+The `object-contain` class on the `<img>` does preserve aspect ratio correctly — the issue is purely the fixed height being too small to match the visual weight of the text fallback or the nav links next to it.
+
+### Entry checkpoint
+
+- [x] Phase 9 complete — header logo has responsive `h-10 md:h-12` class (or ready to adjust)
+
+### Tasks
+
+#### 11.1 Confirm current logo CSS
+
+The current logo `<img>` in `Header.tsx` uses:
+```tsx
+className="h-10 w-auto max-w-45 object-contain"
+```
+
+If Phase 9 has been applied, this is already:
+```tsx
+className="h-10 md:h-12 w-auto max-w-48 object-contain"
+```
+
+#### 11.2 Fine-tune logo height if needed
+
+If after Phase 9 the logo still appears too small relative to the brand text fallback, increase the base height:
+
+- Change `h-10` to `h-11` (44px base) or `h-12` (48px base)
+- Keep `md:h-12` or increase to `md:h-14` (56px) on desktop
+- Keep `w-auto` for aspect ratio preservation
+- Keep `max-w-48` (192px) or increase to `max-w-56` (224px) if the logo is very wide
+
+**Recommended conservative values:**
+```
+className="h-10 md:h-12 w-auto max-w-48 object-contain"
+```
+
+This provides:
+- 40px on mobile (matches nav link height, keeps header compact)
+- 48px on desktop (visually balances with the brand text fallback)
+- 192px max width (can accommodate most logo aspect ratios)
+
+#### 11.3 Test with an actual uploaded logo
+
+Upload a non-square logo image (e.g., a horizontal banner or a tall icon-style logo) via `/admin/settings` → Company Info → Logo.
+
+- Verify the image renders at the correct height without distortion (`object-contain` handles this)
+- Verify the header layout doesn't break (logo doesn't push nav items off-screen)
+- Verify on mobile (375px) the logo scales down appropriately
+- Verify on desktop (1440px) the logo is prominent but not oversized
+
+### Verification
+
+- [ ] Logo `<img>` renders at a sensible height (40px mobile, 48px desktop)
+- [ ] `object-contain` preserves aspect ratio (no stretching)
+- [ ] `max-w-48` prevents oversized logos from breaking the header layout
+- [ ] Logo appears visually balanced with the brand text fallback (if present) and nav links
+- [ ] Text fallback (no logo uploaded) still looks correct — no regressions
+- [ ] Header layout is not broken at any breakpoint
+- [ ] `npm run typecheck` passes
+
+---
+
+### File structure after all phases
+
+```
+app/
+├── lib/
+│   ├── prisma.server.ts        # Prisma singleton (Phase 1)
+│   ├── auth.server.ts          # JWT create/verify/requireAdmin (Phase 2)
+│   ├── supabase.server.ts      # Supabase storage client (Phase 5)
+│   └── video.ts               # Video embed URL helper (Phase 6)
+├── routes/
+│   ├── _index.tsx              # Home — hero carousel now DB-driven (Phase 3 → Phase 8)
+│   ├── login.tsx               # Login (Phase 2)
+│   ├── admin.tsx               # Admin layout + responsive sidebar (Phase 2 → Phase 10)
+│   ├── admin._index.tsx        # Admin dashboard (Phase 2)
+│   ├── admin.logout.tsx        # Logout (Phase 2)
+│   ├── admin.trips._index.tsx  # Trip list (Phase 4)
+│   ├── admin.trips.new.tsx     # Trip create (Phase 4)
+│   ├── admin.trips.$id.edit.tsx # Trip edit (Phase 4)
+│   ├── admin.hero._index.tsx   # Hero slide list (Phase 8)
+│   ├── admin.hero.new.tsx      # Hero slide create (Phase 8)
+│   ├── admin.hero.$id.edit.tsx # Hero slide edit/delete (Phase 8)
+│   ├── ... (all other admin CRUD routes)
+│   ├── trips._index.tsx        # Public trips (Phase 3)
+│   ├── trips.$slug.tsx         # Public trip detail (Phase 3)
+│   ├── ... (all other public routes)
+├── routes.ts                   # Route config (updated each phase)
+├── root.tsx                    # Root layout with loader (Phase 3)
+├── components/
+│   ├── Header.tsx              # Props-driven + responsive logo (Phase 3 → Phase 9/11)
+│   ├── Footer.tsx              # Props-driven (Phase 3 refactor)
+│   └── WhatsAppButton.tsx      # Props-driven (Phase 3 refactor)
+prisma/
+├── schema.prisma               # Full schema + HeroSlide model (Phase 1 → Phase 8)
+├── seed.ts                     # Seed script incl. HeroSlides (Phase 1 → Phase 8)
+└── migrations/                 # Auto-generated by Prisma
+```
+
+### Key env vars reference
+
+| Variable | Where used | Required for |
+|---|---|---|
+| `DATABASE_URL` (pooled) | `schema.prisma`, runtime | All app queries in loaders/actions |
+| `DIRECT_URL` (direct) | `schema.prisma` only | `prisma migrate deploy` |
+| `JWT_SECRET` | `auth.server.ts` | Creating/verifying session tokens |
+| `SUPABASE_URL` | `supabase.server.ts` | Supabase Storage client |
+| `SUPABASE_SERVICE_ROLE_KEY` | `supabase.server.ts` | Server-side uploads to Storage |
+
+### How to update this plan
+
+When a phase is completed, update its status line at the top of the phase section from `❌ Not started` to `✅ Complete`.
+
+When encountering blockers, add a `### Blockers` subsection at the bottom of the affected phase and describe the issue.
+
+---
+
+*End of Implementation Plan*

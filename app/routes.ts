@@ -108,5 +108,10 @@ export default [
 
     // Settings
     route("admin/settings", "routes/admin.settings.tsx"),
+
+    // Hero
+    route("admin/hero", "routes/admin.hero._index.tsx"),
+    route("admin/hero/new", "routes/admin.hero.new.tsx"),
+    route("admin/hero/:id/edit", "routes/admin.hero.$id.edit.tsx"),
   ]),
 ] satisfies RouteConfig;

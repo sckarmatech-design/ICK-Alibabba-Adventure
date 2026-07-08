@@ -15,22 +15,29 @@ import {
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader(_args: LoaderFunctionArgs) {
-  const [trips, testimonials, blogPosts, destinations] = await Promise.all([
-    prisma.trip.findMany({ orderBy: { title: "asc" } }),
-    prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } }),
-    prisma.blogPost.findMany({ orderBy: { date: "desc" }, take: 3 }),
-    prisma.destination.findMany({ orderBy: { name: "asc" } }),
-  ]);
+  const [trips, testimonials, blogPosts, destinations, slides] =
+    await Promise.all([
+      prisma.trip.findMany({ orderBy: { title: "asc" } }),
+      prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } }),
+      prisma.blogPost.findMany({ orderBy: { date: "desc" }, take: 3 }),
+      prisma.destination.findMany({ orderBy: { name: "asc" } }),
+      prisma.heroSlide.findMany({ orderBy: { sortOrder: "asc" } }),
+    ]);
   return {
     trips: trips.map(mapTripFromPrisma),
     testimonials: testimonials.map(mapTestimonialFromPrisma),
     blogPosts: blogPosts.map(mapBlogPostFromPrisma),
     destinations: destinations.map(mapDestinationFromPrisma),
+    heroSlides: slides.map((s) => ({
+      image: s.image,
+      headline: s.title,
+      subheadline: s.subtitle,
+      cta: s.cta,
+      href: s.ctaLink,
+    })),
   };
 }
-import k2BaseCamp from "~/images/hero/k2-base-camp.webp";
-import hunzaValley from "~/images/hero/sebastien-goldberg-BKLHxgbYFDI-unsplash.jpg";
-import fairyMeadows from "~/images/hero/toomas-tartes-Yizrl9N_eDA-unsplash.jpg";
+
 export const meta: MetaFunction = () => [
   ...generateMetaTags({
     title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
@@ -46,33 +53,19 @@ export const meta: MetaFunction = () => [
   },
 ];
 
+type HeroSlide = {
+  image: string;
+  headline: string;
+  subheadline: string;
+  cta: string;
+  href: string;
+};
+
 // Hero Slider Component
-function HeroSlider() {
+function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const slides = [
-    {
-      image: `${k2BaseCamp}`,
-      headline: "K2 Base Camp Trek",
-      subheadline: "Walk across the legendary Baltoro Glacier",
-      cta: "Explore Trek",
-      href: "/trips/k2-base-camp-trek",
-    },
-    {
-      image: `${fairyMeadows}`,
-      headline: "Fairy Meadows Adventure",
-      subheadline: "Experience the magic of alpine meadows",
-      cta: "View Expedition",
-      href: "/expeditions",
-    },
-    {
-      image: `${hunzaValley}`,
-      headline: "Hunza Valley Tour",
-      subheadline: "Discover the secrets of longevity",
-      cta: "Explore Tours",
-      href: "/tours",
-    },
-  ];
+  if (slides.length === 0) return null;
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -240,7 +233,7 @@ function SearchBar() {
 }
 
 export default function Home() {
-  const { trips, testimonials, blogPosts, destinations } =
+  const { trips, testimonials, blogPosts, destinations, heroSlides } =
     useLoaderData<typeof loader>();
   const featuredTrips = trips.slice(0, 3);
   const latestPosts = blogPosts.slice(0, 3);
@@ -249,7 +242,7 @@ export default function Home() {
     <div>
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <HeroSlider />
+        <HeroSlider slides={heroSlides} />
       </div>
 
       {/* Search Bar */}

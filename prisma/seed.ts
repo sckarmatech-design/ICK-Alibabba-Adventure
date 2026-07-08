@@ -113,6 +113,7 @@ async function main() {
     prisma.galleryImage.deleteMany(),
     prisma.galleryVideo.deleteMany(),
     prisma.teamMember.deleteMany(),
+    prisma.heroSlide.deleteMany(),
     prisma.siteSetting.deleteMany(),
   ]);
 
@@ -305,6 +306,36 @@ async function main() {
       key: "companyInfo",
       value: companyInfo as unknown as Prisma.InputJsonValue,
     },
+  });
+
+  // --- HERO SLIDES ---
+  await prisma.heroSlide.createMany({
+    data: [
+      {
+        title: "K2 Base Camp Trek",
+        subtitle: "Walk across the legendary Baltoro Glacier",
+        image: "/images/hero/k2-base-camp.webp",
+        cta: "Explore Trek",
+        ctaLink: "/trips/k2-base-camp-trek",
+        sortOrder: 0,
+      },
+      {
+        title: "Fairy Meadows Adventure",
+        subtitle: "Experience the magic of alpine meadows",
+        image: "/images/hero/toomas-tartes-Yizrl9N_eDA-unsplash.jpg",
+        cta: "View Expedition",
+        ctaLink: "/expeditions",
+        sortOrder: 1,
+      },
+      {
+        title: "Hunza Valley Tour",
+        subtitle: "Discover the secrets of longevity",
+        image: "/images/hero/sebastien-goldberg-BKLHxgbYFDI-unsplash.jpg",
+        cta: "Explore Tours",
+        ctaLink: "/tours",
+        sortOrder: 2,
+      },
+    ],
   });
 
   console.log("Seed completed successfully.");
