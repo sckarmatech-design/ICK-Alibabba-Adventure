@@ -47,12 +47,15 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
       {/* Main Navigation */}
       <nav className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="shrink-0 flex items-center">
+        <Link
+          to="/"
+          className="group shrink-0 flex items-center -my-4 py-1 focus-visible:outline-hidden"
+        >
           {companyInfo.logo ? (
             <img
               src={companyInfo.logo}
               alt={companyInfo.name}
-              className="h-10 md:h-12 w-auto max-w-48 object-contain"
+              className="h-14 w-auto min-w-15 max-w-50 object-contain sm:h-18 md:h-22 lg:h-26 xl:max-w-70 transition-transform duration-300 group-hover:scale-105"
             />
           ) : (
             <div>
