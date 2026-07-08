@@ -1,4 +1,4 @@
-# Robots.txt for Akhtar Abbasi Hiking
+# Robots.txt for ICK Alibaba Adventure
 # Allow all search engines to crawl the site
 
 User-agent: *

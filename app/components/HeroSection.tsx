@@ -12,11 +12,11 @@ export function HeroSection({
   overlay = true,
 }: HeroSectionProps) {
   return (
-    <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg">
+    <div className="relative w-full h-96 md:h-125 overflow-hidden rounded-lg">
       <img src={image} alt={title} className="w-full h-full object-cover" />
       {overlay && (
         // from-black/80 is an intentional dark image overlay — not a theme color
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
       )}
 
       <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">

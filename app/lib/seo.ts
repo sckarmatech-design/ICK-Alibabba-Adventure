@@ -4,7 +4,7 @@
  */
 
 export const SITE_CONFIG = {
-  name: "Akhtar Abbasi Hiking",
+  name: "ICK Alibabba Adventure",
   url: "https://akhtarabbasi-hiking.com",
   description:
     "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
@@ -64,10 +64,16 @@ export const generateMetaTags = (meta: SEOMetadata) => {
   // Add article-specific tags
   if (type === "article") {
     if (meta.publishedDate) {
-      tags.push({ property: "article:published_time", content: meta.publishedDate });
+      tags.push({
+        property: "article:published_time",
+        content: meta.publishedDate,
+      });
     }
     if (meta.modifiedDate) {
-      tags.push({ property: "article:modified_time", content: meta.modifiedDate });
+      tags.push({
+        property: "article:modified_time",
+        content: meta.modifiedDate,
+      });
     }
     if (meta.author) {
       tags.push({ property: "article:author", content: meta.author });
@@ -86,65 +92,65 @@ export const generateJsonLd = (data: Record<string, unknown>) => {
  */
 export const PAGE_SEO: Record<string, SEOMetadata> = {
   home: {
-    title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
+    title: "ICK Alibabba Adventure",
     description:
       "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
     image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
     url: "https://akhtarabbasi-hiking.com",
   },
   trips: {
-    title: "Hiking Trips | Akhtar Abbasi Hiking",
+    title: "Hiking Trips | ICK Alibabba Adventure",
     description:
       "Explore our collection of carefully curated hiking trips across Gilgit Baltistan. From short day hikes to challenging multi-day treks.",
     image: "https://akhtarabbasi-hiking.com/images/og/trips.webp",
     url: "https://akhtarabbasi-hiking.com/trips",
   },
   expeditions: {
-    title: "Mountain Expeditions | Akhtar Abbasi Hiking",
+    title: "Mountain Expeditions | ICK Alibabba Adventure",
     description:
       "Join high-altitude mountain expeditions in Gilgit Baltistan. Summit some of the world's most spectacular peaks with experienced mountaineers.",
     image: "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
     url: "https://akhtarabbasi-hiking.com/expeditions",
   },
   tours: {
-    title: "Cultural Tours | Akhtar Abbasi Hiking",
+    title: "Cultural Tours | ICK Alibabba Adventure",
     description:
       "Discover the rich culture and stunning landscapes of Gilgit Baltistan through guided cultural tours and regional experiences.",
     image: "https://akhtarabbasi-hiking.com/images/og/tours.webp",
     url: "https://akhtarabbasi-hiking.com/tours",
   },
   gallery: {
-    title: "Gallery | Akhtar Abbasi Hiking",
+    title: "Gallery | ICK Alibabba Adventure",
     description:
       "View stunning photographs and videos from our trekking expeditions and mountain adventures in Gilgit Baltistan.",
     image: "https://akhtarabbasi-hiking.com/images/og/gallery.webp",
     url: "https://akhtarabbasi-hiking.com/gallery",
   },
   about: {
-    title: "About Us | Akhtar Abbasi Hiking",
+    title: "About Us | ICK Alibabba Adventure",
     description:
-      "Learn about Akhtar Abbasi Hiking — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
+      "Learn about ICK Alibabba Adventure — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
     image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
     url: "https://akhtarabbasi-hiking.com/about",
   },
   faq: {
-    title: "FAQ | Akhtar Abbasi Hiking",
+    title: "FAQ | ICK Alibabba Adventure",
     description:
       "Frequently asked questions about our trekking trips, expeditions, safety measures, and booking process.",
     image: "https://akhtarabbasi-hiking.com/images/og/faq.webp",
     url: "https://akhtarabbasi-hiking.com/faq",
   },
   blog: {
-    title: "Blog | Akhtar Abbasi Hiking",
+    title: "Blog | ICK Alibabba Adventure",
     description:
       "Stories from the trail, trekking tips, and travel guides from our mountain adventures.",
     image: "https://akhtarabbasi-hiking.com/images/og/blog.webp",
     url: "https://akhtarabbasi-hiking.com/blog",
   },
   contact: {
-    title: "Contact Us | Akhtar Abbasi Hiking",
+    title: "Contact Us | ICK Alibabba Adventure",
     description:
-      "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
+      "Get in touch with ICK Alibabba Adventure. Contact us via email, phone, WhatsApp, or fill out our contact form.",
     image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
     url: "https://akhtarabbasi-hiking.com/contact",
   },
