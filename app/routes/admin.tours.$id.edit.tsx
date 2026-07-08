@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { redirect, Form, useLoaderData, Link } from "react-router";
+import { Form, Link, useActionData, useLoaderData } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
@@ -12,6 +12,11 @@ import {
 import { ItineraryEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
+
+const inputClass =
+  "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -27,38 +32,58 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   if (formData.get("_action") === "delete") {
-    await prisma.tour.delete({ where: { id: params.id } });
-    return redirect("/admin/tours");
+    try {
+      await prisma.tour.delete({ where: { id: params.id } });
+    } catch (err) {
+      console.error("Failed to delete tour:", err);
+      return {
+        ok: false,
+        error: "Failed to delete tour. Please try again.",
+      } as const;
+    }
+    return { ok: true } as const;
   }
 
-  await prisma.tour.update({
-    where: { id: params.id },
-    data: {
-      title: getString(formData, "title"),
-      region: getString(formData, "region"),
-      duration: getString(formData, "duration"),
-      difficulty: getString(formData, "difficulty") as
-        | "EASY"
-        | "MODERATE"
-        | "CHALLENGING"
-        | "EXPERT",
-      bestSeason: getString(formData, "bestSeason"),
-      heroImage: getString(formData, "heroImage"),
-      overview: getString(formData, "overview"),
-      accommodation: getOptionalString(formData, "accommodation"),
-      mealPlan: getOptionalString(formData, "mealPlan"),
-      transport: getOptionalString(formData, "transport"),
-      highlights: getArray(formData, "highlights"),
-      gallery: getArray(formData, "gallery"),
-      itinerary: parseJsonField(getString(formData, "itinerary"), []),
-    },
-  });
-
-  return redirect("/admin/tours");
+  try {
+    await prisma.tour.update({
+      where: { id: params.id },
+      data: {
+        title: getString(formData, "title"),
+        region: getString(formData, "region"),
+        duration: getString(formData, "duration"),
+        difficulty: getString(formData, "difficulty") as
+          | "EASY"
+          | "MODERATE"
+          | "CHALLENGING"
+          | "EXPERT",
+        bestSeason: getString(formData, "bestSeason"),
+        heroImage: getString(formData, "heroImage"),
+        overview: getString(formData, "overview"),
+        accommodation: getOptionalString(formData, "accommodation"),
+        mealPlan: getOptionalString(formData, "mealPlan"),
+        transport: getOptionalString(formData, "transport"),
+        highlights: getArray(formData, "highlights"),
+        gallery: getArray(formData, "gallery"),
+        itinerary: parseJsonField(getString(formData, "itinerary"), []),
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to update tour:", err);
+    return {
+      ok: false,
+      error: "Failed to save tour. Please try again.",
+    } as const;
+  }
 }
 
 export default function AdminEditTour() {
   const tour = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: `/admin/tours/${tour.id}/edit` },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -69,13 +94,14 @@ export default function AdminEditTour() {
           to="/admin/tours"
           className="text-gray-400 hover:text-white transition"
         >
-          Cancel
+          Back to list
         </Link>
       </div>
 
       <Form
         method="post"
-        className="space-y-6 max-w-4xl bg-gray-900 border border-gray-800 rounded-lg p-6"
+        id={`tour-edit-form-${tour.id}`}
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="md:col-span-2">
@@ -91,7 +117,7 @@ export default function AdminEditTour() {
               type="text"
               required
               defaultValue={tour.title}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -108,7 +134,7 @@ export default function AdminEditTour() {
               type="text"
               required
               defaultValue={tour.region}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -125,7 +151,7 @@ export default function AdminEditTour() {
               type="text"
               required
               defaultValue={tour.duration}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -141,7 +167,7 @@ export default function AdminEditTour() {
               name="difficulty"
               required
               defaultValue={tour.difficulty}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white focus:outline-none focus:border-green-500"
+              className={inputClass}
             >
               <option value="EASY">Easy</option>
               <option value="MODERATE">Moderate</option>
@@ -163,7 +189,7 @@ export default function AdminEditTour() {
               type="text"
               required
               defaultValue={tour.bestSeason}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -191,7 +217,7 @@ export default function AdminEditTour() {
               rows={5}
               required
               defaultValue={tour.overview}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -207,7 +233,7 @@ export default function AdminEditTour() {
               name="accommodation"
               type="text"
               defaultValue={tour.accommodation ?? ""}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -223,7 +249,7 @@ export default function AdminEditTour() {
               name="mealPlan"
               type="text"
               defaultValue={tour.mealPlan ?? ""}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -239,7 +265,7 @@ export default function AdminEditTour() {
               name="transport"
               type="text"
               defaultValue={tour.transport ?? ""}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -255,7 +281,7 @@ export default function AdminEditTour() {
               name="highlights"
               rows={4}
               defaultValue={tour.highlights.join("\n")}
-              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -280,37 +306,25 @@ export default function AdminEditTour() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-          <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={uploading}
-              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition disabled:opacity-50"
-            >
-              Save Changes
-            </button>
-            <Link
-              to="/admin/tours"
-              className="text-gray-400 hover:text-white transition"
-            >
-              Cancel
-            </Link>
-          </div>
-
-          <button
-            type="submit"
-            name="_action"
-            value="delete"
-            onClick={(event) => {
-              if (!confirm("Delete this tour?")) {
-                event.preventDefault();
-              }
-            }}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition"
-          >
-            Delete
-          </button>
-        </div>
+        <AdminSaveBar
+          formId={`tour-edit-form-${tour.id}`}
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/tours"
+          saveLabel="Save Changes"
+          submittingLabel="Saving…"
+          deleteButton={{
+            label: "Delete Tour",
+            confirmMessage: "Delete this tour? This cannot be undone.",
+          }}
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

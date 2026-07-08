@@ -25,11 +25,11 @@ export const tours: Tour[] = [
     duration: "3 Days",
     difficulty: "Easy",
     bestSeason: "April – October",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1677103036843-df9e5ad74eea?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1690789290468-4e6e83f7524b?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1684230715200-40f32e068bf2?w=800&h=600&fit=crop",
     ],
     highlights: ["Ancient Markets", "Mountain Views", "Local Culture", "Historical Forts", "Local Cuisine"],
     overview:
@@ -65,11 +65,11 @@ export const tours: Tour[] = [
     duration: "4 Days",
     difficulty: "Easy",
     bestSeason: "April – October",
-    heroImage: "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1611834473980-502e0a1220d7?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1722082933604-288a1c130475?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1684230715200-40f32e068bf2?w=800&h=600&fit=crop",
     ],
     highlights: ["Local Villages", "Apricot Orchards", "Mountain Scenery", "Longevity Culture", "Traditional Food"],
     overview:
@@ -111,10 +111,10 @@ export const tours: Tour[] = [
     duration: "5 Days",
     difficulty: "Moderate",
     bestSeason: "May – September",
-    heroImage: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1632133915653-8ded5c72e329?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1638433097357-1dea5816d7a5?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1684230715200-40f32e068bf2?w=800&h=600&fit=crop",
     ],
     highlights: ["River Activities", "Mountain Biking", "Cultural Sites", "Local Markets", "Adventure Sports"],
     overview:
@@ -162,10 +162,10 @@ export const tours: Tour[] = [
     duration: "4 Days",
     difficulty: "Easy",
     bestSeason: "May – October",
-    heroImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=600&fit=crop",
+    heroImage: "https://images.unsplash.com/photo-1690789290468-4e6e83f7524b?w=1200&h=600&fit=crop",
     gallery: [
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
-      "https://images.unsplash.com/photo-1519904981063-b0cf448d479e?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1677103036843-df9e5ad74eea?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-wOAaDxhIyYc?w=800&h=600&fit=crop",
     ],
     highlights: ["Hidden Valleys", "Local Homestays", "Scenic Trails", "Authentic Experience", "Photography"],
     overview:

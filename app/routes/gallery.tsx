@@ -85,7 +85,7 @@ export default function Gallery() {
           />
         </div>
 
-        {/* Filter Tabs */}
+        {/* Filter Tabs (non-CTA — uses bg-accent) */}
         <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
           {categories.map((category) => (
             <button
@@ -93,8 +93,8 @@ export default function Gallery() {
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-lg whitespace-nowrap font-medium transition ${
                 selectedCategory === category
-                  ? "bg-[#16a34a] text-white"
-                  : "bg-[#111827] text-[#9ca3af] hover:text-[#f9fafb] border border-[#1f2937]"
+                  ? "bg-accent text-white"
+                  : "bg-surface text-muted hover:text-ink border border-border"
               }`}
             >
               {category}
@@ -111,7 +111,7 @@ export default function Gallery() {
                 setLightboxIndex(imageList.indexOf(image.image));
                 setLightboxOpen(true);
               }}
-              className="relative overflow-hidden rounded-lg h-48 group cursor-pointer bg-[#111827]"
+              className="relative overflow-hidden rounded-lg h-48 group cursor-pointer bg-surface"
             >
               <img
                 src={image.image}
@@ -119,6 +119,7 @@ export default function Gallery() {
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 loading="lazy"
               />
+              {/* Dark overlay on hover — not theme color */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                 <span className="text-white font-semibold">View</span>
               </div>
@@ -128,7 +129,7 @@ export default function Gallery() {
 
         {/* Videos Section */}
         <div className="mt-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-ink mb-8">
             Featured Videos
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -138,7 +139,7 @@ export default function Gallery() {
                 href={video.videoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative aspect-video block rounded-lg overflow-hidden group bg-[#111827]"
+                className="relative aspect-video block rounded-lg overflow-hidden group bg-surface"
               >
                 <img
                   src={video.thumbnail || "/images/video-placeholder.jpg"}

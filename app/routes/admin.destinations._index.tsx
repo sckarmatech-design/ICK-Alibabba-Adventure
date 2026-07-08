@@ -37,7 +37,7 @@ export default function AdminDestinationsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -57,9 +57,15 @@ export default function AdminDestinationsIndex() {
             )}
             {destinations.map((destination) => (
               <tr key={destination.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white">{destination.name}</td>
-                <td className="px-4 py-3 text-gray-300">{destination.region}</td>
-                <td className="px-4 py-3 text-gray-300">{destination.tripCount}</td>
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {destination.name}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {destination.region}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {destination.tripCount}
+                </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <Link
                     to={`/admin/destinations/${destination.id}/edit`}

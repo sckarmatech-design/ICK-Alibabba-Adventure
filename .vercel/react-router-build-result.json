@@ -56,7 +56,10 @@
       "routes/admin.gallery.videos.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/admin.gallery.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
       "routes/admin.inquiries": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
-      "routes/admin.settings": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+      "routes/admin.settings": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.hero._index": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.hero.new": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "routes/admin.hero.$id.edit": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
     },
     "routes": {
       "root": {
@@ -493,6 +496,33 @@
         "config": {
           "runtime": "nodejs"
         }
+      },
+      "routes/admin.hero._index": {
+        "id": "routes/admin.hero._index",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.hero._index.tsx",
+        "path": "admin/hero",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.hero.new": {
+        "id": "routes/admin.hero.new",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.hero.new.tsx",
+        "path": "admin/hero/new",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "routes/admin.hero.$id.edit": {
+        "id": "routes/admin.hero.$id.edit",
+        "parentId": "routes/admin",
+        "file": "app/routes/admin.hero.$id.edit.tsx",
+        "path": "admin/hero/:id/edit",
+        "config": {
+          "runtime": "nodejs"
+        }
       }
     }
   },
@@ -795,6 +825,24 @@
         "parentId": "routes/admin",
         "file": "routes/admin.settings.tsx",
         "path": "admin/settings"
+      },
+      "routes/admin.hero._index": {
+        "id": "routes/admin.hero._index",
+        "parentId": "routes/admin",
+        "file": "routes/admin.hero._index.tsx",
+        "path": "admin/hero"
+      },
+      "routes/admin.hero.new": {
+        "id": "routes/admin.hero.new",
+        "parentId": "routes/admin",
+        "file": "routes/admin.hero.new.tsx",
+        "path": "admin/hero/new"
+      },
+      "routes/admin.hero.$id.edit": {
+        "id": "routes/admin.hero.$id.edit",
+        "parentId": "routes/admin",
+        "file": "routes/admin.hero.$id.edit.tsx",
+        "path": "admin/hero/:id/edit"
       }
     },
     "routeDiscovery": {
@@ -1003,6 +1051,18 @@
               {
                 "file": "routes/admin.settings.tsx",
                 "path": "admin/settings"
+              },
+              {
+                "file": "routes/admin.hero._index.tsx",
+                "path": "admin/hero"
+              },
+              {
+                "file": "routes/admin.hero.new.tsx",
+                "path": "admin/hero/new"
+              },
+              {
+                "file": "routes/admin.hero.$id.edit.tsx",
+                "path": "admin/hero/:id/edit"
               }
             ]
           }

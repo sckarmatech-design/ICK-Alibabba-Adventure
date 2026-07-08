@@ -1,17 +1,13 @@
-import { useState } from "react";
+import { Form, Link, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
-import {
-  redirect,
-  Form,
-  useLoaderData,
-  Link,
-  useActionData,
-} from "react-router";
+import { useState } from "react";
 import type { BlogCategory } from "@prisma/client";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { slugify, getString, getOptionalString, getNumber } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 const categories: { value: BlogCategory; label: string }[] = [
   { value: "TREKKING", label: "Trekking" },
@@ -24,49 +20,39 @@ export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
-  const title = getString(formData, "title");
-  const errors: Record<string, string> = {};
-
-  if (!title.trim()) errors.title = "Title is required";
-  if (!getString(formData, "author").trim())
-    errors.author = "Author is required";
-  if (!getString(formData, "date")) errors.date = "Date is required";
-  if (!getString(formData, "excerpt").trim())
-    errors.excerpt = "Excerpt is required";
-  if (!getString(formData, "content").trim())
-    errors.content = "Content is required";
-  if (!getString(formData, "image").trim())
-    errors.image = "Image URL is required";
-
-  if (Object.keys(errors).length > 0) {
-    return { errors };
+  try {
+    const title = getString(formData, "title");
+    await prisma.blogPost.create({
+      data: {
+        slug: slugify(title),
+        title,
+        author: getString(formData, "author"),
+        date: new Date(getString(formData, "date")),
+        category: getString(formData, "category") as BlogCategory,
+        excerpt: getString(formData, "excerpt"),
+        content: getString(formData, "content"),
+        image: getString(formData, "image"),
+        readingTime: getNumber(formData, "readingTime"),
+        videoUrl: getOptionalString(formData, "videoUrl"),
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to create blog post:", err);
+    return {
+      ok: false,
+      error: "Failed to create blog post. Please try again.",
+    } as const;
   }
-
-  await prisma.blogPost.create({
-    data: {
-      slug: slugify(title),
-      title,
-      author: getString(formData, "author"),
-      date: new Date(getString(formData, "date")),
-      category: getString(formData, "category") as BlogCategory,
-      excerpt: getString(formData, "excerpt"),
-      content: getString(formData, "content"),
-      image: getString(formData, "image"),
-      readingTime: getNumber(formData, "readingTime"),
-      videoUrl: getOptionalString(formData, "videoUrl"),
-    },
-  });
-
-  return redirect("/admin/blog");
 }
 
 export default function AdminBlogNew() {
   const actionData = useActionData<typeof action>();
-  const errors = actionData?.errors;
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: "/admin/blog/new" },
+  );
   const [uploading, setUploading] = useState(false);
-
-  const inputClass =
-    "w-full px-4 py-2 bg-gray-950 border border-gray-700 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition";
 
   return (
     <div>
@@ -82,13 +68,14 @@ export default function AdminBlogNew() {
 
       <Form
         method="post"
-        className="space-y-6 max-w-4xl bg-gray-900 border border-gray-800 rounded-lg p-6"
+        id="blog-new-form"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+          <div className="md:col-span-2">
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Title
             </label>
@@ -97,18 +84,15 @@ export default function AdminBlogNew() {
               name="title"
               type="text"
               required
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
               placeholder="Post title"
             />
-            {errors?.title && (
-              <p className="mt-1 text-sm text-red-400">{errors.title}</p>
-            )}
           </div>
 
           <div>
             <label
               htmlFor="author"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Author
             </label>
@@ -117,18 +101,15 @@ export default function AdminBlogNew() {
               name="author"
               type="text"
               required
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
               placeholder="Author name"
             />
-            {errors?.author && (
-              <p className="mt-1 text-sm text-red-400">{errors.author}</p>
-            )}
           </div>
 
           <div>
             <label
               htmlFor="date"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Date
             </label>
@@ -137,17 +118,14 @@ export default function AdminBlogNew() {
               name="date"
               type="date"
               required
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
             />
-            {errors?.date && (
-              <p className="mt-1 text-sm text-red-400">{errors.date}</p>
-            )}
           </div>
 
           <div>
             <label
               htmlFor="category"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Category
             </label>
@@ -155,7 +133,7 @@ export default function AdminBlogNew() {
               id="category"
               name="category"
               required
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
             >
               {categories.map((cat) => (
                 <option key={cat.value} value={cat.value}>
@@ -173,15 +151,12 @@ export default function AdminBlogNew() {
               required
               onLoadingChange={setUploading}
             />
-            {errors?.image && (
-              <p className="mt-1 text-sm text-red-400">{errors.image}</p>
-            )}
           </div>
 
           <div>
             <label
               htmlFor="readingTime"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Reading Time (minutes)
             </label>
@@ -192,14 +167,14 @@ export default function AdminBlogNew() {
               min={1}
               required
               defaultValue={5}
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
             />
           </div>
 
-          <div>
+          <div className="md:col-span-2">
             <label
               htmlFor="videoUrl"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Video URL (optional)
             </label>
@@ -207,7 +182,7 @@ export default function AdminBlogNew() {
               id="videoUrl"
               name="videoUrl"
               type="url"
-              className={inputClass}
+              className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
               placeholder="https://..."
             />
             <p className="mt-1 text-xs text-gray-500">
@@ -220,7 +195,7 @@ export default function AdminBlogNew() {
         <div>
           <label
             htmlFor="excerpt"
-            className="block text-sm font-medium text-gray-400 mb-2"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Excerpt
           </label>
@@ -229,18 +204,15 @@ export default function AdminBlogNew() {
             name="excerpt"
             rows={3}
             required
-            className={inputClass}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
             placeholder="Short summary"
           />
-          {errors?.excerpt && (
-            <p className="mt-1 text-sm text-red-400">{errors.excerpt}</p>
-          )}
         </div>
 
         <div>
           <label
             htmlFor="content"
-            className="block text-sm font-medium text-gray-400 mb-2"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Content
           </label>
@@ -249,29 +221,26 @@ export default function AdminBlogNew() {
             name="content"
             rows={10}
             required
-            className={inputClass}
+            className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500"
             placeholder="Full post content"
           />
-          {errors?.content && (
-            <p className="mt-1 text-sm text-red-400">{errors.content}</p>
-          )}
         </div>
 
-        <div className="flex items-center justify-end gap-4 pt-4">
-          <Link
-            to="/admin/blog"
-            className="px-4 py-2 text-gray-400 hover:text-white transition"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Create Post
-          </button>
-        </div>
+        <AdminSaveBar
+          formId="blog-new-form"
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/blog"
+          saveLabel="Create Post"
+          submittingLabel="Creating…"
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

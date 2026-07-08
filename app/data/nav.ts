@@ -106,6 +106,7 @@ export interface CompanyInfo {
   location: string;
   description: string;
   whatsapp: string;
+  logo: string;
   socialMedia: {
     facebook: string;
     instagram: string;
@@ -114,13 +115,14 @@ export interface CompanyInfo {
 }
 
 export const companyInfo: CompanyInfo = {
-  name: "Akhtar Abbasi Hiking",
-  email: "info@akhtarabbasi.com",
-  phone: "+92-1234-567890",
+  name: "ICK ALIBABBA ADVENTURE",
+  email: "ickalibabaadventure100@gmail.com",
+  phone: "+92 355 4258109",
   location: "Gilgit Baltistan, Pakistan",
   description:
     "Leading adventure and hiking company offering world-class expeditions and treks in the Karakoram and Hindu Kush mountains.",
-  whatsapp: "+92-300-1234567",
+  whatsapp: "+92 355 4258109",
+  logo: "",
   socialMedia: {
     facebook: "https://facebook.com/akhtarabbasihiking",
     instagram: "https://instagram.com/akhtarabbasihiking",

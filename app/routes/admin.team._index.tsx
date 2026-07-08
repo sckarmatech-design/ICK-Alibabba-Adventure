@@ -37,7 +37,7 @@ export default function AdminTeamIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -58,10 +58,18 @@ export default function AdminTeamIndex() {
             )}
             {teamMembers.map((member) => (
               <tr key={member.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white">{member.name}</td>
-                <td className="px-4 py-3 text-gray-300">{member.role}</td>
-                <td className="px-4 py-3 text-gray-300">{member.specialization || "—"}</td>
-                <td className="px-4 py-3 text-gray-300">{member.sortOrder}</td>
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {member.name}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.role}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.specialization || "—"}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.sortOrder}
+                </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <Link
                     to={`/admin/team/${member.id}/edit`}
@@ -90,6 +98,75 @@ export default function AdminTeamIndex() {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {teamMembers.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-400">
+            No team members yet.
+          </div>
+        )}
+        {teamMembers.map((member) => (
+          <div
+            key={member.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Name
+                </div>
+                <div className="text-sm text-white font-medium">
+                  {member.name}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Role
+                </div>
+                <div className="text-sm text-gray-300">{member.role}</div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Specialization
+                </div>
+                <div className="text-sm text-gray-300">
+                  {member.specialization || "—"}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs text-gray-500 uppercase tracking-wide">
+                  Order
+                </div>
+                <div className="text-sm text-gray-300">{member.sortOrder}</div>
+              </div>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Link
+                to={`/admin/team/${member.id}/edit`}
+                className="text-sm px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white rounded transition"
+              >
+                Edit
+              </Link>
+              <Form method="post" className="inline">
+                <input type="hidden" name="id" value={member.id} />
+                <button
+                  type="submit"
+                  name="_action"
+                  value="delete"
+                  className="text-sm px-3 py-1.5 bg-red-900/50 hover:bg-red-900 text-red-200 rounded transition"
+                  onClick={(e) => {
+                    if (!confirm("Delete this team member?")) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

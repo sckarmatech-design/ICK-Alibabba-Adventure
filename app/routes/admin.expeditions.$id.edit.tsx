@@ -1,12 +1,14 @@
+import { Form, Link, useActionData, useLoaderData } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import { redirect, Form, useLoaderData, Link } from "react-router";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getArray, parseJsonField } from "~/lib/admin";
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 const DIFFICULTY_OPTIONS = [
   "EASY",
@@ -14,6 +16,9 @@ const DIFFICULTY_OPTIONS = [
   "CHALLENGING",
   "EXPERT",
 ] as const;
+
+const inputClass =
+  "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded text-white placeholder-gray-500 focus:outline-none focus:border-green-500 transition";
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
@@ -29,44 +34,64 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   if (formData.get("_action") === "delete") {
-    await prisma.expedition.delete({ where: { id: params.id } });
-    return redirect("/admin/expeditions");
+    try {
+      await prisma.expedition.delete({ where: { id: params.id } });
+    } catch (err) {
+      console.error("Failed to delete expedition:", err);
+      return {
+        ok: false,
+        error: "Failed to delete expedition. Please try again.",
+      } as const;
+    }
+    return { ok: true } as const;
   }
 
-  await prisma.expedition.update({
-    where: { id: params.id },
-    data: {
-      title: getString(formData, "title"),
-      region: getString(formData, "region"),
-      duration: getString(formData, "duration"),
-      altitude: getString(formData, "altitude"),
-      difficulty: getString(formData, "difficulty") as
-        | "EASY"
-        | "MODERATE"
-        | "CHALLENGING"
-        | "EXPERT",
-      bestSeason: getString(formData, "bestSeason"),
-      heroImage: getString(formData, "heroImage"),
-      overview: getString(formData, "overview"),
-      technicalRating: getString(formData, "technicalRating"),
-      highlights: getArray(formData, "highlights"),
-      gallery: getArray(formData, "gallery"),
-      gear: getArray(formData, "gear"),
-      itinerary: parseJsonField<
-        Array<{ day: number; title: string; description: string }>
-      >(getString(formData, "itinerary"), []),
-      faqs: parseJsonField<Array<{ question: string; answer: string }>>(
-        getString(formData, "faqs"),
-        [],
-      ),
-    },
-  });
-
-  return redirect("/admin/expeditions");
+  try {
+    await prisma.expedition.update({
+      where: { id: params.id },
+      data: {
+        title: getString(formData, "title"),
+        region: getString(formData, "region"),
+        duration: getString(formData, "duration"),
+        altitude: getString(formData, "altitude"),
+        difficulty: getString(formData, "difficulty") as
+          | "EASY"
+          | "MODERATE"
+          | "CHALLENGING"
+          | "EXPERT",
+        bestSeason: getString(formData, "bestSeason"),
+        heroImage: getString(formData, "heroImage"),
+        overview: getString(formData, "overview"),
+        technicalRating: getString(formData, "technicalRating"),
+        highlights: getArray(formData, "highlights"),
+        gallery: getArray(formData, "gallery"),
+        gear: getArray(formData, "gear"),
+        itinerary: parseJsonField<
+          Array<{ day: number; title: string; description: string }>
+        >(getString(formData, "itinerary"), []),
+        faqs: parseJsonField<Array<{ question: string; answer: string }>>(
+          getString(formData, "faqs"),
+          [],
+        ),
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to update expedition:", err);
+    return {
+      ok: false,
+      error: "Failed to save expedition. Please try again.",
+    } as const;
+  }
 }
 
 export default function AdminEditExpedition() {
   const expedition = useLoaderData<typeof loader>();
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: `/admin/expeditions/${expedition.id}/edit` },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -77,16 +102,20 @@ export default function AdminEditExpedition() {
           to="/admin/expeditions"
           className="text-gray-400 hover:text-white transition"
         >
-          Cancel
+          Back to list
         </Link>
       </div>
 
-      <Form method="post" className="space-y-6 max-w-4xl">
+      <Form
+        method="post"
+        id={`expedition-edit-form-${expedition.id}`}
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
+      >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label
               htmlFor="title"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Title
             </label>
@@ -96,14 +125,14 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.title}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
           <div>
             <label
               htmlFor="region"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Region
             </label>
@@ -113,14 +142,14 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.region}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
           <div>
             <label
               htmlFor="duration"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Duration
             </label>
@@ -130,14 +159,14 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.duration}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
           <div>
             <label
               htmlFor="altitude"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Altitude
             </label>
@@ -147,14 +176,14 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.altitude}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
           <div>
             <label
               htmlFor="difficulty"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Difficulty
             </label>
@@ -163,7 +192,7 @@ export default function AdminEditExpedition() {
               name="difficulty"
               required
               defaultValue={expedition.difficulty}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             >
               {DIFFICULTY_OPTIONS.map((option) => (
                 <option key={option} value={option}>
@@ -176,7 +205,7 @@ export default function AdminEditExpedition() {
           <div>
             <label
               htmlFor="bestSeason"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Best Season
             </label>
@@ -186,7 +215,7 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.bestSeason}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
@@ -204,7 +233,7 @@ export default function AdminEditExpedition() {
           <div>
             <label
               htmlFor="technicalRating"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Technical Rating
             </label>
@@ -214,7 +243,7 @@ export default function AdminEditExpedition() {
               type="text"
               required
               defaultValue={expedition.technicalRating}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
         </div>
@@ -222,7 +251,7 @@ export default function AdminEditExpedition() {
         <div>
           <label
             htmlFor="overview"
-            className="block text-sm font-medium text-gray-400 mb-2"
+            className="block text-sm font-medium text-gray-300 mb-1"
           >
             Overview
           </label>
@@ -232,7 +261,7 @@ export default function AdminEditExpedition() {
             rows={5}
             required
             defaultValue={expedition.overview}
-            className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+            className={inputClass}
           />
         </div>
 
@@ -240,10 +269,10 @@ export default function AdminEditExpedition() {
           <div>
             <label
               htmlFor="highlights"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Highlights
-              <span className="text-gray-600 text-xs block font-normal">
+              <span className="text-gray-500 font-normal block text-xs">
                 One per line
               </span>
             </label>
@@ -252,7 +281,7 @@ export default function AdminEditExpedition() {
               name="highlights"
               rows={6}
               defaultValue={expedition.highlights.join("\n")}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
 
@@ -269,10 +298,10 @@ export default function AdminEditExpedition() {
           <div>
             <label
               htmlFor="gear"
-              className="block text-sm font-medium text-gray-400 mb-2"
+              className="block text-sm font-medium text-gray-300 mb-1"
             >
               Gear
-              <span className="text-gray-600 text-xs block font-normal">
+              <span className="text-gray-500 font-normal block text-xs">
                 One item per line
               </span>
             </label>
@@ -281,13 +310,13 @@ export default function AdminEditExpedition() {
               name="gear"
               rows={6}
               defaultValue={expedition.gear.join("\n")}
-              className="w-full px-4 py-2 bg-gray-900 border border-gray-800 rounded text-white placeholder-gray-500 hover:border-green-500 focus:outline-none focus:border-green-500 transition"
+              className={inputClass}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Itinerary
           </label>
           <ItineraryEditor
@@ -299,7 +328,7 @@ export default function AdminEditExpedition() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-400 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             FAQs
           </label>
           <FaqEditor
@@ -308,38 +337,25 @@ export default function AdminEditExpedition() {
           />
         </div>
 
-        <div className="flex items-center justify-between pt-4">
-          <div className="flex items-center gap-4">
-            <button
-              type="submit"
-              disabled={uploading}
-              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed transition font-semibold"
-            >
-              Save Changes
-            </button>
-            <Link
-              to="/admin/expeditions"
-              className="px-6 py-2 text-gray-400 hover:text-white transition"
-            >
-              Cancel
-            </Link>
-          </div>
-          <button
-            type="submit"
-            name="_action"
-            value="delete"
-            className="px-6 py-2 bg-red-600/20 text-red-400 border border-red-600/30 rounded-lg hover:bg-red-600/30 transition font-semibold"
-            onClick={(e) => {
-              if (
-                !confirm("Are you sure you want to delete this expedition?")
-              ) {
-                e.preventDefault();
-              }
-            }}
-          >
-            Delete
-          </button>
-        </div>
+        <AdminSaveBar
+          formId={`expedition-edit-form-${expedition.id}`}
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/expeditions"
+          saveLabel="Save Changes"
+          submittingLabel="Saving…"
+          deleteButton={{
+            label: "Delete Expedition",
+            confirmMessage: "Delete this expedition? This cannot be undone.",
+          }}
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

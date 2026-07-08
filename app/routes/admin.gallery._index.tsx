@@ -35,7 +35,7 @@ export default function AdminGalleryIndex() {
         </div>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto hidden md:block">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -58,8 +58,12 @@ export default function AdminGalleryIndex() {
                     className="h-12 w-16 object-cover rounded border border-gray-700"
                   />
                 </td>
-                <td className="px-4 py-3 text-white">{image.title}</td>
-                <td className="px-4 py-3 text-gray-400">{image.category}</td>
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {image.title}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {image.category}
+                </td>
                 <td className="px-4 py-3 text-gray-400">
                   {image.featured ? "Yes" : "No"}
                 </td>
@@ -109,8 +113,10 @@ export default function AdminGalleryIndex() {
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3 text-white">{video.title}</td>
-                <td className="px-4 py-3 text-gray-400 truncate max-w-xs">
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {video.title}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
                   {video.videoUrl}
                 </td>
                 <td className="px-4 py-3 text-gray-400">—</td>
@@ -146,16 +152,165 @@ export default function AdminGalleryIndex() {
             ))}
             {images.length === 0 && videos.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   No gallery items yet.
                 </td>
               </tr>
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className="md:hidden space-y-4">
+        {images.map((image) => (
+          <div
+            key={image.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Type
+                </p>
+                <p className="text-gray-300">Image</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Preview
+                </p>
+                <img
+                  src={image.thumbnail || image.image}
+                  alt={image.alt}
+                  className="h-12 w-16 object-cover rounded border border-gray-700"
+                />
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Title
+                </p>
+                <p className="text-white truncate">{image.title}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Category / URL
+                </p>
+                <p className="text-gray-400 truncate">{image.category}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Featured
+                </p>
+                <p className="text-gray-400">{image.featured ? "Yes" : "No"}</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <Link
+                to={`/admin/gallery/${image.id}/edit`}
+                className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white rounded transition"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/gallery/${image.id}/edit`}
+                className="inline"
+                onSubmit={(e) => {
+                  if (!confirm("Delete this image?")) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="_action" value="delete" />
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-red-900/50 hover:bg-red-900 text-red-200 rounded transition"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
+        {videos.map((video) => (
+          <div
+            key={video.id}
+            className="bg-gray-900 border border-gray-800 rounded-lg p-4"
+          >
+            <div className="space-y-3">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Type
+                </p>
+                <p className="text-gray-300">Video</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Preview
+                </p>
+                {video.thumbnail ? (
+                  <img
+                    src={video.thumbnail}
+                    alt={video.alt}
+                    className="h-12 w-16 object-cover rounded border border-gray-700"
+                  />
+                ) : (
+                  <div className="h-12 w-16 bg-gray-800 rounded flex items-center justify-center text-xs text-gray-500">
+                    Video
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Title
+                </p>
+                <p className="text-white truncate">{video.title}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Category / URL
+                </p>
+                <p className="text-gray-400 truncate">{video.videoUrl}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">
+                  Featured
+                </p>
+                <p className="text-gray-400">—</p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              <Link
+                to={`/admin/gallery/${video.id}/edit`}
+                className="px-3 py-1 bg-gray-800 hover:bg-gray-700 text-white rounded transition"
+              >
+                Edit
+              </Link>
+              <Form
+                method="post"
+                action={`/admin/gallery/${video.id}/edit`}
+                className="inline"
+                onSubmit={(e) => {
+                  if (!confirm("Delete this video?")) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <input type="hidden" name="_action" value="delete" />
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-red-900/50 hover:bg-red-900 text-red-200 rounded transition"
+                >
+                  Delete
+                </button>
+              </Form>
+            </div>
+          </div>
+        ))}
+        {images.length === 0 && videos.length === 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-lg p-8 text-center text-gray-500">
+            No gallery items yet.
+          </div>
+        )}
       </div>
     </div>
   );

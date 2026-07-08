@@ -1,13 +1,6 @@
+import { Form, Link, useActionData, useLoaderData } from "react-router";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
-import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
-import {
-  Form,
-  Link,
-  redirect,
-  useActionData,
-  useLoaderData,
-  useNavigation,
-} from "react-router";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import {
@@ -19,15 +12,16 @@ import {
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 const CATEGORIES = ["SHORT_TREK", "MULTI_DAY_TREK", "DAY_HIKE"] as const;
 const DIFFICULTIES = ["EASY", "MODERATE", "CHALLENGING", "EXPERT"] as const;
 
 type Errors = Record<string, string>;
 
-function validateTrip(formData: FormData): { errors: Errors } {
+function validateTrip(formData: FormData): Errors {
   const errors: Errors = {};
-
   const title = getString(formData, "title").trim();
   const category = getString(formData, "category");
   const region = getString(formData, "region").trim();
@@ -64,17 +58,13 @@ function validateTrip(formData: FormData): { errors: Errors } {
     }
   }
 
-  return { errors };
+  return errors;
 }
 
 export async function loader({ params, request }: LoaderFunctionArgs) {
   await requireAdmin(request);
-  const trip = await prisma.trip.findUnique({
-    where: { id: params.id },
-  });
-  if (!trip) {
-    throw new Response("Not Found", { status: 404 });
-  }
+  const trip = await prisma.trip.findUnique({ where: { id: params.id } });
+  if (!trip) throw new Response("Not Found", { status: 404 });
   return trip;
 }
 
@@ -83,11 +73,19 @@ export async function action({ params, request }: ActionFunctionArgs) {
   const formData = await request.formData();
 
   if (formData.get("_action") === "delete") {
-    await prisma.trip.delete({ where: { id: params.id } });
-    return redirect("/admin/trips");
+    try {
+      await prisma.trip.delete({ where: { id: params.id } });
+    } catch (err) {
+      console.error("Failed to delete trip:", err);
+      return {
+        ok: false,
+        error: "Failed to delete trip. Please try again.",
+      } as const;
+    }
+    return { ok: true } as const;
   }
 
-  const { errors } = validateTrip(formData);
+  const errors = validateTrip(formData);
   if (Object.keys(errors).length > 0) {
     return { errors };
   }
@@ -120,6 +118,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         faqs: parseJsonField(getString(formData, "faqs"), []),
       },
     });
+    return { ok: true } as const;
   } catch (error) {
     if (
       error &&
@@ -129,18 +128,25 @@ export async function action({ params, request }: ActionFunctionArgs) {
     ) {
       return { errors: { title: "A trip with this title already exists" } };
     }
-    throw error;
+    console.error("Failed to update trip:", error);
+    return {
+      ok: false,
+      error: "Failed to save trip. Please try again.",
+    } as const;
   }
-
-  return redirect("/admin/trips");
 }
+
+const inputClass =
+  "w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-green-500 focus:ring-1 focus:ring-green-500";
 
 export default function AdminTripsEdit() {
   const trip = useLoaderData<typeof loader>();
   const actionData = useActionData<typeof action>();
-  const navigation = useNavigation();
-  const errors = actionData?.errors ?? {};
-  const isSubmitting = navigation.state === "submitting";
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: `/admin/trips/${trip.id}/edit` },
+  );
+  const errors: Errors = actionData?.errors ?? {};
   const [uploading, setUploading] = useState(false);
 
   const highlightsValue = Array.isArray(trip.highlights)
@@ -159,19 +165,9 @@ export default function AdminTripsEdit() {
         </Link>
       </div>
 
-      {Object.keys(errors).length > 0 && (
-        <div className="mb-6 p-4 bg-red-900/30 border border-red-800 rounded-lg text-red-100">
-          <p className="font-semibold mb-1">Please fix the following errors:</p>
-          <ul className="list-disc list-inside text-sm">
-            {Object.entries(errors).map(([field, message]) => (
-              <li key={field}>{message}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
       <Form
         method="post"
+        id={`trip-edit-form-${trip.id}`}
         className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -188,8 +184,11 @@ export default function AdminTripsEdit() {
               type="text"
               defaultValue={trip.title}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
+            {errors.title && (
+              <p className="mt-1 text-sm text-red-400">{errors.title}</p>
+            )}
           </div>
 
           <div>
@@ -204,7 +203,7 @@ export default function AdminTripsEdit() {
               name="category"
               defaultValue={trip.category}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             >
               <option value="">Select category</option>
               {CATEGORIES.map((c) => (
@@ -213,6 +212,9 @@ export default function AdminTripsEdit() {
                 </option>
               ))}
             </select>
+            {errors.category && (
+              <p className="mt-1 text-sm text-red-400">{errors.category}</p>
+            )}
           </div>
 
           <div>
@@ -227,7 +229,7 @@ export default function AdminTripsEdit() {
               name="difficulty"
               defaultValue={trip.difficulty}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             >
               <option value="">Select difficulty</option>
               {DIFFICULTIES.map((d) => (
@@ -236,6 +238,9 @@ export default function AdminTripsEdit() {
                 </option>
               ))}
             </select>
+            {errors.difficulty && (
+              <p className="mt-1 text-sm text-red-400">{errors.difficulty}</p>
+            )}
           </div>
 
           <div>
@@ -251,8 +256,11 @@ export default function AdminTripsEdit() {
               type="text"
               defaultValue={trip.region}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
+            {errors.region && (
+              <p className="mt-1 text-sm text-red-400">{errors.region}</p>
+            )}
           </div>
 
           <div>
@@ -268,8 +276,11 @@ export default function AdminTripsEdit() {
               type="text"
               defaultValue={trip.duration}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
+            {errors.duration && (
+              <p className="mt-1 text-sm text-red-400">{errors.duration}</p>
+            )}
           </div>
 
           <div>
@@ -285,8 +296,11 @@ export default function AdminTripsEdit() {
               type="text"
               defaultValue={trip.bestSeason}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
+            {errors.bestSeason && (
+              <p className="mt-1 text-sm text-red-400">{errors.bestSeason}</p>
+            )}
           </div>
 
           <div>
@@ -298,6 +312,9 @@ export default function AdminTripsEdit() {
               required
               onLoadingChange={setUploading}
             />
+            {errors.heroImage && (
+              <p className="mt-1 text-sm text-red-400">{errors.heroImage}</p>
+            )}
           </div>
 
           <div>
@@ -312,7 +329,7 @@ export default function AdminTripsEdit() {
               name="groupSize"
               type="text"
               defaultValue={trip.groupSize ?? ""}
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -328,7 +345,7 @@ export default function AdminTripsEdit() {
               name="startPoint"
               type="text"
               defaultValue={trip.startPoint ?? ""}
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -344,7 +361,7 @@ export default function AdminTripsEdit() {
               name="endPoint"
               type="text"
               defaultValue={trip.endPoint ?? ""}
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -361,8 +378,11 @@ export default function AdminTripsEdit() {
               rows={5}
               defaultValue={trip.overview}
               required
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
+            {errors.overview && (
+              <p className="mt-1 text-sm text-red-400">{errors.overview}</p>
+            )}
           </div>
 
           <div className="md:col-span-2">
@@ -377,7 +397,7 @@ export default function AdminTripsEdit() {
               name="highlights"
               rows={4}
               defaultValue={highlightsValue}
-              className="w-full rounded-md bg-gray-800 border-gray-700 text-white focus:border-green-500 focus:ring-green-500"
+              className={inputClass}
             />
           </div>
 
@@ -399,6 +419,9 @@ export default function AdminTripsEdit() {
               name="itinerary"
               defaultValue={trip.itinerary as unknown as ItineraryDay[]}
             />
+            {errors.itinerary && (
+              <p className="mt-1 text-sm text-red-400">{errors.itinerary}</p>
+            )}
           </div>
 
           <div className="md:col-span-2">
@@ -409,43 +432,31 @@ export default function AdminTripsEdit() {
               name="faqs"
               defaultValue={trip.faqs as unknown as FaqItem[]}
             />
+            {errors.faqs && (
+              <p className="mt-1 text-sm text-red-400">{errors.faqs}</p>
+            )}
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-4 pt-4 border-t border-gray-800">
-          <Link
-            to="/admin/trips"
-            className="px-4 py-2 text-gray-300 hover:text-white transition"
-          >
-            Cancel
-          </Link>
-          <button
-            type="submit"
-            disabled={isSubmitting || uploading}
-            className="px-6 py-2 bg-green-600 hover:bg-green-500 disabled:bg-green-800 text-white rounded-md font-medium transition"
-          >
-            {isSubmitting ? "Saving..." : "Save Changes"}
-          </button>
-        </div>
-      </Form>
-
-      <Form
-        method="post"
-        onSubmit={(e) => {
-          if (!confirm("Delete this trip? This cannot be undone.")) {
-            e.preventDefault();
+        <AdminSaveBar
+          formId={`trip-edit-form-${trip.id}`}
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
           }
-        }}
-        className="mt-4"
-      >
-        <input type="hidden" name="_action" value="delete" />
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="px-4 py-2 bg-red-900/50 hover:bg-red-800 disabled:bg-red-950 text-red-100 rounded-md font-medium transition"
-        >
-          Delete Trip
-        </button>
+          cancelHref="/admin/trips"
+          saveLabel="Save Changes"
+          submittingLabel="Saving…"
+          deleteButton={{
+            label: "Delete Trip",
+            confirmMessage: "Delete this trip? This cannot be undone.",
+          }}
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

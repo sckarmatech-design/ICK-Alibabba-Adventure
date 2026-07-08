@@ -1,30 +1,44 @@
-import { redirect, Form, Link } from "react-router";
+import { Form, Link, useActionData } from "react-router";
 import type { ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { getString, getNumber, getArray } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
+import { AdminSaveBar } from "~/components/AdminSaveBar";
+import { useAdminSaveState } from "~/lib/use-admin-save-state";
 
 export async function action({ request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
-  await prisma.destination.create({
-    data: {
-      name: getString(formData, "name"),
-      region: getString(formData, "region"),
-      image: getString(formData, "image"),
-      tripCount: getNumber(formData, "tripCount"),
-      description: getString(formData, "description"),
-      highlights: getArray(formData, "highlights"),
-    },
-  });
-
-  return redirect("/admin/destinations");
+  try {
+    await prisma.destination.create({
+      data: {
+        name: getString(formData, "name"),
+        region: getString(formData, "region"),
+        image: getString(formData, "image"),
+        tripCount: getNumber(formData, "tripCount"),
+        description: getString(formData, "description"),
+        highlights: getArray(formData, "highlights"),
+      },
+    });
+    return { ok: true } as const;
+  } catch (err) {
+    console.error("Failed to create destination:", err);
+    return {
+      ok: false,
+      error: "Failed to create destination. Please try again.",
+    } as const;
+  }
 }
 
 export default function AdminDestinationsNew() {
+  const actionData = useActionData<typeof action>();
+  const { isSubmitting, successVisible, setSuccessVisible } = useAdminSaveState(
+    actionData,
+    { formAction: "/admin/destinations/new" },
+  );
   const [uploading, setUploading] = useState(false);
 
   return (
@@ -41,7 +55,8 @@ export default function AdminDestinationsNew() {
 
       <Form
         method="post"
-        className="max-w-2xl space-y-6 bg-gray-900 border border-gray-800 rounded-lg p-6"
+        id="destination-new-form"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
           <label
@@ -135,21 +150,21 @@ export default function AdminDestinationsNew() {
           />
         </div>
 
-        <div className="flex items-center gap-4 pt-2">
-          <button
-            type="submit"
-            disabled={uploading}
-            className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition disabled:opacity-50"
-          >
-            Create Destination
-          </button>
-          <Link
-            to="/admin/destinations"
-            className="text-gray-400 hover:text-white transition"
-          >
-            Cancel
-          </Link>
-        </div>
+        <AdminSaveBar
+          formId="destination-new-form"
+          isSubmitting={isSubmitting}
+          isUploading={uploading}
+          successVisible={successVisible}
+          errorMessage={
+            actionData && "ok" in actionData && !actionData.ok
+              ? actionData.error
+              : undefined
+          }
+          cancelHref="/admin/destinations"
+          saveLabel="Create Destination"
+          submittingLabel="Creating…"
+          onDismissSuccess={() => setSuccessVisible(false)}
+        />
       </Form>
     </div>
   );

@@ -45,7 +45,7 @@ export default function AdminFaqsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -65,11 +65,15 @@ export default function AdminFaqsIndex() {
             )}
             {faqs.map((faq) => (
               <tr key={faq.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white max-w-md truncate">{faq.question}</td>
-                <td className="px-4 py-3 text-gray-300">
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {faq.question}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
                   {categoryLabels[faq.category] || faq.category}
                 </td>
-                <td className="px-4 py-3 text-gray-300">{faq.sortOrder}</td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {faq.sortOrder}
+                </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <Link
                     to={`/admin/faqs/${faq.id}/edit`}

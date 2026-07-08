@@ -44,20 +44,20 @@ export default function TripsIndex() {
       </div>
 
       {/* Filter Section */}
-      <div className="bg-[#111827] border border-[#1f2937] rounded-lg p-6 mb-8">
-        <h3 className="font-semibold text-white mb-4">Filter Trips</h3>
+      <div className="bg-surface border border-border rounded-lg p-6 mb-8">
+        <h3 className="font-semibold text-ink mb-4">Filter Trips</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label
               htmlFor="filter-region"
-              className="block text-sm text-[#9ca3af] mb-2"
+              className="block text-sm text-muted mb-2"
             >
               Region
             </label>
             <select
               id="filter-region"
               name="filter-region"
-              className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+              className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
             >
               <option value="">All Regions</option>
               <option value="karakoram">The Karakoram</option>
@@ -68,14 +68,14 @@ export default function TripsIndex() {
           <div>
             <label
               htmlFor="filter-duration"
-              className="block text-sm text-[#9ca3af] mb-2"
+              className="block text-sm text-muted mb-2"
             >
               Duration
             </label>
             <select
               id="filter-duration"
               name="filter-duration"
-              className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+              className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
             >
               <option value="">All Durations</option>
               <option value="short">Short Treks</option>
@@ -85,14 +85,14 @@ export default function TripsIndex() {
           <div>
             <label
               htmlFor="filter-difficulty"
-              className="block text-sm text-[#9ca3af] mb-2"
+              className="block text-sm text-muted mb-2"
             >
               Difficulty
             </label>
             <select
               id="filter-difficulty"
               name="filter-difficulty"
-              className="w-full px-4 py-2 bg-[#1f2937] border border-[#1f2937] rounded text-white hover:border-[#16a34a] transition focus:outline-none focus:border-[#16a34a]"
+              className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
             >
               <option value="">All Levels</option>
               <option value="easy">Easy</option>
@@ -124,7 +124,7 @@ export default function TripsIndex() {
       {/* Empty State */}
       {trips.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-xl text-[#9ca3af]">
+          <p className="text-xl text-muted">
             No trips found matching your criteria.
           </p>
         </div>

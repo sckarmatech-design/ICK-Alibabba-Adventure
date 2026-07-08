@@ -243,3 +243,17 @@ model SiteSetting {
   key   String @unique
   value Json
 }
+
+// ===== HERO SLIDES (added in Phase 8) =====
+
+model HeroSlide {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String
+  image     String
+  cta       String
+  ctaLink   String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
