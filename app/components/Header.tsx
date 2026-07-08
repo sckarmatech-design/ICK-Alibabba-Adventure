@@ -52,7 +52,7 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
             <img
               src={companyInfo.logo}
               alt={companyInfo.name}
-              className="h-10 w-auto max-w-45 object-contain"
+              className="h-10 md:h-12 w-auto max-w-48 object-contain"
             />
           ) : (
             <div>

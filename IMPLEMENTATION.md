@@ -152,7 +152,7 @@ await prisma.heroSlide.createMany({
 
 ## PHASE 9 — Public Page Responsiveness
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** Phase 3 (public routes all work), Phase 8 (hero carousel is DB-driven)
 
 ### Background

@@ -76,7 +76,7 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden rounded-lg mb-12">
+    <div className="relative w-full min-h-[60vh] md:h-screen overflow-hidden rounded-lg mb-12">
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
@@ -94,7 +94,7 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
 
           {/* Content */}
-          <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-12">
+          <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 md:p-12">
             <div
               className={`transform transition-all duration-500 ${
                 index === currentSlide
@@ -103,15 +103,15 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
               }`}
             >
               {/* text-white on dark image overlay stays */}
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-4">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">
                 {slide.headline}
               </h1>
-              <p className="text-xl text-white/80 mb-8 max-w-2xl">
+              <p className="text-base sm:text-lg md:text-xl text-white/80 mb-8 max-w-2xl">
                 {slide.subheadline}
               </p>
               <a
                 href={slide.href}
-                className="inline-block px-8 py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
+                className="inline-block px-6 sm:px-8 py-2 sm:py-3 bg-cta text-white rounded-lg hover:bg-cta-hover transition font-semibold"
               >
                 {slide.cta}
               </a>
@@ -126,18 +126,20 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         className="absolute left-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white/20 hover:bg-white/40 text-white rounded-full transition"
         aria-label="Previous slide"
       >
-        <ChevronLeft size={32} />
+        <ChevronLeft size={24} className="sm:hidden" />
+        <ChevronLeft size={32} className="hidden sm:block" />
       </button>
       <button
         onClick={nextSlide}
         className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 bg-white/20 hover:bg-white/40 text-white rounded-full transition"
         aria-label="Next slide"
       >
-        <ChevronRight size={32} />
+        <ChevronRight size={24} className="sm:hidden" />
+        <ChevronRight size={32} className="hidden sm:block" />
       </button>
 
       {/* Dots */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
