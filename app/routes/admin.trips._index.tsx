@@ -26,7 +26,7 @@ export default function AdminTripsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -41,23 +41,28 @@ export default function AdminTripsIndex() {
           <tbody className="divide-y divide-gray-800">
             {trips.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-gray-400"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-400">
                   No trips yet.
                 </td>
               </tr>
             )}
             {trips.map((trip) => (
               <tr key={trip.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white font-medium">
+                <td className="px-4 py-3 text-white font-medium min-w-0 truncate">
                   {trip.title}
                 </td>
-                <td className="px-4 py-3 text-gray-300">{trip.category}</td>
-                <td className="px-4 py-3 text-gray-300">{trip.region}</td>
-                <td className="px-4 py-3 text-gray-300">{trip.duration}</td>
-                <td className="px-4 py-3 text-gray-300">{trip.difficulty}</td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {trip.category}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {trip.region}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {trip.duration}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {trip.difficulty}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex items-center gap-2">
                     <Link

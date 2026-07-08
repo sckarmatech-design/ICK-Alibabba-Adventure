@@ -86,7 +86,7 @@ export default function AdminTeamEdit() {
       <Form
         method="post"
         id={`team-edit-form-${member.id}`}
-        className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
           <label

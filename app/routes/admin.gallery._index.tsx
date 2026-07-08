@@ -35,7 +35,7 @@ export default function AdminGalleryIndex() {
         </div>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -58,8 +58,12 @@ export default function AdminGalleryIndex() {
                     className="h-12 w-16 object-cover rounded border border-gray-700"
                   />
                 </td>
-                <td className="px-4 py-3 text-white">{image.title}</td>
-                <td className="px-4 py-3 text-gray-400">{image.category}</td>
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {image.title}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {image.category}
+                </td>
                 <td className="px-4 py-3 text-gray-400">
                   {image.featured ? "Yes" : "No"}
                 </td>
@@ -109,8 +113,10 @@ export default function AdminGalleryIndex() {
                     </div>
                   )}
                 </td>
-                <td className="px-4 py-3 text-white">{video.title}</td>
-                <td className="px-4 py-3 text-gray-400 truncate max-w-xs">
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {video.title}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
                   {video.videoUrl}
                 </td>
                 <td className="px-4 py-3 text-gray-400">—</td>
@@ -146,10 +152,7 @@ export default function AdminGalleryIndex() {
             ))}
             {images.length === 0 && videos.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   No gallery items yet.
                 </td>
               </tr>

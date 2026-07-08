@@ -743,7 +743,7 @@ export function FooterLinksEditor({
                 type="text"
                 value={cat.category}
                 onChange={(e) => updateCategory(catIndex, e.target.value)}
-                className={`${inputClass()} max-w-xs`}
+                className={`${inputClass()} w-full`}
                 placeholder="Category name"
               />
               <button

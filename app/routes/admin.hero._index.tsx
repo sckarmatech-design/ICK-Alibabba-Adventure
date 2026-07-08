@@ -41,10 +41,7 @@ export default function AdminHeroIndex() {
           <tbody className="divide-y divide-gray-800">
             {slides.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   No hero slides yet.
                 </td>
               </tr>
@@ -55,11 +52,9 @@ export default function AdminHeroIndex() {
                 <td className="px-4 py-3 font-medium text-white">
                   {slide.title}
                 </td>
-                <td className="px-4 py-3 max-w-xs truncate">
-                  {slide.subtitle}
-                </td>
-                <td className="px-4 py-3">{slide.cta}</td>
-                <td className="px-4 py-3 max-w-xs truncate text-gray-400">
+                <td className="px-4 py-3 min-w-0 truncate">{slide.subtitle}</td>
+                <td className="px-4 py-3 min-w-0 truncate">{slide.cta}</td>
+                <td className="px-4 py-3 min-w-0 truncate text-gray-400">
                   {slide.image.length > 40
                     ? slide.image.slice(0, 40) + "..."
                     : slide.image}

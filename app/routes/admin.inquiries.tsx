@@ -40,15 +40,12 @@ export default function AdminInquiries() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-white">Inquiries</h1>
-        <Link
-          to="/admin"
-          className="text-gray-400 hover:text-white transition"
-        >
+        <Link to="/admin" className="text-gray-400 hover:text-white transition">
           Back to dashboard
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -64,25 +61,25 @@ export default function AdminInquiries() {
           <tbody className="divide-y divide-gray-800">
             {submissions.map((submission) => (
               <tr key={submission.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-gray-400 whitespace-nowrap">
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
                   {formatDate(submission.createdAt)}
                 </td>
-                <td className="px-4 py-3 text-white font-medium">
+                <td className="px-4 py-3 text-white font-medium min-w-0 truncate">
                   {submission.fullName}
                 </td>
-                <td className="px-4 py-3 text-gray-300">
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
                   <a
                     href={`mailto:${submission.email}`}
-                    className="text-green-400 hover:text-green-300"
+                    className="text-green-400 hover:text-green-300 truncate inline-block max-w-full"
                   >
                     {submission.email}
                   </a>
                 </td>
-                <td className="px-4 py-3 text-gray-300">
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
                   {submission.phone ? (
                     <a
                       href={`tel:${submission.phone}`}
-                      className="text-green-400 hover:text-green-300"
+                      className="text-green-400 hover:text-green-300 truncate inline-block max-w-full"
                     >
                       {submission.phone}
                     </a>
@@ -90,12 +87,12 @@ export default function AdminInquiries() {
                     <span className="text-gray-500">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-gray-300">
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
                   {submission.tripInterest || (
                     <span className="text-gray-500">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-gray-300 max-w-xs truncate">
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
                   {submission.message || (
                     <span className="text-gray-500">—</span>
                   )}
@@ -123,10 +120,7 @@ export default function AdminInquiries() {
             ))}
             {submissions.length === 0 && (
               <tr>
-                <td
-                  colSpan={7}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
                   No inquiries yet.
                 </td>
               </tr>

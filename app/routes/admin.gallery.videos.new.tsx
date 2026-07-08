@@ -63,7 +63,7 @@ export default function AdminGalleryVideoNew() {
       <Form
         method="post"
         id="gallery-video-new-form"
-        className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
           <label htmlFor="title" className="block text-sm text-gray-400 mb-1">

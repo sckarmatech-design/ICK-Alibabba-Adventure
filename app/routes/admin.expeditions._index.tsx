@@ -26,7 +26,7 @@ export default function AdminExpeditionsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -41,13 +41,21 @@ export default function AdminExpeditionsIndex() {
           <tbody className="divide-y divide-gray-800">
             {expeditions.map((expedition) => (
               <tr key={expedition.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white font-medium">
+                <td className="px-4 py-3 text-white font-medium min-w-0 truncate">
                   {expedition.title}
                 </td>
-                <td className="px-4 py-3 text-gray-400">{expedition.region}</td>
-                <td className="px-4 py-3 text-gray-400">{expedition.duration}</td>
-                <td className="px-4 py-3 text-gray-400">{expedition.altitude}</td>
-                <td className="px-4 py-3 text-gray-400">{expedition.difficulty}</td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {expedition.region}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {expedition.duration}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {expedition.altitude}
+                </td>
+                <td className="px-4 py-3 text-gray-400 min-w-0 truncate">
+                  {expedition.difficulty}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <Link
@@ -63,7 +71,7 @@ export default function AdminExpeditionsIndex() {
                       onSubmit={(e) => {
                         if (
                           !confirm(
-                            "Are you sure you want to delete this expedition?"
+                            "Are you sure you want to delete this expedition?",
                           )
                         ) {
                           e.preventDefault();

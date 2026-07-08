@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight, MapPin, Filter } from "lucide-react";
 import { useLoaderData } from "react-router";
 import type { MetaFunction, LoaderFunctionArgs } from "react-router";
@@ -64,19 +64,52 @@ type HeroSlide = {
 // Hero Slider Component
 function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  });
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % slides.length);
+  }, [slides.length]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+  }, [slides.length]);
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+
+  // Respect OS-level reduced-motion preference.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setPrefersReducedMotion(mq.matches);
+    const handler = (event: MediaQueryListEvent) =>
+      setPrefersReducedMotion(event.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Auto-advance every 5 seconds; pause on hover/focus and resume after.
+  // Manual navigation resets the timer because currentSlide is a dependency.
+  useEffect(() => {
+    if (slides.length <= 1 || isPaused || prefersReducedMotion) return;
+    const timer = setInterval(nextSlide, 5000);
+    return () => clearInterval(timer);
+  }, [currentSlide, isPaused, prefersReducedMotion, slides.length, nextSlide]);
 
   if (slides.length === 0) return null;
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
-
   return (
-    <div className="relative w-full min-h-[60vh] md:h-screen overflow-hidden rounded-lg mb-12">
+    <div
+      className="relative w-full min-h-[60vh] md:h-screen overflow-hidden rounded-lg mb-8 md:mb-12"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocusCapture={() => setIsPaused(true)}
+      onBlurCapture={() => setIsPaused(false)}
+    >
       {/* Slides */}
       {slides.map((slide, index) => (
         <div
@@ -94,9 +127,9 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
 
           {/* Content */}
-          <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 md:p-12">
+          <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8 md:p-12 pb-16 sm:pb-20 md:pb-24">
             <div
-              className={`transform transition-all duration-500 ${
+              className={`w-full max-w-2xl px-8 sm:px-10 md:px-12 transform transition-all duration-500 ${
                 index === currentSlide
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-4"
@@ -143,7 +176,7 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => setCurrentSlide(index)}
+            onClick={() => goToSlide(index)}
             className={`w-3 h-3 rounded-full transition ${
               index === currentSlide ? "bg-accent" : "bg-white/50"
             }`}
@@ -243,7 +276,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 md:py-8">
         <HeroSlider slides={heroSlides} />
       </div>
 

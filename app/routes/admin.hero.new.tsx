@@ -56,7 +56,7 @@ export default function AdminHeroNew() {
       <Form
         method="post"
         id="hero-new-form"
-        className="max-w-3xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>

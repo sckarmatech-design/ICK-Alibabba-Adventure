@@ -89,7 +89,7 @@ export default function AdminFaqsEdit() {
       <Form
         method="post"
         id={`faq-edit-form-${faq.id}`}
-        className="max-w-2xl bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
+        className="bg-gray-900 border border-gray-800 rounded-lg p-6 space-y-6"
       >
         <div>
           <label

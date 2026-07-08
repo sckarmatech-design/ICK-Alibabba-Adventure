@@ -37,7 +37,7 @@ export default function AdminTeamIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left">
           <thead className="bg-gray-800 text-gray-300">
             <tr>
@@ -58,10 +58,18 @@ export default function AdminTeamIndex() {
             )}
             {teamMembers.map((member) => (
               <tr key={member.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 text-white">{member.name}</td>
-                <td className="px-4 py-3 text-gray-300">{member.role}</td>
-                <td className="px-4 py-3 text-gray-300">{member.specialization || "—"}</td>
-                <td className="px-4 py-3 text-gray-300">{member.sortOrder}</td>
+                <td className="px-4 py-3 text-white min-w-0 truncate">
+                  {member.name}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.role}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.specialization || "—"}
+                </td>
+                <td className="px-4 py-3 text-gray-300 min-w-0 truncate">
+                  {member.sortOrder}
+                </td>
                 <td className="px-4 py-3 text-right space-x-2">
                   <Link
                     to={`/admin/team/${member.id}/edit`}

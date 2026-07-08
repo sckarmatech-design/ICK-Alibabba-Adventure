@@ -136,7 +136,7 @@ export default function AdminSettings() {
         <div
           role="tablist"
           aria-label="Settings sections"
-          className="flex gap-1 mb-6 border-b border-gray-800"
+          className="flex flex-wrap gap-1 mb-6 border-b border-gray-800"
         >
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
@@ -209,7 +209,7 @@ export default function AdminSettings() {
         </div>
 
         {/* Sticky save bar */}
-        <div className="sticky bottom-0 -mx-6 -mb-6 mt-6 px-6 py-4 bg-gray-900/95 backdrop-blur border-t border-gray-800 rounded-b-lg flex items-center justify-between gap-4">
+        <div className="sticky bottom-0 -mx-6 -mb-6 mt-6 px-6 py-4 bg-gray-900/95 backdrop-blur border-t border-gray-800 rounded-b-lg flex flex-wrap items-center justify-between gap-4">
           <div className="grow min-w-0">
             {showError && (
               <div

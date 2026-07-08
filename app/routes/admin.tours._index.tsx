@@ -26,7 +26,7 @@ export default function AdminToursIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left text-gray-300">
           <thead className="bg-gray-800 text-gray-100 uppercase text-xs">
             <tr>
@@ -40,12 +40,14 @@ export default function AdminToursIndex() {
           <tbody className="divide-y divide-gray-800">
             {tours.map((tour) => (
               <tr key={tour.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 font-medium text-white">
+                <td className="px-4 py-3 font-medium text-white min-w-0 truncate">
                   {tour.title}
                 </td>
-                <td className="px-4 py-3">{tour.region}</td>
-                <td className="px-4 py-3">{tour.duration}</td>
-                <td className="px-4 py-3">{tour.difficulty}</td>
+                <td className="px-4 py-3 min-w-0 truncate">{tour.region}</td>
+                <td className="px-4 py-3 min-w-0 truncate">{tour.duration}</td>
+                <td className="px-4 py-3 min-w-0 truncate">
+                  {tour.difficulty}
+                </td>
                 <td className="px-4 py-3 text-right">
                   <div className="inline-flex items-center gap-2">
                     <Link
@@ -78,10 +80,7 @@ export default function AdminToursIndex() {
             ))}
             {tours.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={5} className="px-4 py-8 text-center text-gray-500">
                   No tours yet.{" "}
                   <Link
                     to="/admin/tours/new"

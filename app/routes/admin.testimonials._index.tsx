@@ -26,7 +26,7 @@ export default function AdminTestimonialsIndex() {
         </Link>
       </div>
 
-      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden">
+      <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-x-auto">
         <table className="w-full text-left text-sm text-gray-300">
           <thead className="bg-gray-800 text-gray-100 uppercase text-xs">
             <tr>
@@ -41,28 +41,31 @@ export default function AdminTestimonialsIndex() {
           <tbody className="divide-y divide-gray-800">
             {testimonials.length === 0 && (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-4 py-8 text-center text-gray-500"
-                >
+                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   No testimonials yet.
                 </td>
               </tr>
             )}
             {testimonials.map((testimonial) => (
               <tr key={testimonial.id} className="hover:bg-gray-800/50">
-                <td className="px-4 py-3 font-medium text-white">
+                <td className="px-4 py-3 font-medium text-white min-w-0 truncate">
                   {testimonial.name}
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-4 py-3 min-w-0 truncate">
                   {testimonial.country} ({testimonial.countryCode})
                 </td>
-                <td className="px-4 py-3">
-                  <span className="text-yellow-400">{"★".repeat(testimonial.rating)}</span>
-                  <span className="text-gray-600">{"★".repeat(5 - testimonial.rating)}</span>
+                <td className="px-4 py-3 min-w-0 truncate">
+                  <span className="text-yellow-400">
+                    {"★".repeat(testimonial.rating)}
+                  </span>
+                  <span className="text-gray-600">
+                    {"★".repeat(5 - testimonial.rating)}
+                  </span>
                 </td>
-                <td className="px-4 py-3">{testimonial.tripName}</td>
-                <td className="px-4 py-3 max-w-xs truncate">
+                <td className="px-4 py-3 min-w-0 truncate">
+                  {testimonial.tripName}
+                </td>
+                <td className="px-4 py-3 min-w-0 truncate">
                   {testimonial.review}
                 </td>
                 <td className="px-4 py-3 text-right">

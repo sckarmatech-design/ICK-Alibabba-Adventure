@@ -53,7 +53,7 @@ export function AdminSaveBar({
   const disabled = isSubmitting || isUploading;
 
   return (
-    <div className="sticky bottom-0 -mx-8 -mb-8 mt-6 px-6 py-4 bg-gray-900/95 backdrop-blur border-t border-gray-800 rounded-b-lg flex items-center gap-4">
+    <div className="sticky bottom-0 -mx-4 -mb-4 md:-mx-6 md:-mb-6 lg:-mx-8 lg:-mb-8 mt-6 px-6 py-4 bg-gray-900/95 backdrop-blur border-t border-gray-800 rounded-b-lg flex flex-wrap items-center gap-4">
       {/* Delete: its own <Form>, entirely separate from the save form. */}
       {deleteButton && (
         <Form method="post" className="shrink-0 min-w-0">

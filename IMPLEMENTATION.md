@@ -275,7 +275,7 @@ This gives 40px on mobile, 48px on desktop, with a slightly wider max width.
 
 ## PHASE 10 — Admin Dashboard Responsiveness
 
-**Status:** ❌ Not started
+**Status:** 🔄 In progress
 **Dependencies:** Phase 4 (admin CRUD routes, admin.tsx layout)
 
 ### Background
