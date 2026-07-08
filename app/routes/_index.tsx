@@ -40,7 +40,7 @@ export async function loader(_args: LoaderFunctionArgs) {
 
 export const meta: MetaFunction = () => [
   ...generateMetaTags({
-    title: "Akhtar Abbasi Hiking | Trekking & Expeditions in Gilgit Baltistan",
+    title: "ICK Alibabba Adventure",
     description:
       "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
     image: "https://akhtarabbasi-hiking.com/images/og/home.webp",

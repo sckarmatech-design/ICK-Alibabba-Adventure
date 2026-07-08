@@ -85,7 +85,7 @@ export function ThemeSwitcher({ variant }: ThemeSwitcherProps) {
         <span className="text-xs uppercase tracking-wider text-muted">
           Theme
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 cursor-pointer">
           {THEMES.map((t) => (
             <button
               key={t.value}

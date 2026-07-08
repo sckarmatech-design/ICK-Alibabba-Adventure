@@ -10,7 +10,7 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   const email = "admin@akhtarabbasi.com";
-  const password = "admin123"; // CHANGE after first login
+  const password = "skd786*"; // CHANGE after first login
   const passwordHash = await bcrypt.hash(password, 12);
 
   await prisma.adminUser.upsert({
