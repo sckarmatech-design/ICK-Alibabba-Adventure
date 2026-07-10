@@ -1,4 +1,4 @@
-import { Form, useActionData, useLoaderData } from "react-router";
+import { Form, redirect, useActionData, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
@@ -54,7 +54,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete gallery item. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/gallery");
   }
 
   const [image, video] = await Promise.all([

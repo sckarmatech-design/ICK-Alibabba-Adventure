@@ -8,6 +8,8 @@ import { SectionTitle } from "~/components/SectionTitle";
 import prisma from "~/lib/prisma.server";
 import {
   mapTripFromPrisma,
+  mapExpeditionFromPrisma,
+  mapTourFromPrisma,
   mapTestimonialFromPrisma,
   mapBlogPostFromPrisma,
   mapDestinationFromPrisma,
@@ -15,16 +17,73 @@ import {
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 
 export async function loader(_args: LoaderFunctionArgs) {
-  const [trips, testimonials, blogPosts, destinations, slides] =
+  const [trips, expeditions, tours, testimonials, blogPosts, destinations, slides] =
     await Promise.all([
       prisma.trip.findMany({ orderBy: { title: "asc" } }),
+      prisma.expedition.findMany({ orderBy: { title: "asc" } }),
+      prisma.tour.findMany({ orderBy: { title: "asc" } }),
       prisma.testimonial.findMany({ orderBy: { createdAt: "desc" } }),
       prisma.blogPost.findMany({ orderBy: { date: "desc" }, take: 3 }),
       prisma.destination.findMany({ orderBy: { name: "asc" } }),
       prisma.heroSlide.findMany({ orderBy: { sortOrder: "asc" } }),
     ]);
+
+  const adventures: AdventureItem[] = [
+    ...trips.map((t) => {
+      const trip = mapTripFromPrisma(t);
+      return {
+        kind: "trip" as const,
+        slug: trip.slug,
+        title: trip.title,
+        region: trip.region,
+        duration: trip.duration,
+        difficulty: trip.difficulty,
+        category: trip.category,
+        bestSeason: trip.bestSeason,
+        overview: trip.overview,
+        heroImage: trip.heroImage,
+        highlights: trip.highlights,
+        href: `/trips/${trip.slug}`,
+      };
+    }),
+    ...expeditions.map((e) => {
+      const expedition = mapExpeditionFromPrisma(e);
+      return {
+        kind: "expedition" as const,
+        slug: expedition.slug,
+        title: expedition.title,
+        region: expedition.region,
+        duration: expedition.duration,
+        difficulty: expedition.difficulty,
+        category: "Expedition",
+        bestSeason: expedition.bestSeason,
+        overview: expedition.overview,
+        heroImage: expedition.heroImage,
+        highlights: expedition.highlights,
+        href: `/expeditions/${expedition.slug}`,
+      };
+    }),
+    ...tours.map((t) => {
+      const tour = mapTourFromPrisma(t);
+      return {
+        kind: "tour" as const,
+        slug: tour.slug,
+        title: tour.title,
+        region: tour.region,
+        duration: tour.duration,
+        difficulty: tour.difficulty,
+        category: "Tour",
+        bestSeason: tour.bestSeason,
+        overview: tour.overview,
+        heroImage: tour.heroImage,
+        highlights: tour.highlights,
+        href: `/tours/${tour.slug}`,
+      };
+    }),
+  ];
+
   return {
-    trips: trips.map(mapTripFromPrisma),
+    adventures,
     testimonials: testimonials.map(mapTestimonialFromPrisma),
     blogPosts: blogPosts.map(mapBlogPostFromPrisma),
     destinations: destinations.map(mapDestinationFromPrisma),
@@ -60,6 +119,75 @@ type HeroSlide = {
   cta: string;
   href: string;
 };
+
+type AdventureItem = {
+  kind: "trip" | "expedition" | "tour";
+  slug: string;
+  title: string;
+  region: string;
+  duration: string;
+  difficulty: string;
+  category: string;
+  bestSeason: string;
+  overview: string;
+  heroImage: string;
+  highlights: string[];
+  href: string;
+};
+
+const MONTHS = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];
+
+function monthIndex(month: string): number {
+  return MONTHS.indexOf(month.toLowerCase());
+}
+
+function parseSeasonRange(season: string): { start: number; end: number } | null {
+  const normalized = season
+    .toLowerCase()
+    .replace(/[–—]/g, "-")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  let start = -1;
+  let end = -1;
+
+  for (let i = 0; i < MONTHS.length; i++) {
+    if (normalized.includes(MONTHS[i])) {
+      if (start === -1) start = i;
+      end = i;
+    }
+  }
+
+  if (start === -1 || end === -1) return null;
+  return { start, end };
+}
+
+function matchesMonth(season: string, selectedMonth: string): boolean {
+  if (!selectedMonth) return true;
+  const selected = monthIndex(selectedMonth);
+  if (selected === -1) return true;
+
+  const range = parseSeasonRange(season);
+  if (!range) {
+    // Fallback: literal substring match if range can't be parsed
+    return season.toLowerCase().includes(MONTHS[selected]);
+  }
+
+  return selected >= range.start && selected <= range.end;
+}
 
 // Hero Slider Component
 function HeroSlider({ slides }: { slides: HeroSlide[] }) {
@@ -188,16 +316,69 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
   );
 }
 
+type Filters = {
+  destination: string;
+  month: string;
+  type: string;
+  query: string;
+};
+
+function filterAdventures(
+  items: AdventureItem[],
+  filters: Filters,
+): AdventureItem[] {
+  return items.filter((item) => {
+    if (filters.type && item.kind !== filters.type) return false;
+
+    if (filters.destination) {
+      const term = filters.destination.toLowerCase();
+      const searchable = `${item.title} ${item.region} ${item.overview}`.toLowerCase();
+      if (!searchable.includes(term)) return false;
+    }
+
+    if (filters.month && !matchesMonth(item.bestSeason, filters.month)) {
+      return false;
+    }
+
+    if (filters.query) {
+      const term = filters.query.toLowerCase();
+      const searchable =
+        `${item.title} ${item.region} ${item.overview} ${item.category}`.toLowerCase();
+      if (!searchable.includes(term)) return false;
+    }
+
+    return true;
+  });
+}
+
 // Search/Filter Bar Component
-function SearchBar() {
+function SearchBar({
+  filters,
+  setFilters,
+  onSearch,
+}: {
+  filters: Filters;
+  setFilters: React.Dispatch<React.SetStateAction<Filters>>;
+  onSearch: () => void;
+}) {
+  function updateFilter(key: keyof Filters, value: string) {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  }
+
   return (
-    <div className="bg-surface border border-border rounded-lg p-6 mb-12">
+    <form
+      className="bg-surface border border-border rounded-lg p-6 mb-12"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSearch();
+      }}
+    >
       <h3 className="text-xl font-semibold text-ink mb-6 flex items-center gap-2">
         <Filter size={20} className="text-accent" />
         Find Your Adventure
       </h3>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <div>
           <label
             htmlFor="search-destination"
@@ -208,6 +389,8 @@ function SearchBar() {
           <select
             id="search-destination"
             name="destination"
+            value={filters.destination}
+            onChange={(e) => updateFilter("destination", e.target.value)}
             className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select destination</option>
@@ -227,6 +410,8 @@ function SearchBar() {
           <select
             id="search-month"
             name="month"
+            value={filters.month}
+            onChange={(e) => updateFilter("month", e.target.value)}
             className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select month</option>
@@ -247,6 +432,8 @@ function SearchBar() {
           <select
             id="search-type"
             name="type"
+            value={filters.type}
+            onChange={(e) => updateFilter("type", e.target.value)}
             className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
           >
             <option value="">Select type</option>
@@ -256,22 +443,56 @@ function SearchBar() {
           </select>
         </div>
 
+        <div>
+          <label
+            htmlFor="search-query"
+            className="block text-sm text-muted mb-2"
+          >
+            Search
+          </label>
+          <input
+            id="search-query"
+            name="query"
+            type="text"
+            value={filters.query}
+            onChange={(e) => updateFilter("query", e.target.value)}
+            placeholder="e.g. K2, glacier..."
+            className="w-full px-4 py-2 rounded focus:outline-none focus:border-accent transition"
+          />
+        </div>
+
         <div className="flex items-end">
           {/* CTA — fixed brand green */}
-          <button className="w-full px-6 py-2 bg-cta text-white rounded hover:bg-cta-hover transition font-semibold">
+          <button
+            type="submit"
+            className="w-full px-6 py-2 bg-cta text-white rounded hover:bg-cta-hover transition font-semibold"
+          >
             Search
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }
 
 export default function Home() {
-  const { trips, testimonials, blogPosts, destinations, heroSlides } =
+  const { adventures, testimonials, blogPosts, destinations, heroSlides } =
     useLoaderData<typeof loader>();
-  const featuredTrips = trips.slice(0, 3);
+  const [filters, setFilters] = useState<Filters>({
+    destination: "",
+    month: "",
+    type: "",
+    query: "",
+  });
+  const [filtered, setFiltered] = useState<AdventureItem[]>(adventures);
   const latestPosts = blogPosts.slice(0, 3);
+
+  const hasActiveFilters =
+    filters.destination || filters.month || filters.type || filters.query;
+
+  function handleSearch() {
+    setFiltered(filterAdventures(adventures, filters));
+  }
 
   return (
     <div>
@@ -282,31 +503,46 @@ export default function Home() {
 
       {/* Search Bar */}
       <div className="max-w-7xl mx-auto px-4 mb-16">
-        <SearchBar />
+        <SearchBar
+          filters={filters}
+          setFilters={setFilters}
+          onSearch={handleSearch}
+        />
       </div>
 
-      {/* Featured Trips */}
+      {/* Featured / Filtered Adventures */}
       <section className="max-w-7xl mx-auto px-4 mb-16">
         <SectionTitle
-          title="Featured Hiking & Travel Packages"
-          subtitle="Discover Gilgit Baltistan"
+          title={hasActiveFilters ? "Matching Adventures" : "Hiking & Travel Packages"}
+          subtitle={
+            hasActiveFilters
+              ? `${filtered.length} result${filtered.length === 1 ? "" : "s"} found`
+              : "Discover Gilgit Baltistan"
+          }
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {featuredTrips.map((trip) => (
+          {filtered.map((item) => (
             <TripCard
-              key={trip.slug}
-              slug={trip.slug}
-              title={trip.title}
-              category={trip.category}
-              region={trip.region}
-              duration={trip.duration}
-              difficulty={trip.difficulty}
-              image={trip.heroImage}
-              highlights={trip.highlights}
-              href={`/trips/${trip.slug}`}
+              key={`${item.kind}-${item.slug}`}
+              slug={item.slug}
+              title={item.title}
+              category={item.category}
+              region={item.region}
+              duration={item.duration}
+              difficulty={item.difficulty}
+              image={item.heroImage}
+              highlights={item.highlights}
+              href={item.href}
             />
           ))}
         </div>
+        {filtered.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-xl text-muted">
+              No adventures match your filters. Try adjusting your search.
+            </p>
+          </div>
+        )}
         <div className="text-center mt-8">
           {/* CTA — fixed brand green */}
           <a

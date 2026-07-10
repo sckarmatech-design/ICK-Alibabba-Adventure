@@ -112,6 +112,7 @@ export default function Gallery() {
                 setLightboxOpen(true);
               }}
               className="relative overflow-hidden rounded-lg h-48 group cursor-pointer bg-surface"
+              aria-label={`View ${image.title}`}
             >
               <img
                 src={image.image}
@@ -119,9 +120,14 @@ export default function Gallery() {
                 className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
                 loading="lazy"
               />
-              {/* Dark overlay on hover — not theme color */}
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                <span className="text-white font-semibold">View</span>
+              {/* Persistent gradient + title at bottom */}
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 via-black/40 to-transparent p-3 pt-8">
+                <p className="text-white font-semibold text-sm line-clamp-2 text-left">
+                  {image.title}
+                </p>
+                <p className="text-white/70 text-xs text-left mt-0.5">
+                  {image.category}
+                </p>
               </div>
             </button>
           ))}
@@ -139,18 +145,25 @@ export default function Gallery() {
                 href={video.videoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative aspect-video block rounded-lg overflow-hidden group bg-surface"
+                className="block rounded-lg overflow-hidden group bg-surface"
               >
-                <img
-                  src={video.thumbnail || "/images/video-placeholder.jpg"}
-                  alt={video.alt}
-                  className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
-                  <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center pl-1">
-                    <Play className="w-7 h-7 text-gray-900 fill-current" />
+                <div className="relative aspect-video">
+                  <img
+                    src={video.thumbnail || "/images/video-placeholder.jpg"}
+                    alt={video.alt}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition">
+                    <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center pl-1">
+                      <Play className="w-7 h-7 text-gray-900 fill-current" />
+                    </div>
                   </div>
+                </div>
+                <div className="p-3">
+                  <p className="text-ink font-semibold text-sm line-clamp-1">
+                    {video.title}
+                  </p>
                 </div>
               </a>
             ))}

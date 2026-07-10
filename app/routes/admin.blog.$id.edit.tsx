@@ -1,4 +1,10 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import type { BlogCategory } from "@prisma/client";
@@ -43,7 +49,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete blog post. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/blog");
   }
 
   try {

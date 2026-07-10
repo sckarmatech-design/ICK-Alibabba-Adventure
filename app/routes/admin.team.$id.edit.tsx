@@ -1,4 +1,10 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
@@ -20,7 +26,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export async function action({
   params,
   request,
-}: ActionFunctionArgs): Promise<{ ok: true } | { ok: false; error: string }> {
+}: ActionFunctionArgs): Promise<
+  { ok: true } | { ok: false; error: string } | Response
+> {
   await requireAdmin(request);
   const formData = await request.formData();
 
@@ -34,7 +42,7 @@ export async function action({
         error: "Failed to delete team member. Please try again.",
       };
     }
-    return { ok: true };
+    return redirect("/admin/team");
   }
 
   const image = getOptionalString(formData, "image");

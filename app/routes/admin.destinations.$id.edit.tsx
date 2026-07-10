@@ -1,4 +1,10 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
@@ -31,7 +37,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete destination. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/destinations");
   }
 
   try {
