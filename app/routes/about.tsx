@@ -7,19 +7,37 @@ import { Users, Target, Heart, Mountain } from "lucide-react";
 import prisma from "~/lib/prisma.server";
 import { mapTeamMemberFromPrisma } from "~/lib/mappers";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
+import { companyInfo as defaultCompanyInfo, type CompanyInfo } from "~/data/nav";
 
 export async function loader(_args: LoaderFunctionArgs) {
-  const team = await prisma.teamMember.findMany({
-    orderBy: { sortOrder: "asc" },
-  });
-  return team.map(mapTeamMemberFromPrisma);
+  const [team, companyInfoSetting] = await Promise.all([
+    prisma.teamMember.findMany({
+      orderBy: { sortOrder: "asc" },
+    }),
+    prisma.siteSetting.findUnique({
+      where: { key: "companyInfo" },
+    }),
+  ]);
+
+  const companyInfo: CompanyInfo = {
+    ...defaultCompanyInfo,
+    ...(companyInfoSetting?.value &&
+    typeof companyInfoSetting.value === "object"
+      ? (companyInfoSetting.value as Record<string, unknown>)
+      : {}),
+  } as CompanyInfo;
+
+  return {
+    team: team.map(mapTeamMemberFromPrisma),
+    companyInfo,
+  };
 }
 
 export const meta: MetaFunction = () => [
   ...generateMetaTags({
-    title: "About Us | Akhtar Abbasi Hiking",
+    title: "About Us | ICK Alibabba Adventure",
     description:
-      "Learn about Akhtar Abbasi Hiking — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
+      "Learn about ICK Alibabba Adventure — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
     image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
     url: `${SITE_CONFIG.url}/about`,
   }),
@@ -31,7 +49,8 @@ export const meta: MetaFunction = () => [
 ];
 
 export default function About() {
-  const team = useLoaderData<typeof loader>();
+  const { team, companyInfo } = useLoaderData<typeof loader>();
+  const aboutImage = companyInfo.aboutImage || "/images/about/team.webp";
   const stats = [
     { icon: Mountain, label: "Years of Experience", value: "25+" },
     { icon: Users, label: "Happy Clients", value: "2000+" },
@@ -49,7 +68,7 @@ export default function About() {
 
         <div className="mt-8 mb-12">
           <SectionTitle
-            title="About Akhtar Abbasi Hiking"
+            title="About ICK Alibabba Adventure"
             subtitle="Leading adventures in Gilgit Baltistan since the beginning"
             centered={true}
           />
@@ -60,7 +79,7 @@ export default function About() {
           <div>
             <h2 className="text-3xl font-bold text-ink mb-4">Who We Are</h2>
             <p className="text-muted leading-relaxed mb-4">
-              Akhtar Abbasi Hiking is a premier adventure company dedicated to
+              ICK Alibabba Adventure is a premier adventure company dedicated to
               providing world-class trekking and expedition experiences in
               Gilgit Baltistan. Founded with a passion for the mountains, we've
               been guiding adventurers to some of the world's most spectacular
@@ -82,7 +101,7 @@ export default function About() {
 
           <div className="relative">
             <img
-              src="/images/about/team.webp"
+              src={aboutImage}
               alt="Our Team"
               className="w-full h-96 object-cover rounded-lg"
             />

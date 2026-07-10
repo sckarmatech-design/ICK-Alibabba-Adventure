@@ -17,6 +17,7 @@ import { Footer } from "./components/Footer";
 import { WhatsAppButton } from "./components/WhatsAppButton";
 import prisma from "./lib/prisma.server";
 import { SITE_CONFIG } from "./lib/seo";
+import type { CompanyInfo } from "./data/nav";
 import {
   DEFAULT_THEME,
   parseThemeFromCookieHeader,
@@ -26,7 +27,7 @@ import {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const settings = await prisma.siteSetting.findMany();
-  const map = Object.fromEntries(settings.map((s) => [s.key, s.value])) as {
+  const map = Object.fromEntries(settings.map((s) => [s.key, s.value])) as unknown as {
     mainNav: Array<{
       label: string;
       href?: string;
@@ -36,16 +37,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       category: string;
       links: Array<{ label: string; href: string }>;
     }>;
-    companyInfo: {
-      name: string;
-      email: string;
-      phone: string;
-      location: string;
-      description: string;
-      whatsapp: string;
-      logo: string;
-      socialMedia: { facebook: string; instagram: string; youtube: string };
-    };
+    companyInfo: CompanyInfo;
   };
 
   // Admin CMS is intentionally theme-agnostic and visually locked to

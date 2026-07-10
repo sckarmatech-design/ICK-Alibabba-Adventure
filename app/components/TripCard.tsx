@@ -29,12 +29,18 @@ export function TripCard({
       <div className="bg-surface rounded-lg overflow-hidden border border-border hover:border-accent transition h-full flex flex-col">
         {/* Image Container */}
         <div className="relative overflow-hidden h-48 md:h-56 bg-primary">
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            loading="lazy"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full bg-surface flex items-center justify-center text-muted text-sm">
+              No image
+            </div>
+          )}
           <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 
           {/* Category Badge (non-CTA accent) */}

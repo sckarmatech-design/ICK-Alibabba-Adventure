@@ -190,23 +190,25 @@ export default function ExpeditionDetail() {
               <div>
                 <h3 className="text-2xl font-bold text-ink mb-4">Gallery</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {expedition.gallery.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setLightboxIndex(index);
-                        setLightboxOpen(true);
-                      }}
-                      className="relative overflow-hidden rounded-lg h-48 bg-surface hover:opacity-75 transition"
-                    >
-                      <img
-                        src={image}
-                        alt={`Gallery ${index + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
+                  {expedition.gallery
+                    .filter((image) => Boolean(image))
+                    .map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setLightboxIndex(index);
+                          setLightboxOpen(true);
+                        }}
+                        className="relative overflow-hidden rounded-lg h-48 bg-surface hover:opacity-75 transition"
+                      >
+                        <img
+                          src={image}
+                          alt={`Gallery ${index + 1}`}
+                          className="w-full h-full object-cover hover:scale-105 transition"
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
                 </div>
               </div>
             )}
@@ -245,7 +247,7 @@ export default function ExpeditionDetail() {
       {/* Lightbox */}
       {lightboxOpen && (
         <Lightbox
-          images={expedition.gallery}
+          images={expedition.gallery.filter((image) => Boolean(image))}
           initialIndex={lightboxIndex}
           onClose={() => setLightboxOpen(false)}
         />

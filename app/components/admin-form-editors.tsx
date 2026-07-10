@@ -948,6 +948,16 @@ export function CompanyInfoEditor({
       </div>
 
       <div>
+        <ImageInput
+          name="aboutImage"
+          label="About Page Story Image"
+          folder="company"
+          value={info.aboutImage ?? ""}
+          onChange={(value) => update("aboutImage", value)}
+        />
+      </div>
+
+      <div>
         <label className="block text-xs text-gray-400 mb-1">Description</label>
         <textarea
           value={info.description}

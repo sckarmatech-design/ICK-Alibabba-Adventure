@@ -169,23 +169,25 @@ export default function TripDetail() {
               <div>
                 <h3 className="text-2xl font-bold text-ink mb-4">Gallery</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {trip.gallery.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setLightboxIndex(index);
-                        setLightboxOpen(true);
-                      }}
-                      className="relative overflow-hidden rounded-lg h-48 bg-surface hover:opacity-75 transition"
-                    >
-                      <img
-                        src={image}
-                        alt={`Gallery ${index + 1}`}
-                        className="w-full h-full object-cover hover:scale-105 transition"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
+                  {trip.gallery
+                    .filter((image) => Boolean(image))
+                    .map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          setLightboxIndex(index);
+                          setLightboxOpen(true);
+                        }}
+                        className="relative overflow-hidden rounded-lg h-48 bg-surface hover:opacity-75 transition"
+                      >
+                        <img
+                          src={image}
+                          alt={`Gallery ${index + 1}`}
+                          className="w-full h-full object-cover hover:scale-105 transition"
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
                 </div>
               </div>
             )}
@@ -227,7 +229,7 @@ export default function TripDetail() {
       {/* Lightbox */}
       {lightboxOpen && (
         <Lightbox
-          images={trip.gallery}
+          images={trip.gallery.filter((image) => Boolean(image))}
           initialIndex={lightboxIndex}
           onClose={() => setLightboxOpen(false)}
         />

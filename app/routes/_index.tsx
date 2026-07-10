@@ -246,11 +246,17 @@ function HeroSlider({ slides }: { slides: HeroSlide[] }) {
             index === currentSlide ? "opacity-100" : "opacity-0"
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.headline}
-            className="w-full h-full object-cover"
-          />
+          {slide.image ? (
+            <img
+              src={slide.image}
+              alt={slide.headline}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-primary flex items-center justify-center text-muted">
+              No image
+            </div>
+          )}
           {/* Dark image overlay — not a theme color */}
           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
 
@@ -586,6 +592,20 @@ export default function Home() {
               className="bg-surface rounded-lg border border-border p-6"
             >
               <div className="flex items-center gap-3 mb-4">
+                {testimonial.image ? (
+                  <div className="shrink-0 w-14 h-14 rounded-full overflow-hidden aspect-square bg-primary border border-border">
+                    <img
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                ) : (
+                  <div className="shrink-0 w-14 h-14 rounded-full flex items-center justify-center bg-primary border border-border text-accent font-bold text-lg">
+                    {testimonial.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
                 <div>
                   <p className="font-semibold text-ink">{testimonial.name}</p>
                   <p className="text-sm text-muted">{testimonial.country}</p>

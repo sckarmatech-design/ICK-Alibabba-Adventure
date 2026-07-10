@@ -22,7 +22,7 @@ export function Footer({ footerLinks, companyInfo }: FooterProps) {
           <div>
             <div className="mb-4">
               <h3 className="text-2xl font-bold text-ink mb-2">
-                <span className="text-accent">Akhtar</span> Abbasi
+                ICK <span className="text-accent"> Alibabba</span> Adventure
               </h3>
               <p className="text-sm text-muted">Hiking Adventures</p>
             </div>
@@ -90,7 +90,7 @@ export function Footer({ footerLinks, companyInfo }: FooterProps) {
         {/* Bottom Footer */}
         <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-muted text-sm text-center md:text-left">
-            © 2026 Akhtar Abbasi Hiking. All rights reserved.
+            © 2026 ICK Alibabba Adventure . All rights reserved.
           </p>
 
           <button
