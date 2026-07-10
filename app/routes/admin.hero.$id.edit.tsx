@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { getString, getNumber } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
 import { AdminSaveBar } from "~/components/AdminSaveBar";
@@ -31,9 +32,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
+  const existing = await prisma.heroSlide.findUnique({ where: { id } });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.heroSlide.delete({ where: { id } });
+      await deleteImageFromStorage(existing.image);
     } catch (err) {
       console.error("Failed to delete hero slide:", err);
       return {
@@ -44,18 +49,25 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect("/admin/hero");
   }
 
+  const newImage = getString(formData, "image");
+
   try {
     await prisma.heroSlide.update({
       where: { id },
       data: {
         title: getString(formData, "title"),
         subtitle: getString(formData, "subtitle"),
-        image: getString(formData, "image"),
+        image: newImage,
         cta: getString(formData, "cta"),
         ctaLink: getString(formData, "ctaLink"),
         sortOrder: getNumber(formData, "sortOrder"),
       },
     });
+
+    if (existing.image && existing.image !== newImage) {
+      await deleteImageFromStorage(existing.image);
+    }
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update hero slide:", err);

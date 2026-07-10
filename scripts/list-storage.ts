@@ -21,8 +21,8 @@ const supabase = createClient(supabaseUrl, supabaseKey, {
 interface StorageFile {
   name: string;
   id: string;
-  updated_at: string;
-  created_at: string;
+  updated_at: string | null;
+  created_at: string | null;
   metadata?: { size?: number; mimetype?: string };
 }
 

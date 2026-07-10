@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { getString, getNumber, getOptionalString } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
 import { AdminSaveBar } from "~/components/AdminSaveBar";
@@ -33,9 +34,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
+  const existing = await prisma.testimonial.findUnique({ where: { id } });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.testimonial.delete({ where: { id } });
+      await deleteImageFromStorage(existing.image);
     } catch (err) {
       console.error("Failed to delete testimonial:", err);
       return {
@@ -45,6 +50,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
     }
     return redirect("/admin/testimonials");
   }
+
+  const newImage = getOptionalString(formData, "image");
 
   try {
     await prisma.testimonial.update({
@@ -56,9 +63,14 @@ export async function action({ params, request }: ActionFunctionArgs) {
         rating: getNumber(formData, "rating"),
         review: getString(formData, "review"),
         tripName: getString(formData, "tripName"),
-        image: getOptionalString(formData, "image"),
+        image: newImage,
       },
     });
+
+    if (existing.image && existing.image !== newImage) {
+      await deleteImageFromStorage(existing.image);
+    }
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update testimonial:", err);

@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImagesFromStorage } from "~/lib/supabase.server";
 import {
   getString,
   getOptionalString,
@@ -37,9 +38,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
+  const existing = await prisma.tour.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.tour.delete({ where: { id: params.id } });
+      await deleteImagesFromStorage([existing.heroImage, ...existing.gallery]);
     } catch (err) {
       console.error("Failed to delete tour:", err);
       return {
@@ -49,6 +56,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
     }
     return redirect("/admin/tours");
   }
+
+  const newHeroImage = getString(formData, "heroImage");
+  const newGallery = getArray(formData, "gallery");
 
   try {
     await prisma.tour.update({
@@ -63,16 +73,28 @@ export async function action({ params, request }: ActionFunctionArgs) {
           | "CHALLENGING"
           | "EXPERT",
         bestSeason: getString(formData, "bestSeason"),
-        heroImage: getString(formData, "heroImage"),
+        heroImage: newHeroImage,
         overview: getString(formData, "overview"),
         accommodation: getOptionalString(formData, "accommodation"),
         mealPlan: getOptionalString(formData, "mealPlan"),
         transport: getOptionalString(formData, "transport"),
         highlights: getArray(formData, "highlights"),
-        gallery: getArray(formData, "gallery"),
+        gallery: newGallery,
         itinerary: parseJsonField(getString(formData, "itinerary"), []),
       },
     });
+
+    const imagesToDelete: string[] = [];
+    if (existing.heroImage && existing.heroImage !== newHeroImage) {
+      imagesToDelete.push(existing.heroImage);
+    }
+    for (const oldUrl of existing.gallery) {
+      if (oldUrl && !newGallery.includes(oldUrl)) {
+        imagesToDelete.push(oldUrl);
+      }
+    }
+    await deleteImagesFromStorage(imagesToDelete);
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update tour:", err);

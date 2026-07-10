@@ -10,6 +10,7 @@ import { useState } from "react";
 import type { BlogCategory } from "@prisma/client";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { slugify, getString, getOptionalString, getNumber } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
 import { AdminSaveBar } from "~/components/AdminSaveBar";
@@ -39,9 +40,13 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
+  const existing = await prisma.blogPost.findUnique({ where: { id } });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.blogPost.delete({ where: { id } });
+      await deleteImageFromStorage(existing.image);
     } catch (err) {
       console.error("Failed to delete blog post:", err);
       return {
@@ -54,6 +59,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   try {
     const title = getString(formData, "title");
+    const newImage = getString(formData, "image");
     await prisma.blogPost.update({
       where: { id },
       data: {
@@ -64,11 +70,16 @@ export async function action({ params, request }: ActionFunctionArgs) {
         category: getString(formData, "category") as BlogCategory,
         excerpt: getString(formData, "excerpt"),
         content: getString(formData, "content"),
-        image: getString(formData, "image"),
+        image: newImage,
         readingTime: getNumber(formData, "readingTime"),
         videoUrl: getOptionalString(formData, "videoUrl"),
       },
     });
+
+    if (existing.image && existing.image !== newImage) {
+      await deleteImageFromStorage(existing.image);
+    }
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update blog post:", err);

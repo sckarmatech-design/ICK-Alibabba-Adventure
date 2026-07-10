@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { getString, getNumber, getArray } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
 import { AdminSaveBar } from "~/components/AdminSaveBar";
@@ -27,9 +28,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
+  const existing = await prisma.destination.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.destination.delete({ where: { id: params.id } });
+      await deleteImageFromStorage(existing.image);
     } catch (err) {
       console.error("Failed to delete destination:", err);
       return {
@@ -40,18 +47,25 @@ export async function action({ params, request }: ActionFunctionArgs) {
     return redirect("/admin/destinations");
   }
 
+  const newImage = getString(formData, "image");
+
   try {
     await prisma.destination.update({
       where: { id: params.id },
       data: {
         name: getString(formData, "name"),
         region: getString(formData, "region"),
-        image: getString(formData, "image"),
+        image: newImage,
         tripCount: getNumber(formData, "tripCount"),
         description: getString(formData, "description"),
         highlights: getArray(formData, "highlights"),
       },
     });
+
+    if (existing.image && existing.image !== newImage) {
+      await deleteImageFromStorage(existing.image);
+    }
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update destination:", err);

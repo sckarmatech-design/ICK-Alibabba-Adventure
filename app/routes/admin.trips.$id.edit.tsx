@@ -9,6 +9,7 @@ import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImagesFromStorage } from "~/lib/supabase.server";
 import {
   getArray,
   getOptionalString,
@@ -78,9 +79,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
+  const existing = await prisma.trip.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.trip.delete({ where: { id: params.id } });
+      await deleteImagesFromStorage([existing.heroImage, ...existing.gallery]);
     } catch (err) {
       console.error("Failed to delete trip:", err);
       return {
@@ -95,6 +102,9 @@ export async function action({ params, request }: ActionFunctionArgs) {
   if (Object.keys(errors).length > 0) {
     return { errors };
   }
+
+  const newHeroImage = getString(formData, "heroImage").trim();
+  const newGallery = getArray(formData, "gallery");
 
   try {
     await prisma.trip.update({
@@ -113,17 +123,29 @@ export async function action({ params, request }: ActionFunctionArgs) {
           | "CHALLENGING"
           | "EXPERT",
         bestSeason: getString(formData, "bestSeason").trim(),
-        heroImage: getString(formData, "heroImage").trim(),
+        heroImage: newHeroImage,
         overview: getString(formData, "overview").trim(),
         groupSize: getOptionalString(formData, "groupSize"),
         startPoint: getOptionalString(formData, "startPoint"),
         endPoint: getOptionalString(formData, "endPoint"),
         highlights: getArray(formData, "highlights"),
-        gallery: getArray(formData, "gallery"),
+        gallery: newGallery,
         itinerary: parseJsonField(getString(formData, "itinerary"), []),
         faqs: parseJsonField(getString(formData, "faqs"), []),
       },
     });
+
+    const imagesToDelete: string[] = [];
+    if (existing.heroImage && existing.heroImage !== newHeroImage) {
+      imagesToDelete.push(existing.heroImage);
+    }
+    for (const oldUrl of existing.gallery) {
+      if (oldUrl && !newGallery.includes(oldUrl)) {
+        imagesToDelete.push(oldUrl);
+      }
+    }
+    await deleteImagesFromStorage(imagesToDelete);
+
     return { ok: true } as const;
   } catch (error) {
     if (
