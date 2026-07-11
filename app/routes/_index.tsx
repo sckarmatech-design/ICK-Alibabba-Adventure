@@ -33,7 +33,7 @@ export async function loader(_args: LoaderFunctionArgs) {
     ...trips.map((t) => {
       const trip = mapTripFromPrisma(t);
       return {
-        kind: "trip" as const,
+        kind: "trek" as const,
         slug: trip.slug,
         title: trip.title,
         region: trip.region,
@@ -128,7 +128,7 @@ type HeroSlide = {
 };
 
 type AdventureItem = {
-  kind: "trip" | "expedition" | "tour";
+  kind: "trek" | "expedition" | "tour";
   slug: string;
   title: string;
   region: string;
@@ -524,15 +524,18 @@ export default function Home() {
           subtitle="Choose from our most popular regions"
         />
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          {destinations.map((dest) => (
-            <DestinationCard
-              key={dest.id}
-              image={dest.image}
-              name={dest.name}
-              tripCount={dest.tripCount}
-              href={`/tours?region=${dest.id}`}
-            />
-          ))}
+          {destinations.map((dest) => {
+            const regionParam = dest.name.split(" ")[0]?.toLowerCase() || "";
+            return (
+              <DestinationCard
+                key={dest.id}
+                image={dest.image}
+                name={dest.name}
+                tripCount={dest.tripCount}
+                href={`/tours?region=${regionParam}`}
+              />
+            );
+          })}
         </div>
       </section>
 

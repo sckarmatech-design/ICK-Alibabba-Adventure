@@ -102,7 +102,7 @@ export function TripCard({
           )}
 
           {/* Price */}
-          {typeof price === "number" && (
+          {typeof price === "number" && price > 0 && (
             <div className="mb-4">
               <p className="text-xs text-muted mb-0.5">From</p>
               <p className="text-xl font-bold text-accent">

@@ -109,7 +109,7 @@ export function DetailSidebar({
         )}
 
         {/* Price */}
-        {typeof price === "number" && (
+        {typeof price === "number" && price > 0 && (
           <div
             className={`${hasDetails ? "pt-3 border-t border-border" : ""}`}
           >
@@ -117,7 +117,7 @@ export function DetailSidebar({
             <p className="text-2xl font-bold text-accent">
               {formatPrice(price, currency)}
             </p>
-            {typeof depositAmount === "number" && (
+            {typeof depositAmount === "number" && depositAmount > 0 && (
               <p className="text-xs text-muted mt-0.5">
                 Deposit: {formatPrice(depositAmount, currency)}
               </p>
@@ -126,7 +126,7 @@ export function DetailSidebar({
         )}
 
         {/* Includes / Excludes */}
-        {(priceIncludes?.length || priceExcludes?.length) && (
+        {(!!priceIncludes?.length || !!priceExcludes?.length) && (
           <div
             className={`${hasPricing ? "pt-3 border-t border-border" : ""} space-y-3`}
           >
