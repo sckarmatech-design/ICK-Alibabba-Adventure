@@ -49,12 +49,19 @@ export default function BlogPost() {
   return (
     <div>
       {/* Hero */}
+      {/* Hero Image */}
       <div className="relative w-full h-96 md:h-[500px] overflow-hidden rounded-lg mb-8">
-        <img
-          src={post.image}
-          alt={post.title}
-          className="w-full h-full object-cover"
-        />
+        {post.image ? (
+          <img
+            src={post.image}
+            alt={post.title}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-surface flex items-center justify-center text-muted">
+            No image
+          </div>
+        )}
         {/* Dark image overlay — not a theme color */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 p-8">

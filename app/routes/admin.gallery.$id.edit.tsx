@@ -1,8 +1,9 @@
-import { Form, useActionData, useLoaderData } from "react-router";
+import { Form, redirect, useActionData, useLoaderData } from "react-router";
 import type { LoaderFunctionArgs, ActionFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImagesFromStorage } from "~/lib/supabase.server";
 import { getString, getOptionalString } from "~/lib/admin";
 import { getYoutubeThumbnailUrl } from "~/lib/video";
 import { ImageInput } from "~/components/ImageInput";
@@ -32,19 +33,21 @@ export async function action({ params, request }: ActionFunctionArgs) {
 
   const formData = await request.formData();
 
-  if (formData.get("_action") === "delete") {
-    const [image, video] = await Promise.all([
-      prisma.galleryImage.findUnique({ where: { id } }),
-      prisma.galleryVideo.findUnique({ where: { id } }),
-    ]);
+  const [image, video] = await Promise.all([
+    prisma.galleryImage.findUnique({ where: { id } }),
+    prisma.galleryVideo.findUnique({ where: { id } }),
+  ]);
 
+  if (!image && !video) throw new Response("Not Found", { status: 404 });
+
+  if (formData.get("_action") === "delete") {
     try {
       if (image) {
         await prisma.galleryImage.delete({ where: { id } });
+        await deleteImagesFromStorage([image.image, image.thumbnail]);
       } else if (video) {
         await prisma.galleryVideo.delete({ where: { id } });
-      } else {
-        throw new Response("Not Found", { status: 404 });
+        await deleteImagesFromStorage([video.thumbnail]);
       }
     } catch (err) {
       if (err instanceof Response) throw err;
@@ -54,13 +57,8 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete gallery item. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/gallery");
   }
-
-  const [image, video] = await Promise.all([
-    prisma.galleryImage.findUnique({ where: { id } }),
-    prisma.galleryVideo.findUnique({ where: { id } }),
-  ]);
 
   try {
     if (image) {
@@ -87,6 +85,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
         where: { id },
         data: { title, image: imageUrl, thumbnail, category, alt, featured },
       });
+
+      const imagesToDelete: string[] = [];
+      if (image.image && image.image !== imageUrl) {
+        imagesToDelete.push(image.image);
+      }
+      if (image.thumbnail && image.thumbnail !== thumbnail) {
+        imagesToDelete.push(image.thumbnail);
+      }
+      await deleteImagesFromStorage(imagesToDelete);
     } else if (video) {
       const title = getString(formData, "title");
       const videoUrl = getString(formData, "videoUrl");
@@ -108,8 +115,10 @@ export async function action({ params, request }: ActionFunctionArgs) {
         where: { id },
         data: { title, videoUrl, thumbnail, alt },
       });
-    } else {
-      throw new Response("Not Found", { status: 404 });
+
+      if (video.thumbnail && video.thumbnail !== thumbnail) {
+        await deleteImagesFromStorage([video.thumbnail]);
+      }
     }
   } catch (err) {
     if (err instanceof Response) throw err;

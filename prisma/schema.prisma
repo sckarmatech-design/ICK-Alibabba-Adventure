@@ -58,25 +58,30 @@ model AdminUser {
 // ===== TRIPS =====
 
 model Trip {
-  id         String         @id @default(cuid())
-  slug       String         @unique
-  title      String
-  category   TripCategory
-  region     String
-  duration   String
-  difficulty Difficulty
-  bestSeason String
-  heroImage  String
-  overview   String
-  groupSize  String?
-  startPoint String?
-  endPoint   String?
-  highlights String[]
-  gallery    String[]
-  itinerary  Json
-  faqs       Json
-  createdAt  DateTime       @default(now())
-  updatedAt  DateTime       @updatedAt
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  category      TripCategory
+  region        String
+  duration      String
+  difficulty    Difficulty
+  bestSeason    String
+  heroImage     String
+  overview      String
+  price         Int?
+  currency      String         @default("USD")
+  priceIncludes String[]       @default([])
+  priceExcludes String[]       @default([])
+  depositAmount Int?
+  groupSize     String?
+  startPoint    String?
+  endPoint      String?
+  highlights    String[]
+  gallery       String[]
+  itinerary     Json
+  faqs          Json
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 // ===== EXPEDITIONS =====
@@ -92,6 +97,11 @@ model Expedition {
   bestSeason      String
   heroImage       String
   overview        String
+  price           Int?
+  currency        String     @default("USD")
+  priceIncludes   String[]   @default([])
+  priceExcludes   String[]   @default([])
+  depositAmount   Int?
   technicalRating String
   highlights      String[]
   gallery         String[]
@@ -114,6 +124,11 @@ model Tour {
   bestSeason    String
   heroImage     String
   overview      String
+  price         Int?
+  currency      String     @default("USD")
+  priceIncludes String[]   @default([])
+  priceExcludes String[]   @default([])
+  depositAmount Int?
   accommodation String?
   mealPlan      String?
   transport     String?

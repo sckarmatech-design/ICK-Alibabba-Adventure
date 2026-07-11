@@ -26,6 +26,16 @@ export function getNumber(formData: FormData, name: string): number {
   return Number(value) || 0;
 }
 
+export function getOptionalNumber(
+  formData: FormData,
+  name: string,
+): number | undefined {
+  const value = formData.get(name);
+  if (value === null || String(value) === "") return undefined;
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? undefined : parsed;
+}
+
 export function getArray(formData: FormData, name: string): string[] {
   const values = formData.getAll(name);
   if (values.length > 1) {

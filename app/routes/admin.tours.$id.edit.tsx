@@ -1,11 +1,19 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImagesFromStorage } from "~/lib/supabase.server";
 import {
   getString,
   getOptionalString,
+  getOptionalNumber,
   getArray,
   parseJsonField,
 } from "~/lib/admin";
@@ -31,9 +39,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
+  const existing = await prisma.tour.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.tour.delete({ where: { id: params.id } });
+      await deleteImagesFromStorage([existing.heroImage, ...existing.gallery]);
     } catch (err) {
       console.error("Failed to delete tour:", err);
       return {
@@ -41,8 +55,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete tour. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/tours");
   }
+
+  const newHeroImage = getString(formData, "heroImage");
+  const newGallery = getArray(formData, "gallery");
 
   try {
     await prisma.tour.update({
@@ -57,16 +74,33 @@ export async function action({ params, request }: ActionFunctionArgs) {
           | "CHALLENGING"
           | "EXPERT",
         bestSeason: getString(formData, "bestSeason"),
-        heroImage: getString(formData, "heroImage"),
+        heroImage: newHeroImage,
         overview: getString(formData, "overview"),
+        price: getOptionalNumber(formData, "price"),
+        currency: getString(formData, "currency") || "USD",
+        priceIncludes: getArray(formData, "priceIncludes"),
+        priceExcludes: getArray(formData, "priceExcludes"),
+        depositAmount: getOptionalNumber(formData, "depositAmount"),
         accommodation: getOptionalString(formData, "accommodation"),
         mealPlan: getOptionalString(formData, "mealPlan"),
         transport: getOptionalString(formData, "transport"),
         highlights: getArray(formData, "highlights"),
-        gallery: getArray(formData, "gallery"),
+        gallery: newGallery,
         itinerary: parseJsonField(getString(formData, "itinerary"), []),
       },
     });
+
+    const imagesToDelete: string[] = [];
+    if (existing.heroImage && existing.heroImage !== newHeroImage) {
+      imagesToDelete.push(existing.heroImage);
+    }
+    for (const oldUrl of existing.gallery) {
+      if (oldUrl && !newGallery.includes(oldUrl)) {
+        imagesToDelete.push(oldUrl);
+      }
+    }
+    await deleteImagesFromStorage(imagesToDelete);
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update tour:", err);
@@ -292,6 +326,92 @@ export default function AdminEditTour() {
               defaultValues={tour.gallery}
               folder="gallery"
               onLoadingChange={setUploading}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price (whole number, e.g. 1790)
+            </label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={tour.price ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="currency"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Currency
+            </label>
+            <select
+              id="currency"
+              name="currency"
+              defaultValue={tour.currency ?? "USD"}
+              className={inputClass}
+            >
+              <option value="USD">USD</option>
+              <option value="PKR">PKR</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="depositAmount"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Deposit Amount (optional)
+            </label>
+            <input
+              id="depositAmount"
+              name="depositAmount"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={tour.depositAmount ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceIncludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Includes (one per line)
+            </label>
+            <textarea
+              id="priceIncludes"
+              name="priceIncludes"
+              rows={4}
+              defaultValue={tour.priceIncludes?.join("\n") ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceExcludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Excludes (one per line)
+            </label>
+            <textarea
+              id="priceExcludes"
+              name="priceExcludes"
+              rows={4}
+              defaultValue={tour.priceExcludes?.join("\n") ?? ""}
+              className={inputClass}
             />
           </div>
 

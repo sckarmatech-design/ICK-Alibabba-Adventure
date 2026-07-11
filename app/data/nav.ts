@@ -107,6 +107,7 @@ export interface CompanyInfo {
   description: string;
   whatsapp: string;
   logo: string;
+  aboutImage?: string;
   socialMedia: {
     facebook: string;
     instagram: string;
@@ -123,6 +124,7 @@ export const companyInfo: CompanyInfo = {
     "Leading adventure and hiking company offering world-class expeditions and treks in the Karakoram and Hindu Kush mountains.",
   whatsapp: "+92 355 4258109",
   logo: "",
+  aboutImage: "",
   socialMedia: {
     facebook: "https://facebook.com/akhtarabbasihiking",
     instagram: "https://instagram.com/akhtarabbasihiking",

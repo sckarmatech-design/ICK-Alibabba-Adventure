@@ -75,13 +75,19 @@ export default function BlogIndex() {
                       href={`/blog/${post.slug}`}
                       className="group bg-surface rounded-lg border border-border overflow-hidden hover:border-accent transition"
                     >
-                      <div className="h-48 overflow-hidden">
-                        <img
-                          src={post.image}
-                          alt={post.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-                          loading="lazy"
-                        />
+                      <div className="h-48 overflow-hidden bg-surface">
+                        {post.image ? (
+                          <img
+                            src={post.image}
+                            alt={post.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-muted text-sm">
+                            No image
+                          </div>
+                        )}
                       </div>
                       <div className="p-4">
                         <div className="flex items-center justify-between mb-2">

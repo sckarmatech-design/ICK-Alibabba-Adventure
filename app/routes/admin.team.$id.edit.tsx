@@ -1,8 +1,15 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { getString, getOptionalString, getNumber } from "~/lib/admin";
 import { ImageInput } from "~/components/ImageInput";
 import { AdminSaveBar } from "~/components/AdminSaveBar";
@@ -20,13 +27,21 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 export async function action({
   params,
   request,
-}: ActionFunctionArgs): Promise<{ ok: true } | { ok: false; error: string }> {
+}: ActionFunctionArgs): Promise<
+  { ok: true } | { ok: false; error: string } | Response
+> {
   await requireAdmin(request);
   const formData = await request.formData();
+
+  const existing = await prisma.teamMember.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
 
   if (formData.get("_action") === "delete") {
     try {
       await prisma.teamMember.delete({ where: { id: params.id } });
+      await deleteImageFromStorage(existing.image);
     } catch (err) {
       console.error("Failed to delete team member:", err);
       return {
@@ -34,7 +49,7 @@ export async function action({
         error: "Failed to delete team member. Please try again.",
       };
     }
-    return { ok: true };
+    return redirect("/admin/team");
   }
 
   const image = getOptionalString(formData, "image");
@@ -52,6 +67,10 @@ export async function action({
         sortOrder: getNumber(formData, "sortOrder"),
       },
     });
+    if (existing.image && existing.image !== image) {
+      await deleteImageFromStorage(existing.image);
+    }
+
     return { ok: true };
   } catch (err) {
     console.error("Failed to update team member:", err);

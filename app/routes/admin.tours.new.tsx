@@ -7,6 +7,7 @@ import {
   slugify,
   getString,
   getOptionalString,
+  getOptionalNumber,
   getArray,
   parseJsonField,
 } from "~/lib/admin";
@@ -41,6 +42,11 @@ export async function action({ request }: ActionFunctionArgs) {
         bestSeason: getString(formData, "bestSeason"),
         heroImage: getString(formData, "heroImage"),
         overview: getString(formData, "overview"),
+        price: getOptionalNumber(formData, "price"),
+        currency: getString(formData, "currency") || "USD",
+        priceIncludes: getArray(formData, "priceIncludes"),
+        priceExcludes: getArray(formData, "priceExcludes"),
+        depositAmount: getOptionalNumber(formData, "depositAmount"),
         accommodation: getOptionalString(formData, "accommodation"),
         mealPlan: getOptionalString(formData, "mealPlan"),
         transport: getOptionalString(formData, "transport"),
@@ -263,6 +269,88 @@ export default function AdminNewTour() {
               defaultValues={[]}
               folder="gallery"
               onLoadingChange={setUploading}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price (whole number, e.g. 1790)
+            </label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min={0}
+              step={1}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="currency"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Currency
+            </label>
+            <select
+              id="currency"
+              name="currency"
+              defaultValue="USD"
+              className={inputClass}
+            >
+              <option value="USD">USD</option>
+              <option value="PKR">PKR</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="depositAmount"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Deposit Amount (optional)
+            </label>
+            <input
+              id="depositAmount"
+              name="depositAmount"
+              type="number"
+              min={0}
+              step={1}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceIncludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Includes (one per line)
+            </label>
+            <textarea
+              id="priceIncludes"
+              name="priceIncludes"
+              rows={4}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceExcludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Excludes (one per line)
+            </label>
+            <textarea
+              id="priceExcludes"
+              name="priceExcludes"
+              rows={4}
+              className={inputClass}
             />
           </div>
 

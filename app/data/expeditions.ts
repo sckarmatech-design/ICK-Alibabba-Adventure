@@ -14,6 +14,11 @@ export interface Expedition {
   overview: string;
   itinerary: Array<{ day: number; title: string; description: string }>;
   technicalRating: string;
+  price?: number;
+  currency?: string;
+  priceIncludes?: string[];
+  priceExcludes?: string[];
+  depositAmount?: number;
   gear?: string[];
   faqs?: Array<{ question: string; answer: string }>;
 }

@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { MapPin, Clock, Zap } from "lucide-react";
+import { formatPrice } from "~/lib/format";
 
 interface TripCardProps {
   slug: string;
@@ -10,6 +11,8 @@ interface TripCardProps {
   difficulty?: string;
   image: string;
   highlights?: string[];
+  price?: number;
+  currency?: string;
   href: string;
 }
 
@@ -22,6 +25,8 @@ export function TripCard({
   difficulty,
   image,
   highlights,
+  price,
+  currency,
   href,
 }: TripCardProps) {
   return (
@@ -29,12 +34,18 @@ export function TripCard({
       <div className="bg-surface rounded-lg overflow-hidden border border-border hover:border-accent transition h-full flex flex-col">
         {/* Image Container */}
         <div className="relative overflow-hidden h-48 md:h-56 bg-primary">
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
-            loading="lazy"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={title}
+              className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full bg-surface flex items-center justify-center text-muted text-sm">
+              No image
+            </div>
+          )}
           <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent"></div>
 
           {/* Category Badge (non-CTA accent) */}
@@ -84,9 +95,19 @@ export function TripCard({
 
           {/* Difficulty — uses secondary (warm amber) per theme */}
           {difficulty && (
-            <div className="flex items-center gap-1 text-muted text-sm mb-4">
+            <div className="flex items-center gap-1 text-muted text-sm mb-3">
               <Zap size={14} className="text-secondary" />
               <span>{difficulty}</span>
+            </div>
+          )}
+
+          {/* Price */}
+          {typeof price === "number" && price > 0 && (
+            <div className="mb-4">
+              <p className="text-xs text-muted mb-0.5">From</p>
+              <p className="text-xl font-bold text-accent">
+                {formatPrice(price, currency)}
+              </p>
             </div>
           )}
 
