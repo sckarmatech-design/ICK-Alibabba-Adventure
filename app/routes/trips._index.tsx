@@ -188,6 +188,8 @@ export default function TripsIndex() {
               difficulty={trip.difficulty}
               image={trip.heroImage}
               highlights={trip.highlights}
+              price={trip.price}
+              currency={trip.currency}
               href={`/trips/${trip.slug}`}
             />
           ))}

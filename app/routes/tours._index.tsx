@@ -120,6 +120,8 @@ export default function ToursIndex() {
               difficulty={tour.difficulty}
               image={tour.heroImage}
               highlights={tour.highlights}
+              price={tour.price}
+              currency={tour.currency}
               href={`/tours/${tour.slug}`}
             />
           ))}

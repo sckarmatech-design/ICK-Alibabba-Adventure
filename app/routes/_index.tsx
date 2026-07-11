@@ -44,6 +44,8 @@ export async function loader(_args: LoaderFunctionArgs) {
         overview: trip.overview,
         heroImage: trip.heroImage,
         highlights: trip.highlights,
+        price: trip.price,
+        currency: trip.currency,
         href: `/trips/${trip.slug}`,
       };
     }),
@@ -61,6 +63,8 @@ export async function loader(_args: LoaderFunctionArgs) {
         overview: expedition.overview,
         heroImage: expedition.heroImage,
         highlights: expedition.highlights,
+        price: expedition.price,
+        currency: expedition.currency,
         href: `/expeditions/${expedition.slug}`,
       };
     }),
@@ -78,6 +82,8 @@ export async function loader(_args: LoaderFunctionArgs) {
         overview: tour.overview,
         heroImage: tour.heroImage,
         highlights: tour.highlights,
+        price: tour.price,
+        currency: tour.currency,
         href: `/tours/${tour.slug}`,
       };
     }),
@@ -133,6 +139,8 @@ type AdventureItem = {
   overview: string;
   heroImage: string;
   highlights: string[];
+  price?: number;
+  currency?: string;
   href: string;
 };
 
@@ -485,6 +493,8 @@ export default function Home() {
               difficulty={item.difficulty}
               image={item.heroImage}
               highlights={item.highlights}
+              price={item.price}
+              currency={item.currency}
               href={item.href}
             />
           ))}

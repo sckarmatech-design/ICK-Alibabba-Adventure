@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { MapPin, Clock, Zap } from "lucide-react";
+import { formatPrice } from "~/lib/format";
 
 interface TripCardProps {
   slug: string;
@@ -10,6 +11,8 @@ interface TripCardProps {
   difficulty?: string;
   image: string;
   highlights?: string[];
+  price?: number;
+  currency?: string;
   href: string;
 }
 
@@ -22,6 +25,8 @@ export function TripCard({
   difficulty,
   image,
   highlights,
+  price,
+  currency,
   href,
 }: TripCardProps) {
   return (
@@ -90,9 +95,19 @@ export function TripCard({
 
           {/* Difficulty — uses secondary (warm amber) per theme */}
           {difficulty && (
-            <div className="flex items-center gap-1 text-muted text-sm mb-4">
+            <div className="flex items-center gap-1 text-muted text-sm mb-3">
               <Zap size={14} className="text-secondary" />
               <span>{difficulty}</span>
+            </div>
+          )}
+
+          {/* Price */}
+          {typeof price === "number" && (
+            <div className="mb-4">
+              <p className="text-xs text-muted mb-0.5">From</p>
+              <p className="text-xl font-bold text-accent">
+                {formatPrice(price, currency)}
+              </p>
             </div>
           )}
 

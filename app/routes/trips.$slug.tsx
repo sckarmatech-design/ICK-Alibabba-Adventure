@@ -217,6 +217,11 @@ export default function TripDetail() {
               groupSize={trip.groupSize}
               startPoint={trip.startPoint}
               endPoint={trip.endPoint}
+              price={trip.price}
+              currency={trip.currency}
+              depositAmount={trip.depositAmount}
+              priceIncludes={trip.priceIncludes}
+              priceExcludes={trip.priceExcludes}
               ctaText="Enquire Now"
               onCTA={() => {
                 window.location.href = "/contact";

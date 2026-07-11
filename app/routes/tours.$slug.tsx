@@ -165,6 +165,11 @@ export default function TourDetail() {
             <DetailSidebar
               duration={tour.duration}
               difficulty={tour.difficulty}
+              price={tour.price}
+              currency={tour.currency}
+              depositAmount={tour.depositAmount}
+              priceIncludes={tour.priceIncludes}
+              priceExcludes={tour.priceExcludes}
               ctaText="Book This Tour"
               onCTA={() => {
                 window.location.href = "/contact";

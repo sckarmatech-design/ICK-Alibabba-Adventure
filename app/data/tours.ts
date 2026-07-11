@@ -11,6 +11,11 @@ export interface Tour {
   gallery: string[];
   highlights: string[];
   overview: string;
+  price?: number;
+  currency?: string;
+  priceIncludes?: string[];
+  priceExcludes?: string[];
+  depositAmount?: number;
   accommodation?: string;
   mealPlan?: string;
   transport?: string;

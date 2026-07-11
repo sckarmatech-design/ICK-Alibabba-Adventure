@@ -25,6 +25,11 @@ export interface Trip {
   overview: string;
   itinerary: ItineraryDay[];
   faqs: FAQ[];
+  price?: number;
+  currency?: string;
+  priceIncludes?: string[];
+  priceExcludes?: string[];
+  depositAmount?: number;
   groupSize?: string;
   startPoint?: string;
   endPoint?: string;

@@ -124,6 +124,8 @@ export default function ExpeditionsIndex() {
               difficulty={expedition.difficulty}
               image={expedition.heroImage}
               highlights={expedition.highlights}
+              price={expedition.price}
+              currency={expedition.currency}
               href={`/expeditions/${expedition.slug}`}
             />
           ))}

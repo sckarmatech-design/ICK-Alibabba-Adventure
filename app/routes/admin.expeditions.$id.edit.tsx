@@ -10,7 +10,12 @@ import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
 import { deleteImagesFromStorage } from "~/lib/supabase.server";
-import { getString, getArray, parseJsonField } from "~/lib/admin";
+import {
+  getString,
+  getArray,
+  getOptionalNumber,
+  parseJsonField,
+} from "~/lib/admin";
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
@@ -313,6 +318,102 @@ export default function AdminEditExpedition() {
             />
           </div>
 
+          <div>
+            <label
+              htmlFor="priceIncludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Includes
+              <span className="text-gray-500 font-normal block text-xs">
+                One per line
+              </span>
+            </label>
+            <textarea
+              id="priceIncludes"
+              name="priceIncludes"
+              rows={6}
+              defaultValue={expedition.priceIncludes?.join("\n") ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceExcludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Excludes
+              <span className="text-gray-500 font-normal block text-xs">
+                One per line
+              </span>
+            </label>
+            <textarea
+              id="priceExcludes"
+              name="priceExcludes"
+              rows={6}
+              defaultValue={expedition.priceExcludes?.join("\n") ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price (whole number, e.g. 1790)
+            </label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={expedition.price ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="currency"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Currency
+            </label>
+            <select
+              id="currency"
+              name="currency"
+              defaultValue={expedition.currency ?? "USD"}
+              className={inputClass}
+            >
+              <option value="USD">USD</option>
+              <option value="PKR">PKR</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="depositAmount"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Deposit Amount (optional)
+            </label>
+            <input
+              id="depositAmount"
+              name="depositAmount"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={expedition.depositAmount ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div>
             <ImageListInput
               name="gallery"

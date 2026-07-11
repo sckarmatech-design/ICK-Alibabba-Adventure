@@ -235,6 +235,11 @@ export default function ExpeditionDetail() {
               altitude={expedition.altitude}
               duration={expedition.duration}
               difficulty={expedition.difficulty}
+              price={expedition.price}
+              currency={expedition.currency}
+              depositAmount={expedition.depositAmount}
+              priceIncludes={expedition.priceIncludes}
+              priceExcludes={expedition.priceExcludes}
               ctaText="Request Expedition Quote"
               onCTA={() => {
                 window.location.href = "/contact";
