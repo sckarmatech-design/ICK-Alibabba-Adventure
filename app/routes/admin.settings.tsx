@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Prisma } from "@prisma/client";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
+import { deleteImageFromStorage } from "~/lib/supabase.server";
 import { getString, parseJsonField } from "~/lib/admin";
 import {
   MainNavEditor,
@@ -70,6 +71,31 @@ export async function action({ request }: ActionFunctionArgs) {
       ),
     };
 
+    const existingCompanyInfo = await prisma.siteSetting.findUnique({
+      where: { key: "companyInfo" },
+    });
+    const oldCompanyInfo =
+      existingCompanyInfo && typeof existingCompanyInfo.value === "object"
+        ? (existingCompanyInfo.value as Record<string, unknown>)
+        : {};
+    const oldLogo =
+      typeof oldCompanyInfo.logo === "string" ? oldCompanyInfo.logo : "";
+    const oldAboutImage =
+      typeof oldCompanyInfo.aboutImage === "string"
+        ? oldCompanyInfo.aboutImage
+        : "";
+
+    const newCompanyInfo =
+      values.companyInfo && typeof values.companyInfo === "object"
+        ? (values.companyInfo as Record<string, unknown>)
+        : {};
+    const newLogo =
+      typeof newCompanyInfo.logo === "string" ? newCompanyInfo.logo : "";
+    const newAboutImage =
+      typeof newCompanyInfo.aboutImage === "string"
+        ? newCompanyInfo.aboutImage
+        : "";
+
     await Promise.all(
       SETTING_KEYS.map((key) =>
         prisma.siteSetting.upsert({
@@ -79,6 +105,22 @@ export async function action({ request }: ActionFunctionArgs) {
         }),
       ),
     );
+
+    console.log("Settings image cleanup:", {
+      oldLogo,
+      newLogo,
+      oldAboutImage,
+      newAboutImage,
+      willDeleteLogo: !!(oldLogo && oldLogo !== newLogo),
+      willDeleteAboutImage: !!(oldAboutImage && oldAboutImage !== newAboutImage),
+    });
+
+    if (oldLogo && oldLogo !== newLogo) {
+      await deleteImageFromStorage(oldLogo);
+    }
+    if (oldAboutImage && oldAboutImage !== newAboutImage) {
+      await deleteImageFromStorage(oldAboutImage);
+    }
 
     return { ok: true } as const;
   } catch (err) {

@@ -46,11 +46,17 @@ export async function deleteImageFromStorage(
   url: string | null | undefined,
 ): Promise<void> {
   const path = getStoragePathFromUrl(url ?? "");
-  if (!path) return;
+  if (!path) {
+    console.log("Skipping storage delete — URL does not map to bucket path:", url);
+    return;
+  }
 
+  console.log("Deleting storage file:", path);
   const { error } = await supabase.storage.from(BUCKET).remove([path]);
   if (error) {
     console.error(`Failed to delete storage file ${path}:`, error.message);
+  } else {
+    console.log("Deleted storage file:", path);
   }
 }
 
