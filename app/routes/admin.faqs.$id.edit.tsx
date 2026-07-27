@@ -1,4 +1,10 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
@@ -37,10 +43,7 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete FAQ. Please try again.",
       } as const;
     }
-    // Use redirect import would create a circular dep here, but the page
-    // intentionally stays put after delete so the admin sees the error if any;
-    // a successful delete should be rare to fail and the admin can navigate back.
-    return { ok: true } as const;
+    return redirect("/admin/faqs");
   }
 
   try {

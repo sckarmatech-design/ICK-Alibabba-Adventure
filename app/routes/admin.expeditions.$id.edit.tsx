@@ -1,9 +1,21 @@
-import { Form, Link, useActionData, useLoaderData } from "react-router";
+import {
+  Form,
+  Link,
+  redirect,
+  useActionData,
+  useLoaderData,
+} from "react-router";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { useState } from "react";
 import prisma from "~/lib/prisma.server";
 import { requireAdmin } from "~/lib/auth.server";
-import { getString, getArray, parseJsonField } from "~/lib/admin";
+import { deleteImagesFromStorage } from "~/lib/supabase.server";
+import {
+  getString,
+  getArray,
+  getOptionalNumber,
+  parseJsonField,
+} from "~/lib/admin";
 import { ItineraryEditor, FaqEditor } from "~/components/admin-form-editors";
 import type { ItineraryDay, FaqItem } from "~/components/admin-form-editors";
 import { ImageInput, ImageListInput } from "~/components/ImageInput";
@@ -33,9 +45,15 @@ export async function action({ params, request }: ActionFunctionArgs) {
   await requireAdmin(request);
   const formData = await request.formData();
 
+  const existing = await prisma.expedition.findUnique({
+    where: { id: params.id },
+  });
+  if (!existing) throw new Response("Not Found", { status: 404 });
+
   if (formData.get("_action") === "delete") {
     try {
       await prisma.expedition.delete({ where: { id: params.id } });
+      await deleteImagesFromStorage([existing.heroImage, ...existing.gallery]);
     } catch (err) {
       console.error("Failed to delete expedition:", err);
       return {
@@ -43,8 +61,11 @@ export async function action({ params, request }: ActionFunctionArgs) {
         error: "Failed to delete expedition. Please try again.",
       } as const;
     }
-    return { ok: true } as const;
+    return redirect("/admin/expeditions");
   }
+
+  const newHeroImage = getString(formData, "heroImage");
+  const newGallery = getArray(formData, "gallery");
 
   try {
     await prisma.expedition.update({
@@ -60,11 +81,16 @@ export async function action({ params, request }: ActionFunctionArgs) {
           | "CHALLENGING"
           | "EXPERT",
         bestSeason: getString(formData, "bestSeason"),
-        heroImage: getString(formData, "heroImage"),
+        heroImage: newHeroImage,
         overview: getString(formData, "overview"),
         technicalRating: getString(formData, "technicalRating"),
+        price: getOptionalNumber(formData, "price"),
+        currency: getString(formData, "currency") || "USD",
+        priceIncludes: getArray(formData, "priceIncludes"),
+        priceExcludes: getArray(formData, "priceExcludes"),
+        depositAmount: getOptionalNumber(formData, "depositAmount"),
         highlights: getArray(formData, "highlights"),
-        gallery: getArray(formData, "gallery"),
+        gallery: newGallery,
         gear: getArray(formData, "gear"),
         itinerary: parseJsonField<
           Array<{ day: number; title: string; description: string }>
@@ -75,6 +101,18 @@ export async function action({ params, request }: ActionFunctionArgs) {
         ),
       },
     });
+
+    const imagesToDelete: string[] = [];
+    if (existing.heroImage && existing.heroImage !== newHeroImage) {
+      imagesToDelete.push(existing.heroImage);
+    }
+    for (const oldUrl of existing.gallery) {
+      if (oldUrl && !newGallery.includes(oldUrl)) {
+        imagesToDelete.push(oldUrl);
+      }
+    }
+    await deleteImagesFromStorage(imagesToDelete);
+
     return { ok: true } as const;
   } catch (err) {
     console.error("Failed to update expedition:", err);
@@ -285,6 +323,102 @@ export default function AdminEditExpedition() {
             />
           </div>
 
+          <div>
+            <label
+              htmlFor="priceIncludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Includes
+              <span className="text-gray-500 font-normal block text-xs">
+                One per line
+              </span>
+            </label>
+            <textarea
+              id="priceIncludes"
+              name="priceIncludes"
+              rows={6}
+              defaultValue={expedition.priceIncludes?.join("\n") ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="priceExcludes"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price Excludes
+              <span className="text-gray-500 font-normal block text-xs">
+                One per line
+              </span>
+            </label>
+            <textarea
+              id="priceExcludes"
+              name="priceExcludes"
+              rows={6}
+              defaultValue={expedition.priceExcludes?.join("\n") ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+          <div>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Price (whole number, e.g. 1790)
+            </label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={expedition.price ?? ""}
+              className={inputClass}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="currency"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Currency
+            </label>
+            <select
+              id="currency"
+              name="currency"
+              defaultValue={expedition.currency ?? "USD"}
+              className={inputClass}
+            >
+              <option value="USD">USD</option>
+              <option value="PKR">PKR</option>
+            </select>
+          </div>
+
+          <div>
+            <label
+              htmlFor="depositAmount"
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
+              Deposit Amount (optional)
+            </label>
+            <input
+              id="depositAmount"
+              name="depositAmount"
+              type="number"
+              min={0}
+              step={1}
+              defaultValue={expedition.depositAmount ?? ""}
+              className={inputClass}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
           <div>
             <ImageListInput
               name="gallery"

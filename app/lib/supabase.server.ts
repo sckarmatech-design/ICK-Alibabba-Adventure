@@ -14,7 +14,10 @@ if (!supabaseUrl || !supabaseKey) {
   );
 }
 
-export const supabase = createClient(supabaseUrl, supabaseKey, {
+const SUPABASE_URL = supabaseUrl;
+const SUPABASE_KEY = supabaseKey;
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     autoRefreshToken: false,
     persistSession: false,
@@ -22,6 +25,56 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 });
 
 const BUCKET = "akhtar_hikings";
+
+function getStoragePathFromUrl(url: string): string | null {
+  if (!url) return null;
+  try {
+    const urlObj = new URL(url);
+    const projectUrl = new URL(SUPABASE_URL);
+    if (urlObj.hostname !== projectUrl.hostname) return null;
+
+    const publicPrefix = `/storage/v1/object/public/${BUCKET}/`;
+    if (!urlObj.pathname.startsWith(publicPrefix)) return null;
+
+    return decodeURIComponent(urlObj.pathname.slice(publicPrefix.length));
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteImageFromStorage(
+  url: string | null | undefined,
+): Promise<void> {
+  const path = getStoragePathFromUrl(url ?? "");
+  if (!path) {
+    console.log("Skipping storage delete — URL does not map to bucket path:", url);
+    return;
+  }
+
+  console.log("Deleting storage file:", path);
+  const { error } = await supabase.storage.from(BUCKET).remove([path]);
+  if (error) {
+    console.error(`Failed to delete storage file ${path}:`, error.message);
+  } else {
+    console.log("Deleted storage file:", path);
+  }
+}
+
+export async function deleteImagesFromStorage(
+  urls: (string | null | undefined)[],
+): Promise<void> {
+  const paths: string[] = [];
+  for (const url of urls) {
+    const path = getStoragePathFromUrl(url ?? "");
+    if (path) paths.push(path);
+  }
+  if (paths.length === 0) return;
+
+  const { error } = await supabase.storage.from(BUCKET).remove(paths);
+  if (error) {
+    console.error("Failed to delete storage files:", error.message, paths);
+  }
+}
 
 export async function uploadImage(
   file: File,
