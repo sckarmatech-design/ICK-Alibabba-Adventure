@@ -18,7 +18,7 @@ export const meta: MetaFunction = () => [
     title: "Blog | Akhtar Abbasi Hiking",
     description:
       "Stories from the trail, trekking tips, and travel guides from our mountain adventures.",
-    image: "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+    image: "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/blog`,
   }),
   {

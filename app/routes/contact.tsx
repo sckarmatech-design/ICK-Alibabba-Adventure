@@ -57,7 +57,7 @@ export const meta: MetaFunction = () => [
     title: "Contact Us | Akhtar Abbasi Hiking",
     description:
       "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
-    image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
+    image: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/contact`,
   }),
   {

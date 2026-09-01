@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <!-- Home -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com</loc>
+    <loc>https://ickalibabbaadventure.com</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -11,56 +11,56 @@
 
   <!-- Main Pages -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com/trips</loc>
+    <loc>https://ickalibabbaadventure.com/trips</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/expeditions</loc>
+    <loc>https://ickalibabbaadventure.com/expeditions</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/tours</loc>
+    <loc>https://ickalibabbaadventure.com/tours</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/gallery</loc>
+    <loc>https://ickalibabbaadventure.com/gallery</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog</loc>
+    <loc>https://ickalibabbaadventure.com/blog</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/about</loc>
+    <loc>https://ickalibabbaadventure.com/about</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/faq</loc>
+    <loc>https://ickalibabbaadventure.com/faq</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/contact</loc>
+    <loc>https://ickalibabbaadventure.com/contact</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -68,21 +68,21 @@
 
   <!-- Trip Detail Pages -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com/trips/k2-base-camp-trek</loc>
+    <loc>https://ickalibabbaadventure.com/trips/k2-base-camp-trek</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/trips/fairy-meadows-adventure</loc>
+    <loc>https://ickalibabbaadventure.com/trips/fairy-meadows-adventure</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/trips/skardu-mountain-trek</loc>
+    <loc>https://ickalibabbaadventure.com/trips/skardu-mountain-trek</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -90,21 +90,21 @@
 
   <!-- Expedition Detail Pages -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com/expeditions/nanga-parbat-expedition</loc>
+    <loc>https://ickalibabbaadventure.com/expeditions/nanga-parbat-expedition</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/expeditions/rakaposhi-expedition</loc>
+    <loc>https://ickalibabbaadventure.com/expeditions/rakaposhi-expedition</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/expeditions/spantik-expedition</loc>
+    <loc>https://ickalibabbaadventure.com/expeditions/spantik-expedition</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -112,21 +112,21 @@
 
   <!-- Tour Detail Pages -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com/tours/skardu-city-tour</loc>
+    <loc>https://ickalibabbaadventure.com/tours/skardu-city-tour</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/tours/hunza-valley-tour</loc>
+    <loc>https://ickalibabbaadventure.com/tours/hunza-valley-tour</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/tours/gilgit-cultural-tour</loc>
+    <loc>https://ickalibabbaadventure.com/tours/gilgit-cultural-tour</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -134,35 +134,35 @@
 
   <!-- Blog Posts -->
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog/k2-preparation-guide</loc>
+    <loc>https://ickalibabbaadventure.com/blog/k2-preparation-guide</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog/high-altitude-secrets</loc>
+    <loc>https://ickalibabbaadventure.com/blog/high-altitude-secrets</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog/trekking-safety-tips</loc>
+    <loc>https://ickalibabbaadventure.com/blog/trekking-safety-tips</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog/best-seasons-for-trekking</loc>
+    <loc>https://ickalibabbaadventure.com/blog/best-seasons-for-trekking</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://akhtarabbasi-hiking.com/blog/trekking-gear-essentials</loc>
+    <loc>https://ickalibabbaadventure.com/blog/trekking-gear-essentials</loc>
     <lastmod>2026-06-25</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>

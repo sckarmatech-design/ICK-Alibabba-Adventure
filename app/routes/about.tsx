@@ -38,7 +38,7 @@ export const meta: MetaFunction = () => [
     title: "About Us | ICK Alibabba Adventure",
     description:
       "Learn about ICK Alibabba Adventure — our mission, vision, experienced guides, and commitment to unforgettable mountain adventures.",
-    image: "https://akhtarabbasi-hiking.com/images/og/about.webp",
+    image: "https://images.unsplash.com/photo-1486915309851-b0cc1f8a0084?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/about`,
   }),
   {

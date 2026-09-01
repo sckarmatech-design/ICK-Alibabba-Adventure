@@ -28,7 +28,7 @@ export const meta: MetaFunction = () => [
     title: "Gallery | Akhtar Abbasi Hiking",
     description:
       "Beautiful photos and videos from our trekking and expedition adventures in Gilgit Baltistan.",
-    image: "https://akhtarabbasi-hiking.com/images/og/gallery.webp",
+    image: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/gallery`,
   }),
   {

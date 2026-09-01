@@ -25,7 +25,7 @@ export const meta: MetaFunction = ({ loaderData }) => {
       title: `${post.title} | Akhtar Abbasi Hiking`,
       description: post.excerpt,
       image:
-        post.image || "https://akhtarabbasi-hiking.com/images/og/blog.webp",
+        post.image || "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=1200&h=630&fit=crop",
       url: `${SITE_CONFIG.url}/blog/${post.slug}`,
       type: "article",
       author: post.author,
