@@ -96,6 +96,33 @@ export const generateJsonLd = (data: Record<string, unknown>) => {
 };
 
 /**
+ * Site-wide TravelAgency structured data.
+ * Render this once in the root layout as:
+ * <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: generateJsonLd(ORGANIZATION_JSON_LD) }} />
+ */
+export const ORGANIZATION_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "TravelAgency",
+  name: SITE_CONFIG.name,
+  url: SITE_CONFIG.url,
+  logo: SITE_CONFIG.logo,
+  image: SITE_CONFIG.image,
+  description: SITE_CONFIG.description,
+  areaServed: {
+    "@type": "Place",
+    name: "Gilgit-Baltistan, Pakistan",
+  },
+  address: {
+    "@type": "PostalAddress",
+    addressCountry: "PK",
+  },
+  sameAs: [
+    "https://www.facebook.com/share/1CDWDmsahw/",
+    "https://www.instagram.com/ickalibabaadventure",
+  ],
+};
+
+/**
  * Page-specific SEO metadata
  */
 export const PAGE_SEO: Record<string, SEOMetadata> = {
