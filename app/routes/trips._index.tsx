@@ -52,7 +52,7 @@ export const meta: MetaFunction = () => [
     title: "Hiking Trips | Akhtar Abbasi Hiking",
     description:
       "Explore our collection of carefully curated hiking trips across Gilgit Baltistan. From short day hikes to challenging multi-day treks.",
-    image: "https://akhtarabbasi-hiking.com/images/og/trips.webp",
+    image: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/trips`,
   }),
   {

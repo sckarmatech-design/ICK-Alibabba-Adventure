@@ -38,7 +38,7 @@ export const meta: MetaFunction = () => [
     title: "Gilgit Baltistan Tours | Akhtar Abbasi Hiking",
     description:
       "Explore cultural and scenic tours across Gilgit Baltistan. Skardu, Hunza, Gilgit, and more destinations.",
-    image: "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+    image: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/tours`,
   }),
   {

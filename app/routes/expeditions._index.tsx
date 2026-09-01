@@ -41,7 +41,7 @@ export const meta: MetaFunction = () => [
     title: "Mountain Expeditions | Akhtar Abbasi Hiking",
     description:
       "Expert-guided expeditions to the world's highest peaks in the Karakoram. Nanga Parbat, Rakaposhi, and more.",
-    image: "https://akhtarabbasi-hiking.com/images/og/expeditions.webp",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/expeditions`,
   }),
   {

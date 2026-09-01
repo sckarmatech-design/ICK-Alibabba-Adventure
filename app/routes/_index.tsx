@@ -109,7 +109,7 @@ export const meta: MetaFunction = () => [
     title: "ICK Alibabba Adventure",
     description:
       "Experience world-class trekking and expeditions in Gilgit Baltistan. Expert guides, unforgettable adventures, and breathtaking mountain views await.",
-    image: "https://akhtarabbasi-hiking.com/images/og/home.webp",
+    image: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&h=630&fit=crop",
     url: SITE_CONFIG.url,
   }),
   {

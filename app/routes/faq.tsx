@@ -19,7 +19,7 @@ export const meta: MetaFunction = () => [
     title: "FAQ | Akhtar Abbasi Hiking",
     description:
       "Frequently asked questions about our trekking packages, expeditions, and adventures.",
-    image: "https://akhtarabbasi-hiking.com/images/og/faq.webp",
+    image: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/faq`,
   }),
   {

@@ -26,7 +26,7 @@ export const meta: MetaFunction = ({ loaderData }) => {
       description: tour.overview.substring(0, 160),
       image:
         tour.heroImage ||
-        "https://akhtarabbasi-hiking.com/images/og/tours.webp",
+        "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=630&fit=crop",
       url: `${SITE_CONFIG.url}/tours/${tour.slug}`,
     }),
     {

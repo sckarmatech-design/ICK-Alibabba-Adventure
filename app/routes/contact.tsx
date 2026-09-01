@@ -11,6 +11,7 @@ import prisma from "~/lib/prisma.server";
 import type { CompanyInfo } from "~/data/nav";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 import { getString, getOptionalString, getNumber } from "~/lib/admin";
+import { ObfuscatedEmail } from "~/components/ObfuscatedEmail";
 
 export async function loader(_args: LoaderFunctionArgs) {
   const settings = await prisma.siteSetting.findMany();
@@ -56,7 +57,7 @@ export const meta: MetaFunction = () => [
     title: "Contact Us | Akhtar Abbasi Hiking",
     description:
       "Get in touch with Akhtar Abbasi Hiking. Contact us via email, phone, WhatsApp, or fill out our contact form.",
-    image: "https://akhtarabbasi-hiking.com/images/og/contact.webp",
+    image: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1200&h=630&fit=crop",
     url: `${SITE_CONFIG.url}/contact`,
   }),
   {
@@ -270,12 +271,10 @@ export default function Contact() {
                 <Mail className="w-6 h-6 text-accent" />
                 <h4 className="font-semibold text-ink">Email</h4>
               </div>
-              <a
-                href={`mailto:${companyInfo.email}`}
-                className="text-accent hover:text-accent-hover transition break-all"
-              >
-                {companyInfo.email}
-              </a>
+              <ObfuscatedEmail
+                email={companyInfo.email}
+                className="text-accent break-all"
+              />
             </div>
 
             {/* Phone */}

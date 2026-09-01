@@ -117,7 +117,7 @@ export interface CompanyInfo {
 
 export const companyInfo: CompanyInfo = {
   name: "ICK ALIBABBA ADVENTURE",
-  email: "ickalibabaadventure100@gmail.com",
+  email: "aWNrYWxpYmFiYmExMDBAZ21haWwuY29t",
   phone: "+92 355 4258109",
   location: "Gilgit Baltistan, Pakistan",
   description:
