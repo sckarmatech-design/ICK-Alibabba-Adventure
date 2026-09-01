@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { Menu, X, ChevronDown, MapPin, Mail, Phone } from "lucide-react";
 import type { CompanyInfo, NavItem } from "~/data/nav";
 import { ThemeSwitcher } from "~/components/ThemeSwitcher";
+import { ObfuscatedEmail } from "~/components/ObfuscatedEmail";
 
 interface HeaderProps {
   mainNav: NavItem[];
@@ -23,13 +24,10 @@ export function Header({ mainNav, companyInfo }: HeaderProps) {
               <MapPin size={14} className="text-accent" />
               <span>{companyInfo.location}</span>
             </div>
-            <a
-              href={`mailto:${companyInfo.email}`}
-              className="flex items-center gap-2 hover:text-accent transition"
-            >
+            <div className="flex items-center gap-2">
               <Mail size={14} className="text-accent" />
-              <span>{companyInfo.email}</span>
-            </a>
+              <ObfuscatedEmail email={companyInfo.email} />
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <a

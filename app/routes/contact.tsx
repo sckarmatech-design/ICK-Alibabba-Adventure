@@ -11,6 +11,7 @@ import prisma from "~/lib/prisma.server";
 import type { CompanyInfo } from "~/data/nav";
 import { generateMetaTags, SITE_CONFIG } from "~/lib/seo";
 import { getString, getOptionalString, getNumber } from "~/lib/admin";
+import { ObfuscatedEmail } from "~/components/ObfuscatedEmail";
 
 export async function loader(_args: LoaderFunctionArgs) {
   const settings = await prisma.siteSetting.findMany();
@@ -270,12 +271,10 @@ export default function Contact() {
                 <Mail className="w-6 h-6 text-accent" />
                 <h4 className="font-semibold text-ink">Email</h4>
               </div>
-              <a
-                href={`mailto:${companyInfo.email}`}
-                className="text-accent hover:text-accent-hover transition break-all"
-              >
-                {companyInfo.email}
-              </a>
+              <ObfuscatedEmail
+                email={companyInfo.email}
+                className="text-accent break-all"
+              />
             </div>
 
             {/* Phone */}
