@@ -64,8 +64,7 @@ export const generateMetaTags = (meta: SEOMetadata) => {
     { name: "twitter:image", content: image },
     { name: "twitter:creator", content: SITE_CONFIG.social.twitter },
 
-    // Additional SEO
-    { name: "canonical", content: url },
+    // Robots
     { name: "robots", content: "index, follow" },
   );
 

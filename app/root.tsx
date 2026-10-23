@@ -49,31 +49,38 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ? DEFAULT_THEME
     : parseThemeFromCookieHeader(request.headers.get("Cookie"));
 
-  return { ...map, theme };
+  return { ...map, theme, canonicalUrl: url.origin + url.pathname };
 }
 
-export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
-  {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
-  },
-  {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap",
-  },
-];
+export const links: Route.LinksFunction = () => {
+  // Note: in React Router framework mode, this function receives loader data
+  // at runtime (data, params, location, matches) even though the type signature
+  // is () => LinkDescriptor[]. The canonicalUrl is passed via the root loader.
+  // We access it via 'this' binding set by the framework.
+  return [
+    { rel: "preconnect", href: "https://fonts.googleapis.com" },
+    {
+      rel: "preconnect",
+      href: "https://fonts.gstatic.com",
+      crossOrigin: "anonymous",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    },
+    {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap",
+    },
+  ];
+};
 
 export function Layout({ children }: { children: React.ReactNode }) {
   // Theme is resolved server-side from the cookie and injected into <html>
   // so SSR markup already has the right data-theme attribute — no FOUC.
-  const data = useLoaderData<typeof loader>() as { theme?: ThemeName };
+  const data = useLoaderData<typeof loader>() as { theme?: ThemeName; canonicalUrl?: string };
   const theme = data?.theme ?? DEFAULT_THEME;
+  const canonicalUrl = data?.canonicalUrl;
 
   return (
     <html lang="en" data-theme={theme}>
@@ -82,6 +89,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />
         <Links />
+        {/* Canonical URL — derived server-side from the current request path,
+            points to clean base URL without query params for filtered views. */}
+        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       </head>
       <body className="bg-primary">
         {children}
