@@ -9,7 +9,7 @@
           "value": "www.ickalibabbaadventure.com"
         }
       ],
-      "destination": "https://ickalibabbaadventure.com/:1",
+      "destination": "https://ickalibabbaadventure.com$1",
       "permanent": true
     }
   ],
