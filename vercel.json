@@ -1,5 +1,18 @@
 {
   "framework": "react-router",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.ickalibabbaadventure.com"
+        }
+      ],
+      "destination": "https://ickalibabbaadventure.com/:1",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
